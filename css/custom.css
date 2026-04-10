@@ -1,0 +1,50 @@
+.preloader2{
+    width:100%;
+    height:100%;
+    top:0;
+    position:fixed;
+    z-index:99999;
+    background:rgba(238, 245, 249, 0.8);
+}
+
+.auth-wrapper .auth-box {
+    background: #dad4c6;
+}
+
+
+.table-striped tbody tr:nth-of-type(2n+1) {
+    background-color: rgb(238, 245, 249);
+}
+
+.custom-file-label::after {
+    content: "Seleccionar fichero";
+}
+
+.select2-container--classic .select2-selection--single, .select2-container--default .select2-selection--multiple, .select2-container--default .select2-selection--single, .select2-container--default .select2-selection--single .select2-selection__arrow, .select2-container--default .select2-selection--single .select2-selection__rendered {
+    height: 100%;
+}
+
+#main-wrapper[data-layout="vertical"] .topbar .navbar-collapse[data-navbarbg="skin1"], #main-wrapper[data-layout="vertical"] .topbar[data-navbarbg="skin1"], #main-wrapper[data-layout="horizontal"] .topbar .navbar-collapse[data-navbarbg="skin1"], #main-wrapper[data-layout="horizontal"] .topbar[data-navbarbg="skin1"] {
+    background: #dad4c6;
+}
+
+#main-wrapper[data-layout="vertical"] .topbar .top-navbar .navbar-header[data-logobg="skin6"], #main-wrapper[data-layout="horizontal"] .topbar .top-navbar .navbar-header[data-logobg="skin6"] {
+    background: #dad4c6;
+}
+
+.page-wrapper {
+    background: #f7f7f7;
+}
+
+#main-wrapper[data-layout="vertical"] .topbar .top-navbar .navbar-header[data-logobg="skin6"] .nav-toggler, #main-wrapper[data-layout="vertical"] .topbar .top-navbar .navbar-header[data-logobg="skin6"] .topbartoggler, #main-wrapper[data-layout="horizontal"] .topbar .top-navbar .navbar-header[data-logobg="skin6"] .nav-toggler, #main-wrapper[data-layout="horizontal"] .topbar .top-navbar .navbar-header[data-logobg="skin6"] .topbartoggler {
+    color: #fff;
+}
+
+
+#main-wrapper[data-layout="vertical"] .topbar .navbar-collapse[data-navbarbg="skin1"], #main-wrapper[data-layout="vertical"] .topbar[data-navbarbg="skin1"], #main-wrapper[data-layout="horizontal"] .topbar .navbar-collapse[data-navbarbg="skin1"], #main-wrapper[data-layout="horizontal"] .topbar[data-navbarbg="skin1"] {
+    background: #ffb114;
+}
+
+#main-wrapper[data-layout="vertical"] .topbar .top-navbar .navbar-header[data-logobg="skin6"], #main-wrapper[data-layout="horizontal"] .topbar .top-navbar .navbar-header[data-logobg="skin6"] {
+    background: #ffb114;
+}

@@ -1,0 +1,22 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /backend_final/
+    
+    # Skip rewriting for real files and directories
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # Route AJAX calls for login
+    RewriteRule ^inc/login\.php/(.*)$ inc/login.php [L,QSA]
+    
+    # Route func_ajax calls
+    RewriteRule ^inc/func_ajax\.php/(.*)$ inc/func_ajax.php [L,QSA]
+</IfModule>
+
+# Prevent direct access to inc folder via web
+<FilesMatch "\.php$">
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+</FilesMatch>
+
