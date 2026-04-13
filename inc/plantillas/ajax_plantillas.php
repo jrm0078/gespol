@@ -1,103 +1,283 @@
 <?php
 
+header('Content-Type: application/json; charset=utf-8');
+
 include '../config.inc.php';
 include '../genericasPHP.php';
 include '../func_datosPHP.php';
 include 'func_plantillas.php';
 include("../seguridad.php");
 
-require '../../libs/Slim/Slim.php';
-\Slim\Slim::registerAutoloader();
+// ==========================================
+// ENRUTADOR PRINCIPAL
+// ==========================================
 
-header("Access-Control-Allow-Origin: *");
-header('Content-Type: application/json; charset=utf-8');
+$action = isset($_GET['action']) ? $_GET['action'] : '';
 
-$app = new \Slim\Slim();
-
-// ============================================
-// RUTAS GET - OBTENER DATOS
-// ============================================
-
-$app->get('/ListarPlantillas', 'ListarPlantillas');
-$app->get('/ObtenerPlantilla', 'ObtenerPlantilla_Handler');
-$app->get('/ObtenerFiltros', 'ObtenerFiltros_Handler');
-$app->get('/ObtenerVariables', 'ObtenerVariables_Handler');
-$app->post('/CargaTablasPlantillas', 'CargaTablasPlantillas');
-
-// ============================================
-// RUTAS POST - MANIPULAR DATOS
-// ============================================
-
-$app->post('/CrearPlantilla', 'CrearPlantilla_Handler');
-$app->post('/ActualizarPlantilla', 'ActualizarPlantilla_Handler');
-$app->post('/EliminarPlantilla', 'EliminarPlantilla_Handler');
-$app->post('/ReemplazarVariables', 'ReemplazarVariables_Handler');
-$app->post('/GuardarDocumento', 'GuardarDocumento_Handler');
-
-$app->run();
-
-// ============================================
-// HANDLERS
-// ============================================
-
-function ListarPlantillas() {
-    $tabla = "plantillas_maestro";
-    $primaryKey = "cod_plantilla";
-    $campos = "cod_plantilla,cod_plantilla,nombre,descripcion,tipo_documento,estado";
-    $tiposcampo = "texto,texto,texto,texto,texto,numero";
-    $joinQuery = "";
-    $extraWhere = "estado = 1";
+switch($action) {
+    // GET
+    case 'listar':
+        listarPlantillas();
+        break;
+    case 'obtener_completa':
+        obtenerCompleta();
+        break;
+    case 'obtener_filtros':
+        obtenerFiltrosAction();
+        break;
     
-    echo CargaTablaPHP($tabla, $campos, $tiposcampo, $primaryKey, $joinQuery, $extraWhere);
+    // POST
+    case 'crear':
+        crearPlantilla();
+        break;
+    case 'editar':
+        editarPlantilla();
+        break;
+    case 'eliminar':
+        eliminarPlantillaAction();
+        break;
+    
+    default:
+        echo json_encode(['success' => false, 'error' => 'Acción no reconocida']);
 }
 
-function ObtenerPlantilla_Handler() {
+// ==========================================
+// FUNCIONES GET
+// ==========================================
+
+/**
+ * Listar todas las plantillas
+ */
+function listarPlantillas() {
+    $plantillas = ObtenerPlantillasAdmin();
+    
+    if ($plantillas) {
+        $data = json_decode($plantillas, true);
+        $formatted = [];
+        
+        foreach ($data as $plant) {
+            $formatted[] = [
+                'cod_plantilla' => $plant[0] ?? '',
+                'nombre' => $plant[1] ?? '',
+                'descripcion' => $plant[2] ?? '',
+                'tipo_documento' => $plant[3] ?? '',
+                'estado' => $plant[4] ?? 1
+            ];
+        }
+        
+        echo json_encode(['success' => true, 'data' => $formatted]);
+    } else {
+        echo json_encode(['success' => true, 'data' => []]);
+    }
+}
+
+/**
+ * Obtener plantilla completa con filtros
+ */
+function obtenerCompleta() {
     $cod = isset($_GET['cod']) ? $_GET['cod'] : '';
     
     if (empty($cod)) {
-        echo json_encode(['validacion' => 'ko', 'error' => 'Código requerido']);
+        echo json_encode(['success' => false, 'error' => 'Código requerido']);
         return;
     }
     
     $plantilla = ObtenerPlantilla($cod);
     
-    if ($plantilla) {
-        $variables = json_decode(ObtenerVariables($cod), true);
-        $filtros = json_decode(ObtenerFiltros($cod), true);
-        
-        echo json_encode([
-            'validacion' => 'ok',
-            'data' => array_merge($plantilla, [
-                'variables' => $variables,
-                'filtros' => $filtros
-            ])
-        ]);
-    } else {
-        echo json_encode(['validacion' => 'ko', 'error' => 'Plantilla no encontrada']);
+    if (!$plantilla) {
+        echo json_encode(['success' => false, 'error' => 'Plantilla no encontrada']);
+        return;
     }
+    
+    // Obtener filtros
+    $filtros_json = ObtenerFiltros($cod);
+    $filtros = json_decode($filtros_json, true) ?? [];
+    
+    // Formatear filtros
+    $filtered = [];
+    if (is_array($filtros)) {
+        foreach ($filtros as $f) {
+            $filtered[] = [
+                'id' => $f[0] ?? '',
+                'nombre_filtro' => $f[1] ?? '',
+                'etiqueta' => $f[2] ?? '',
+                'tipo_filtro' => $f[3] ?? '',
+                'tabla_datos' => $f[4] ?? '',
+                'campo_clave' => $f[5] ?? '',
+                'campo_valor' => $f[6] ?? '',
+                'sql_query' => $f[7] ?? '',
+                'operador' => $f[8] ?? '',
+                'requerido' => $f[9] ?? 0,
+                'orden' => $f[10] ?? 999
+            ];
+        }
+    }
+    
+    echo json_encode([
+        'success' => true,
+        'data' => [
+            'cod_plantilla' => $plantilla['cod_plantilla'] ?? '',
+            'nombre' => $plantilla['nombre'] ?? '',
+            'descripcion' => $plantilla['descripcion'] ?? '',
+            'tipo_documento' => $plantilla['tipo_documento'] ?? '',
+            'contenido' => $plantilla['contenido'] ?? '',
+            'sql_consulta' => $plantilla['sql_consulta'] ?? '',
+            'estado' => $plantilla['estado'] ?? 1,
+            'filtros' => $filtered
+        ]
+    ]);
 }
 
-function ObtenerFiltros_Handler() {
+/**
+ * Obtener filtros de una plantilla
+ */
+function obtenerFiltrosAction() {
     $cod = isset($_GET['cod']) ? $_GET['cod'] : '';
     
     if (empty($cod)) {
-        echo json_encode(['validacion' => 'ko', 'error' => 'Código requerido']);
+        echo json_encode(['success' => false, 'error' => 'Código requerido']);
         return;
     }
     
     $filtros_json = ObtenerFiltros($cod);
-    $filtros = json_decode($filtros_json, true);
+    $filtros = json_decode($filtros_json, true) ?? [];
     
-    echo json_encode(['validacion' => 'ok', 'data' => $filtros]);
+    echo json_encode(['success' => true, 'data' => $filtros]);
 }
 
-function ObtenerVariables_Handler() {
-    $cod = isset($_GET['cod']) ? $_GET['cod'] : '';
+// ==========================================
+// FUNCIONES POST
+// ==========================================
+
+/**
+ * Crear nueva plantilla
+ */
+function crearPlantilla() {
+    $input = file_get_contents('php://input');
+    $data = json_decode($input, true);
     
-    if (empty($cod)) {
-        echo json_encode(['validacion' => 'ko', 'error' => 'Código requerido']);
+    if (!$data) {
+        echo json_encode(['success' => false, 'error' => 'JSON inválido']);
         return;
     }
+    
+    $cod_plantilla = $data['cod_plantilla'] ?? '';
+    $nombre = $data['nombre'] ?? '';
+    $descripcion = $data['descripcion'] ?? '';
+    $tipo_documento = $data['tipo_documento'] ?? '';
+    $contenido = $data['contenido'] ?? '';
+    $sql_consulta = $data['sql_consulta'] ?? '';
+    $estado = $data['estado'] ?? 1;
+    $filtros = $data['filtros'] ?? [];
+    
+    // Crear plantilla
+    $resultado = CrearPlantilla($cod_plantilla, $nombre, $descripcion, $tipo_documento, 
+                               $contenido, $sql_consulta, $estado);
+    
+    $res = json_decode($resultado, true);
+    
+    if ($res['validacion'] === 'ok') {
+        // Guardar filtros
+        if (!empty($filtros) && is_array($filtros)) {
+            foreach ($filtros as $filtro) {
+                AgregarFiltro(
+                    $cod_plantilla,
+                    $filtro['nombre_filtro'] ?? '',
+                    $filtro['etiqueta'] ?? '',
+                    $filtro['tipo_filtro'] ?? '',
+                    $filtro['tabla_datos'] ?? '',
+                    $filtro['campo_clave'] ?? '',
+                    $filtro['campo_valor'] ?? '',
+                    $filtro['sql_query'] ?? '',
+                    $filtro['orden'] ?? 1,
+                    $filtro['requerido'] ?? 0
+                );
+            }
+        }
+        
+        echo json_encode(['success' => true, 'message' => 'Plantilla creada']);
+    } else {
+        echo json_encode(['success' => false, 'error' => $res['error'] ?? 'Error al crear']);
+    }
+}
+
+/**
+ * Actualizar plantilla existente
+ */
+function editarPlantilla() {
+    $input = file_get_contents('php://input');
+    $data = json_decode($input, true);
+    
+    if (!$data) {
+        echo json_encode(['success' => false, 'error' => 'JSON inválido']);
+        return;
+    }
+    
+    $cod_plantilla = $data['cod_plantilla'] ?? '';
+    $nombre = $data['nombre'] ?? '';
+    $descripcion = $data['descripcion'] ?? '';
+    $tipo_documento = $data['tipo_documento'] ?? '';
+    $contenido = $data['contenido'] ?? '';
+    $sql_consulta = $data['sql_consulta'] ?? '';
+    $estado = $data['estado'] ?? 1;
+    $filtros = $data['filtros'] ?? [];
+    
+    // Actualizar plantilla
+    $resultado = ActualizarPlantilla($cod_plantilla, $nombre, $descripcion, $tipo_documento, 
+                                    $contenido, $sql_consulta, $estado);
+    
+    $res = json_decode($resultado, true);
+    
+    if ($res['validacion'] === 'ok') {
+        // Eliminar filtros antiguos y crear nuevos
+        EliminarFiltrosPorPlantilla($cod_plantilla);
+        
+        if (!empty($filtros) && is_array($filtros)) {
+            foreach ($filtros as $filtro) {
+                AgregarFiltro(
+                    $cod_plantilla,
+                    $filtro['nombre_filtro'] ?? '',
+                    $filtro['etiqueta'] ?? '',
+                    $filtro['tipo_filtro'] ?? '',
+                    $filtro['tabla_datos'] ?? '',
+                    $filtro['campo_clave'] ?? '',
+                    $filtro['campo_valor'] ?? '',
+                    $filtro['sql_query'] ?? '',
+                    $filtro['orden'] ?? 1,
+                    $filtro['requerido'] ?? 0
+                );
+            }
+        }
+        
+        echo json_encode(['success' => true, 'message' => 'Plantilla actualizada']);
+    } else {
+        echo json_encode(['success' => false, 'error' => $res['error'] ?? 'Error al actualizar']);
+    }
+}
+
+/**
+ * Eliminar plantilla
+ */
+function eliminarPlantillaAction() {
+    $cod_plantilla = isset($_GET['cod_plantilla']) ? $_GET['cod_plantilla'] : '';
+    
+    if (empty($cod_plantilla)) {
+        echo json_encode(['success' => false, 'error' => 'Código requerido']);
+        return;
+    }
+    
+    $resultado = EliminarPlantilla($cod_plantilla);
+    $res = json_decode($resultado, true);
+    
+    if ($res['validacion'] === 'ok') {
+        echo json_encode(['success' => true, 'message' => 'Plantilla eliminada']);
+    } else {
+        echo json_encode(['success' => false, 'error' => $res['error'] ?? 'Error al eliminar']);
+    }
+}
+
+?>
+
     
     $variables_json = ObtenerVariables($cod);
     $variables = json_decode($variables_json, true);

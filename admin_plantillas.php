@@ -1,4 +1,24 @@
 <?php include("inc/seguridad.php"); ?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración de Plantillas</title>
+    <link href="libs/summernote/dist/summernote-bs4.css" rel="stylesheet">
+    <style>
+        body { background: #f8f9fa; }
+        .card { box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .table-responsive { margin-top: 20px; }
+        .form-group label { font-weight: bold; color: #333; }
+        .note-editor.note-frame { border: 1px solid #ddd; }
+        .filtro-row { background: #f9f9f9; }
+        #referenciaColumnas { background: #f0f8ff; padding: 15px; border-radius: 5px; }
+        .columna-reference { padding: 8px; background: white; margin: 5px 0; border-left: 3px solid #007bff; }
+    </style>
+</head>
+<body>
+
 <div class="container-fluid">
 
     <div class="card shadow mb-4">
@@ -7,21 +27,20 @@
         </div>
         <div class="card-body">
 
-            <div class="row mb-3">
-                <div class="col-md-8">
-                    <h4>Gestionar Plantillas</h4>
-                </div>
-                <div class="col-md-4 text-right">
-                    <button class="btn btn-success btn-sm" onclick="abrirFormularioPlantilla()">
-                        <i class="fas fa-plus"></i> Crear Plantilla
-                    </button>
-                </div>
-            </div>
-
             <div id="alertaContainer"></div>
 
             <!-- TABLA PLANTILLAS -->
             <div id="tablaPantillas" style="display:block;">
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <h4>Gestionar Plantillas</h4>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <button class="btn btn-success btn-sm" onclick="abrirFormularioNueva()">
+                            <i class="fas fa-plus"></i> Crear Plantilla
+                        </button>
+                    </div>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-striped table-sm">
                         <thead class="table-dark">
@@ -49,8 +68,8 @@
                     </div>
                     <div class="card-body">
 
-                        <form id="formPlantilla">
-                            <div class="row">
+                            <!-- DATOS BÁSICOS -->
+                            <div class="row mb-3">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="font-weight-bold">Código Plantilla *</label>
@@ -68,48 +87,97 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="font-weight-bold">Descripción</label>
-                                <textarea class="form-control" id="descripcion" rows="2" 
-                                          placeholder="Descripción breve de la plantilla"></textarea>
+                            <div class="row mb-3">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Descripción</label>
+                                        <textarea class="form-control" id="descripcion" rows="2" 
+                                                  placeholder="Descripción breve de la plantilla"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">Tipo Documento</label>
+                                        <input type="text" class="form-control" id="tipo_documento" 
+                                               placeholder="ej: PDF, Contrato">
+                                    </div>
+                                </div>
                             </div>
 
+                            <!-- CONSULTA SQL -->
                             <div class="form-group">
-                                <label class="font-weight-bold">Tipo Documento</label>
-                                <input type="text" class="form-control" id="tipo_documento" 
-                                       placeholder="ej: PDF, Contrato, etc.">
-                            </div>
-
-                            <div class="form-group">
-                                <label class="font-weight-bold">Contenido HTML *</label>
-                                <small class="text-muted d-block mb-2">
-                                    Usa <code>{%%nombre_variable%%}</code> para variables. Ej: Su cliente es {%%cliente_nombre%%}
-                                </small>
-                                <textarea class="form-control" id="contenido" rows="10" 
-                                          placeholder="Contenido HTML con variables entre {%%...%%}" required></textarea>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="font-weight-bold">SQL Consulta</label>
-                                <small class="text-muted d-block mb-2">
-                                    SQL que proporciona datos. Usa <code>[[parametro]]</code> para filtros.
-                                </small>
+                                <label class="font-weight-bold">Consulta SQL *</label>
+                                <small class="d-block text-muted mb-2">Usa parámetros: <code>[[nombre_filtro]]</code></small>
                                 <textarea class="form-control" id="sql_consulta" rows="4" 
-                                          placeholder="SELECT * FROM tabla WHERE id = [[id]]"></textarea>
+                                          placeholder="SELECT * FROM tabla WHERE id = [[id]]" required></textarea>
                             </div>
 
+                            <!-- BOTÓN REFERENCIA COLUMNAS -->
+                            <div class="form-group">
+                                <button class="btn btn-info btn-sm" type="button" data-toggle="collapse" data-target="#referenciaColumnas">
+                                    <i class="fas fa-info-circle"></i> Ver Columnas Disponibles
+                                </button>
+                            </div>
+
+                            <!-- REFERENCIA COLUMNAS -->
+                            <div class="collapse mb-4" id="referenciaColumnas">
+                                <div class="card card-body">
+                                    <h6>Columnas Disponibles (según SQL):</h6>
+                                    <div id="columnasDisponibles" style="max-height: 200px; overflow-y: auto;">
+                                        <small class="text-muted">Escribe SQL arriba para ver columnas disponibles</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CONTENIDO HTML CON EDITOR -->
+                            <div class="form-group">
+                                <label class="font-weight-bold">Contenido HTML con WYSIWYG *</label>
+                                <small class="d-block text-muted mb-2">Usa variables: <code>{%%nombre_variable%%}</code></small>
+                                <div id="summerNote">
+                                    <textarea id="contenido" class="summernote" required></textarea>
+                                </div>
+                            </div>
+
+                            <!-- ESTADO -->
                             <div class="form-group">
                                 <label class="font-weight-bold">
-                                    <input type="checkbox" id="estado" checked> Activa
+                                    <input type="checkbox" id="estado" checked> Plantilla Activa
                                 </label>
                             </div>
 
-                            <div class="form-group text-right">
-                                <button type="button" class="btn btn-secondary mr-2" onclick="cerrarFormularioPlantilla()">
-                                    Cancelar
-                                </button>
+                            <!-- SECCIÓN: FILTROS -->
+                            <hr>
+                            <h5 class="mb-3">Filtros para Consulta SQL</h5>
+
+                            <div class="table-responsive mb-3">
+                                <table class="table table-sm table-bordered" id="tablaFiltros">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Nombre Filtro</th>
+                                            <th>Etiqueta</th>
+                                            <th>Tipo</th>
+                                            <th style="min-width: 300px;">Configuración</th>
+                                            <th>Orden</th>
+                                            <th>Requerido</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bodyFiltros">
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <button type="button" class="btn btn-sm btn-success mb-4" onclick="agregarFilaFiltro()">
+                                <i class="fas fa-plus"></i> Agregar Filtro
+                            </button>
+
+                            <!-- BOTONES -->
+                            <div class="mt-4">
                                 <button type="button" class="btn btn-primary" onclick="guardarPlantilla()">
                                     <i class="fas fa-save"></i> Guardar
+                                </button>
+                                <button type="button" class="btn btn-secondary mr-2" onclick="cancelarFormulario()">
+                                    <i class="fas fa-times"></i> Cancelar
                                 </button>
                             </div>
                         </form>
@@ -124,198 +192,419 @@
 
 </div>
 
+<script src="libs/summernote/dist/summernote-bs4.js"></script>
+
 <script>
-
+const API_PLANTILLAS = 'inc/plantillas/ajax_plantillas.php';
 let plantillaEnEdicion = null;
-let plantillas = [];
 
-// Cargar tabla de plantillas
-function cargarTablasPlantillas() {
-    $.ajax({
-        url: 'inc/plantillas/ajax_plantillas.php/CargaTablasPlantillas',
-        type: 'POST',
-        dataType: 'json',
-        success: function(response) {
-            if (response.validacion === 'ok') {
-                plantillas = response.data;
-                refrescarTabla();
-            }
+// ==========================================
+// INICIALIZACIÓN
+// ==========================================
+$(document).ready(function() {
+    cargarPlantillas();
+    inicializarSummernote();
+    
+    // Actualizar columnas cuando cambia SQL
+    $('#sql_consulta').on('input', function() {
+        actualizarColumnasDisponibles();
+    });
+});
+
+// ==========================================
+// INICIALIZAR SUMMERNOTE
+// ==========================================
+function inicializarSummernote() {
+    $('.summernote').summernote({
+        height: 400,
+        lang: 'es-ES',
+        placeholder: 'Contenido en WYSIWYG con variables {%%variable%%}',
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+        ]
+    });
+}
+
+// ==========================================
+// CARGAR TABLA DE PLANTILLAS
+// ==========================================
+function cargarPlantillas() {
+    $.get(API_PLANTILLAS + '?action=listar', function(data) {
+        if (data.success) {
+            let html = '';
+            data.data.forEach(plantilla => {
+                const estado = plantilla.estado == 1 ? '<span class="badge badge-success">Activa</span>' : '<span class="badge badge-danger">Inactiva</span>';
+                html += `<tr>
+                    <td><code>${plantilla.cod_plantilla}</code></td>
+                    <td>${plantilla.nombre}</td>
+                    <td><small>${plantilla.descripcion || ''}</small></td>
+                    <td><small>${plantilla.tipo_documento || ''}</small></td>
+                    <td>${estado}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="abrirFormularioEditar('${plantilla.cod_plantilla}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="eliminarPlantilla('${plantilla.cod_plantilla}', '${plantilla.nombre}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>`;
+            });
+            $('#cuerpoTabla').html(html);
         }
     });
 }
 
-// Refrescar tabla
-function refrescarTabla() {
-    const tbody = document.getElementById('cuerpoTabla');
-    tbody.innerHTML = '';
-
-    plantillas.forEach(plantilla => {
-        const estado = plantilla[4] == 1 ? '<span class="badge badge-success">Activa</span>' : 
-                       '<span class="badge badge-danger">Inactiva</span>';
-        
-        const html = `
-            <tr>
-                <td><code>${plantilla[0]}</code></td>
-                <td>${plantilla[1]}</td>
-                <td><small>${plantilla[2] || '-'}</small></td>
-                <td><small>${plantilla[3] || '-'}</small></td>
-                <td>${estado}</td>
-                <td>
-                    <button class="btn btn-sm btn-info" onclick="editarPlantilla('${plantilla[0]}')" title="Editar">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger" onclick="eliminarPlantilla('${plantilla[0]}', '${plantilla[1]}')" title="Eliminar">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        `;
-        tbody.innerHTML += html;
-    });
-}
-
-// Abrir formulario para crear
-function abrirFormularioPlantilla() {
+// ==========================================
+// ABRIR FORMULARIO NUEVA
+// ==========================================
+function abrirFormularioNueva() {
     plantillaEnEdicion = null;
-    document.getElementById('tituloFormulario').innerHTML = 'Nueva Plantilla';
-    document.getElementById('cod_plantilla').disabled = false;
-    document.getElementById('cod_plantilla').value = '';
-    document.getElementById('nombre').value = '';
-    document.getElementById('descripcion').value = '';
-    document.getElementById('tipo_documento').value = '';
-    document.getElementById('contenido').value = '';
-    document.getElementById('sql_consulta').value = '';
-    document.getElementById('estado').checked = true;
-    
-    document.getElementById('tablaPantillas').style.display = 'none';
-    document.getElementById('formularioSection').style.display = 'block';
+    $('#tituloFormulario').text('Nueva Plantilla');
+    $('#cod_plantilla').prop('disabled', false);
+    limpiarFormulario();
+    ocultarTabla();
+    actualizarColumnasDisponibles();
 }
 
-// Editar plantilla
-function editarPlantilla(cod) {
-    $.ajax({
-        url: 'inc/plantillas/ajax_plantillas.php/ObtenerPlantilla?cod=' + cod,
-        type: 'GET',
-        dataType: 'json',
-        success: function(response) {
-            if (response.validacion === 'ok') {
-                const p = response.data;
-                plantillaEnEdicion = p.cod_plantilla;
-                
-                document.getElementById('tituloFormulario').innerHTML = 'Editar: ' + p.nombre;
-                document.getElementById('cod_plantilla').disabled = true;
-                document.getElementById('cod_plantilla').value = p.cod_plantilla;
-                document.getElementById('nombre').value = p.nombre;
-                document.getElementById('descripcion').value = p.descripcion || '';
-                document.getElementById('tipo_documento').value = p.tipo_documento || '';
-                document.getElementById('contenido').value = p.contenido;
-                document.getElementById('sql_consulta').value = p.sql_consulta || '';
-                document.getElementById('estado').checked = p.estado == 1;
-                
-                document.getElementById('tablaPantillas').style.display = 'none';
-                document.getElementById('formularioSection').style.display = 'block';
-            }
+// ==========================================
+// ABRIR FORMULARIO EDITAR
+// ==========================================
+function abrirFormularioEditar(cod) {
+    $.get(API_PLANTILLAS + '?action=obtener_completa&cod=' + cod, function(data) {
+        if (data.success) {
+            plantillaEnEdicion = cod;
+            $('#tituloFormulario').text('Editar Plantilla');
+            $('#cod_plantilla').prop('disabled', true);
+            
+            $('#cod_plantilla').val(data.data.cod_plantilla);
+            $('#nombre').val(data.data.nombre);
+            $('#descripcion').val(data.data.descripcion || '');
+            $('#tipo_documento').val(data.data.tipo_documento || '');
+            $('#sql_consulta').val(data.data.sql_consulta || '');
+            $('#estado').prop('checked', data.data.estado == 1);
+            
+            $('.summernote').summernote('code', data.data.contenido || '');
+            
+            // Cargar filtros
+            cargarFiltrosEnFormulario(data.data.filtros || []);
+            
+            ocultarTabla();
+            actualizarColumnasDisponibles();
         }
     });
 }
 
-// Cerrar formulario
-function cerrarFormularioPlantilla() {
-    document.getElementById('formularioSection').style.display = 'none';
-    document.getElementById('tablaPantillas').style.display = 'block';
+// ==========================================
+// CARGAR FILTROS EN FORMULARIO
+// ==========================================
+function cargarFiltrosEnFormulario(filtros) {
+    const tbody = $('#bodyFiltros');
+    tbody.html('');
+    
+    filtros.forEach(filtro => {
+        const rowId = 'filt_' + Date.now() + Math.random();
+        let configHtml = '';
+        
+        if (filtro.tipo_filtro === 'select_table') {
+            configHtml = `
+                <input type="text" class="form-control form-control-sm mb-1 filtro-tabla" value="${filtro.tabla_datos || ''}">
+                <input type="text" class="form-control form-control-sm mb-1 filtro-campo-clave" value="${filtro.campo_clave || 'id'}">
+                <input type="text" class="form-control form-control-sm filtro-campo-valor" value="${filtro.campo_valor || 'nombre'}">
+            `;
+        } else if (filtro.tipo_filtro === 'select_sql') {
+            configHtml = `<textarea class="form-control form-control-sm filtro-sql-query" rows="2">${filtro.sql_query || ''}</textarea>`;
+        }
+        
+        const fila = `<tr id="${rowId}" class="filtro-row">
+            <td><input type="text" class="form-control form-control-sm filtro-nombre" value="${filtro.nombre_filtro}"></td>
+            <td><input type="text" class="form-control form-control-sm filtro-etiqueta" value="${filtro.etiqueta}"></td>
+            <td>
+                <select class="form-control form-control-sm filtro-tipo" onchange="actualizarConfiguracionFiltro('${rowId}')">
+                    <option value="select_table" ${filtro.tipo_filtro === 'select_table' ? 'selected' : ''}>SELECT Tabla</option>
+                    <option value="select_sql" ${filtro.tipo_filtro === 'select_sql' ? 'selected' : ''}>SELECT SQL</option>
+                    <option value="text" ${filtro.tipo_filtro === 'text' ? 'selected' : ''}>Texto</option>
+                    <option value="number" ${filtro.tipo_filtro === 'number' ? 'selected' : ''}>Número</option>
+                    <option value="date" ${filtro.tipo_filtro === 'date' ? 'selected' : ''}>Fecha</option>
+                </select>
+            </td>
+            <td id="config-${rowId}">${configHtml}</td>
+            <td><input type="number" class="form-control form-control-sm filtro-orden" value="${filtro.orden || 1}" min="1"></td>
+            <td><input type="checkbox" class="form-check-input filtro-requerido" ${filtro.requerido === 1 ? 'checked' : ''}></td>
+            <td><button type="button" class="btn btn-sm btn-danger" onclick="eliminarFilaFiltro('${rowId}')"><i class="fas fa-trash"></i></button></td>
+        </tr>`;
+        
+        tbody.append(fila);
+    });
 }
 
-// Guardar plantilla
+// ==========================================
+// AGREGAR FILA FILTRO
+// ==========================================
+function agregarFilaFiltro() {
+    const tbody = $('#bodyFiltros');
+    const rowId = 'filtro-' + Date.now();
+    
+    const fila = `<tr id="${rowId}" class="filtro-row">
+        <td><input type="text" class="form-control form-control-sm filtro-nombre" placeholder="año, cliente, etc." required></td>
+        <td><input type="text" class="form-control form-control-sm filtro-etiqueta" placeholder="Etiqueta visible" required></td>
+        <td>
+            <select class="form-control form-control-sm filtro-tipo" onchange="actualizarConfiguracionFiltro('${rowId}')">
+                <option value="select_table">SELECT Tabla</option>
+                <option value="select_sql">SELECT SQL</option>
+                <option value="text">Texto</option>
+                <option value="number">Número</option>
+                <option value="date">Fecha</option>
+            </select>
+        </td>
+        <td id="config-${rowId}">
+            <input type="text" class="form-control form-control-sm mb-1 filtro-tabla" placeholder="Tabla: años">
+            <input type="text" class="form-control form-control-sm mb-1 filtro-campo-clave" placeholder="Clave: id" value="id">
+            <input type="text" class="form-control form-control-sm filtro-campo-valor" placeholder="Valor: nombre">
+        </td>
+        <td><input type="number" class="form-control form-control-sm filtro-orden" value="1" min="1" required></td>
+        <td><input type="checkbox" class="form-check-input filtro-requerido" checked></td>
+        <td><button type="button" class="btn btn-sm btn-danger" onclick="eliminarFilaFiltro('${rowId}')"><i class="fas fa-trash"></i></button></td>
+    </tr>`;
+    
+    tbody.append(fila);
+}
+
+// ==========================================
+// ACTUALIZAR CONFIGURACIÓN FILTRO
+// ==========================================
+function actualizarConfiguracionFiltro(rowId) {
+    const fila = $('#' + rowId);
+    const tipo = fila.find('.filtro-tipo').val();
+    const configDiv = $('#config-' + rowId);
+    
+    let html = '';
+    
+    switch(tipo) {
+        case 'select_table':
+            html = `
+                <input type="text" class="form-control form-control-sm mb-1 filtro-tabla" placeholder="Tabla: años">
+                <input type="text" class="form-control form-control-sm mb-1 filtro-campo-clave" placeholder="Clave: id" value="id">
+                <input type="text" class="form-control form-control-sm filtro-campo-valor" placeholder="Valor: nombre">
+            `;
+            break;
+        case 'select_sql':
+            html = `<textarea class="form-control form-control-sm filtro-sql-query" placeholder="SELECT id, nombre FROM tabla" rows="2"></textarea>`;
+            break;
+        default:
+            html = '';
+    }
+    
+    configDiv.html(html);
+}
+
+// ==========================================
+// ELIMINAR FILA FILTRO
+// ==========================================
+function eliminarFilaFiltro(rowId) {
+    $('#' + rowId).remove();
+}
+
+// ==========================================
+// OBTENER FILTROS DEL FORMULARIO
+// ==========================================
+function obtenerFiltros() {
+    const filtros = [];
+    
+    $('#bodyFiltros tr').each(function() {
+        const fila = $(this);
+        const celdas = fila.find('td');
+        
+        const nombre = celdas.eq(0).find('input').val().trim();
+        const etiqueta = celdas.eq(1).find('input').val().trim();
+        const tipo = celdas.eq(2).find('select').val();
+        const orden = parseInt(celdas.eq(4).find('input').val()) || 1;
+        const requerido = celdas.eq(5).find('input[type="checkbox"]').is(':checked') ? 1 : 0;
+        
+        if (!nombre || !etiqueta) return;
+        
+        const filtro = {
+            nombre_filtro: nombre,
+            etiqueta: etiqueta,
+            tipo_filtro: tipo,
+            orden: orden,
+            requerido: requerido
+        };
+        
+        if (tipo === 'select_table') {
+            filtro.tabla_datos = celdas.eq(3).find('.filtro-tabla').val();
+            filtro.campo_clave = celdas.eq(3).find('.filtro-campo-clave').val() || 'id';
+            filtro.campo_valor = celdas.eq(3).find('.filtro-campo-valor').val() || 'nombre';
+        } else if (tipo === 'select_sql') {
+            filtro.sql_query = celdas.eq(3).find('.filtro-sql-query').val();
+        }
+        
+        filtros.push(filtro);
+    });
+    
+    return filtros;
+}
+
+// ==========================================
+// ACTUALIZAR COLUMNAS DISPONIBLES
+// ==========================================
+function actualizarColumnasDisponibles() {
+    const sql = $('#sql_consulta').val().trim();
+    const container = $('#columnasDisponibles');
+    
+    if (!sql) {
+        container.html('<small class="text-muted">Escribe SQL para ver columnas</small>');
+        return;
+    }
+    
+    const regex = /SELECT\s+(.*?)\s+FROM/i;
+    const match = sql.match(regex);
+    
+    if (match) {
+        let columns = match[1];
+        if (columns === '*') {
+            container.html('<small class="text-warning">Selecciona todas las columnas (*). Especifica las columnas para ver referencias.</small>');
+        } else {
+            const cols = columns.split(',').map(c => c.trim());
+            let html = '';
+            cols.forEach(col => {
+                const columna = col.split(' ').pop();
+                html += `<div class="columna-reference"><code>{%%${columna}%%}</code></div>`;
+            });
+            container.html(html);
+        }
+    } else {
+        container.html('<small class="text-danger">SQL no válido. Debe ser: SELECT columnas FROM tabla</small>');
+    }
+}
+
+// ==========================================
+// GUARDAR PLANTILLA
+// ==========================================
 function guardarPlantilla() {
-    const cod = document.getElementById('cod_plantilla').value;
-    const nombre = document.getElementById('nombre').value;
-    const descripcion = document.getElementById('descripcion').value;
-    const tipo = document.getElementById('tipo_documento').value;
-    const contenido = document.getElementById('contenido').value;
-    const sql = document.getElementById('sql_consulta').value;
-    const estado = document.getElementById('estado').checked ? 1 : 0;
+    const cod = $('#cod_plantilla').val().trim();
+    const nombre = $('#nombre').val().trim();
+    const contenido = $('.summernote').summernote('code');
+    const sql = $('#sql_consulta').val().trim();
     
-    if (!cod) {
-        mostrarAlerta('Error', 'Código requerido', 'danger');
-        return;
-    }
-    if (!nombre) {
-        mostrarAlerta('Error', 'Nombre requerido', 'danger');
-        return;
-    }
-    if (!contenido) {
-        mostrarAlerta('Error', 'Contenido requerido', 'danger');
+    if (!cod || !nombre || !contenido || !sql) {
+        mostrarAlerta('Todos los campos requeridos deben estar completos', 'warning');
         return;
     }
     
-    const action = plantillaEnEdicion ? 'ActualizarPlantilla' : 'CrearPlantilla';
-    const url = 'inc/plantillas/ajax_plantillas.php/' + action;
+    const datos = {
+        cod_plantilla: cod,
+        nombre: nombre,
+        descripcion: $('#descripcion').val(),
+        tipo_documento: $('#tipo_documento').val(),
+        sql_consulta: sql,
+        contenido: contenido,
+        estado: $('#estado').is(':checked') ? 1 : 0,
+        filtros: obtenerFiltros()
+    };
+    
+    const action = plantillaEnEdicion ? 'editar&cod=' + plantillaEnEdicion : 'crear';
     
     $.ajax({
-        url: url,
-        type: 'POST',
-        data: {
-            cod_plantilla: cod,
-            nombre: nombre,
-            descripcion: descripcion,
-            tipo_documento: tipo,
-            contenido: contenido,
-            sql_consulta: sql,
-            estado: estado
-        },
-        dataType: 'json',
-        success: function(response) {
-            if (response.validacion === 'ok') {
-                mostrarAlerta('Éxito', response.mensaje, 'success');
-                cerrarFormularioPlantilla();
-                cargarTablasPlantillas();
+        url: API_PLANTILLAS + '?action=' + action,
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(datos),
+        success: function(data) {
+            if (data.success || data.validacion === 'ok') {
+                mostrarAlerta('Plantilla guardada correctamente', 'success');
+                limpiarFormulario();
+                mostrarTabla();
+                cargarPlantillas();
             } else {
-                mostrarAlerta('Error', response.error, 'danger');
+                mostrarAlerta(data.error || 'Error al guardar', 'danger');
             }
+        },
+        error: function(err) {
+            mostrarAlerta('Error al guardar plantilla', 'danger');
+            console.error(err);
         }
     });
 }
 
-// Eliminar plantilla
+// ==========================================
+// ELIMINAR PLANTILLA
+// ==========================================
 function eliminarPlantilla(cod, nombre) {
-    if (confirm('¿Seguro que deseas eliminar la plantilla: ' + nombre + '?')) {
-        $.ajax({
-            url: 'inc/plantillas/ajax_plantillas.php/EliminarPlantilla',
-            type: 'POST',
-            data: {
-                cod_plantilla: cod
-            },
-            dataType: 'json',
-            success: function(response) {
-                if (response.validacion === 'ok') {
-                    mostrarAlerta('Éxito', response.mensaje, 'success');
-                    cargarTablasPlantillas();
-                } else {
-                    mostrarAlerta('Error', response.error, 'danger');
-                }
-            }
-        });
-    }
+    if (!confirm('¿Confirmas que quieres eliminar esta plantilla?')) return;
+    
+    $.post(API_PLANTILLAS + '?action=eliminar&cod_plantilla=' + cod, function(data) {
+        if (data.success || data.validacion === 'ok') {
+            mostrarAlerta('Plantilla eliminada correctamente', 'success');
+            cargarPlantillas();
+        } else {
+            mostrarAlerta(data.error || 'Error al eliminar', 'danger');
+        }
+    });
 }
 
-// Mostrar alerta
-function mostrarAlerta(titulo, mensaje, tipo) {
-    const alertaHTML = `
-        <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
-            <strong>${titulo}:</strong> ${mensaje}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    `;
-    document.getElementById('alertaContainer').innerHTML = alertaHTML;
+// ==========================================
+// LIMPIAR FORMULARIO
+// ==========================================
+function limpiarFormulario() {
+    $('#cod_plantilla').val('');
+    $('#nombre').val('');
+    $('#descripcion').val('');
+    $('#tipo_documento').val('');
+    $('#sql_consulta').val('SELECT * FROM tabla WHERE id = [[id]]');
+    $('#estado').prop('checked', true);
+    $('.summernote').summernote('code', '');
+    $('#bodyFiltros').html('');
+    plantillaEnEdicion = null;
+}
+
+// ==========================================
+// CANCELAR EDICIÓN
+// ==========================================
+function cancelarFormulario() {
+    limpiarFormulario();
+    mostrarTabla();
+}
+
+// ==========================================
+// MOSTRAR/OCULTAR TABLA
+// ==========================================
+function ocultarTabla() {
+    $('#tablaPantillas').hide();
+    $('#formularioSection').show();
+}
+
+function mostrarTabla() {
+    $('#tablaPantillas').show();
+    $('#formularioSection').hide();
+}
+
+// ==========================================
+// MOSTRAR ALERTA
+// ==========================================
+function mostrarAlerta(mensaje, tipo) {
+    const alert = `<div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+        ${mensaje}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>`;
+    
+    $('#alertaContainer').html(alert);
     
     setTimeout(() => {
-        document.getElementById('alertaContainer').innerHTML = '';
+        $('#alertaContainer').html('');
     }, 5000);
 }
 
-// Inicializar
-cargarTablasPlantillas();
-
 </script>
+
+</body>
+</html>
