@@ -98,22 +98,14 @@
                     <!-- ============================================================== -->
                     <!-- Logo -->
                     <!-- ============================================================== -->
-                    <a class="navbar-brand" href="index.php">
+                    <a class="navbar-brand d-flex align-items-center" href="index.php">
                         <!-- Logo icon -->
-                        <b class="logo-icon">
-                            <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
-                            <!-- Dark Logo icon -->
-                            <img src="images/logo-icon.png" alt="homepage" class="dark-logo" />
-                            <!-- Light Logo icon -->
-                            <img src="images/logo-icon.png" alt="homepage" class="light-logo" />
+                        <b class="logo-icon" style="font-size: 2rem; margin-right: 10px;">
+                            <i class="fas fa-cloud" style="color: white;"></i>
                         </b>
-                        <!--End Logo icon -->
                         <!-- Logo text -->
-                        <span class="logo-text">
-                             <!-- dark Logo text -->
-                             <img src="images/logo-text.png" alt="homepage" class="dark-logo" />
-                             <!-- Light Logo text -->    
-                             <img src="images/logo-text.png" class="light-logo" alt="homepage" />
+                        <span class="logo-text" style="color: white; font-weight: bold; font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px;">
+                            CDiCloud
                         </span>
                     </a>
                     <!-- ============================================================== -->

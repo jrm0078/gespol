@@ -2,13 +2,18 @@
 
 <style>
     .filtro-row { background: #f9f9f9; }
-    #referenciaColumnas { background: #f0f8ff; padding: 15px; border-radius: 5px; }
-    .columna-reference { padding: 8px; background: white; margin: 5px 0; border-left: 3px solid #007bff; }
+    #referenciaColumnas { background: #e3f2fd; padding: 15px; border-radius: 5px; border-left: 4px solid #0084D9; }
+    .columna-reference { padding: 8px; background: white; margin: 5px 0; border-left: 3px solid #0084D9; }
     
     /* Responsive TinyMCE y Editor */
     .tox-tinymce {
         max-width: 100% !important;
-        border: 1px solid #dee2e6 !important;
+        border: 1px solid #bee5eb !important;
+    }
+    
+    .card-header {
+        border-bottom: 3px solid #0084D9 !important;
+        background: linear-gradient(to right, rgba(0, 132, 217, 0.05), transparent) !important;
     }
     
     /* Container responsivo */
@@ -25,6 +30,18 @@
     /* Tabla responsive */
     #tablaPlantillas {
         margin-bottom: 0;
+    }
+    
+    /* Tabla hover color azul */
+    #tablaPlantillas tbody tr:hover {
+        background-color: rgba(0, 132, 217, 0.05) !important;
+    }
+    
+    /* Acentos azules */
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #0084D9 !important;
+        box-shadow: 0 0 0 0.2rem rgba(0, 132, 217, 0.25) !important;
     }
     
     /* Responsive table */
@@ -99,7 +116,7 @@
 <!-- FORMULARIO CREAR/EDITAR -->
 <div id="formularioPlantillasSection" style="display:none;" class="mt-4">
     <div class="card">
-        <div class="card-header bg-info">
+        <div class="card-header" style="background: linear-gradient(to right, #0084D9, rgba(0, 132, 217, 0.7)); border-bottom: 3px solid #0084D9; color: white;">
             <h5 class="m-0" id="tituloFormularioPlantillas">Nueva Plantilla</h5>
         </div>
         <div class="card-body">
@@ -151,7 +168,7 @@
 
             <!-- BOTÓN REFERENCIA COLUMNAS -->
             <div class="form-group">
-                <button class="btn btn-info btn-sm" type="button" data-toggle="collapse" data-target="#referenciaColumnasPlantillas">
+                <button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#referenciaColumnasPlantillas">
                     <i class="fas fa-info-circle"></i> Ver Columnas Disponibles
                 </button>
             </div>

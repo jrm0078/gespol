@@ -7,44 +7,151 @@
     background:rgba(238, 245, 249, 0.8);
 }
 
-.auth-wrapper .auth-box {
-    background: #dad4c6;
+/* ============> NAVBAR AZUL <============ */
+.topbar {
+    background: linear-gradient(135deg, #0084D9 0%, #0066B3 100%);
 }
 
-
-.table-striped tbody tr:nth-of-type(2n+1) {
-    background-color: rgb(238, 245, 249);
+.top-navbar {
+    background: linear-gradient(135deg, #0084D9 0%, #0066B3 100%) !important;
 }
 
-.custom-file-label::after {
-    content: "Seleccionar fichero";
+#main-wrapper[data-layout="vertical"] .topbar .navbar-collapse[data-navbarbg="skin1"], 
+#main-wrapper[data-layout="vertical"] .topbar[data-navbarbg="skin1"], 
+#main-wrapper[data-layout="horizontal"] .topbar .navbar-collapse[data-navbarbg="skin1"], 
+#main-wrapper[data-layout="horizontal"] .topbar[data-navbarbg="skin1"] {
+    background: linear-gradient(135deg, #0084D9 0%, #0066B3 100%) !important;
 }
 
-.select2-container--classic .select2-selection--single, .select2-container--default .select2-selection--multiple, .select2-container--default .select2-selection--single, .select2-container--default .select2-selection--single .select2-selection__arrow, .select2-container--default .select2-selection--single .select2-selection__rendered {
-    height: 100%;
+#main-wrapper[data-layout="vertical"] .topbar .top-navbar .navbar-header[data-logobg="skin6"], 
+#main-wrapper[data-layout="horizontal"] .topbar .top-navbar .navbar-header[data-logobg="skin6"] {
+    background: linear-gradient(135deg, #0084D9 0%, #0066B3 100%) !important;
 }
 
-#main-wrapper[data-layout="vertical"] .topbar .navbar-collapse[data-navbarbg="skin1"], #main-wrapper[data-layout="vertical"] .topbar[data-navbarbg="skin1"], #main-wrapper[data-layout="horizontal"] .topbar .navbar-collapse[data-navbarbg="skin1"], #main-wrapper[data-layout="horizontal"] .topbar[data-navbarbg="skin1"] {
-    background: #dad4c6;
+/* Logo styling */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-#main-wrapper[data-layout="vertical"] .topbar .top-navbar .navbar-header[data-logobg="skin6"], #main-wrapper[data-layout="horizontal"] .topbar .top-navbar .navbar-header[data-logobg="skin6"] {
-    background: #dad4c6;
+.logo-text span {
+    display: inline-block;
+    color: white;
+    font-weight: bold;
+    margin-left: 10px;
+    font-size: 1.3rem;
 }
 
+/* ============> MEJORA DE ENCUADRE <============ */
 .page-wrapper {
     background: #f7f7f7;
+    min-height: calc(100vh - 60px);
+    padding: 15px;
 }
 
-#main-wrapper[data-layout="vertical"] .topbar .top-navbar .navbar-header[data-logobg="skin6"] .nav-toggler, #main-wrapper[data-layout="vertical"] .topbar .top-navbar .navbar-header[data-logobg="skin6"] .topbartoggler, #main-wrapper[data-layout="horizontal"] .topbar .top-navbar .navbar-header[data-logobg="skin6"] .nav-toggler, #main-wrapper[data-layout="horizontal"] .topbar .top-navbar .navbar-header[data-logobg="skin6"] .topbartoggler {
-    color: #fff;
+#main-wrapper {
+    overflow-x: hidden;
 }
 
-
-#main-wrapper[data-layout="vertical"] .topbar .navbar-collapse[data-navbarbg="skin1"], #main-wrapper[data-layout="vertical"] .topbar[data-navbarbg="skin1"], #main-wrapper[data-layout="horizontal"] .topbar .navbar-collapse[data-navbarbg="skin1"], #main-wrapper[data-layout="horizontal"] .topbar[data-navbarbg="skin1"] {
-    background: #ffb114;
+.navbar {
+    padding: 0.5rem 1rem !important;
+    box-shadow: 0 2px 10px rgba(0, 132, 217, 0.15);
 }
 
-#main-wrapper[data-layout="vertical"] .topbar .top-navbar .navbar-header[data-logobg="skin6"], #main-wrapper[data-layout="horizontal"] .topbar .top-navbar .navbar-header[data-logobg="skin6"] {
-    background: #ffb114;
+/* Navbar text color */
+.top-navbar .navbar-nav .nav-link,
+.top-navbar .navbar-text {
+    color: white !important;
+}
+
+.top-navbar .navbar-nav .nav-link:hover {
+    color: #b3e5ff !important;
+}
+
+/* Container mejora */
+.container-fluid {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Card mejora */
+.card {
+    border: none;
+    box-shadow: 0 1px 3px rgba(0, 132, 217, 0.1);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.card-header {
+    border-bottom: 3px solid #0084D9;
+    font-weight: 600;
+    background: linear-gradient(to right, rgba(0, 132, 217, 0.05), transparent);
+}
+
+.btn-primary {
+    background-color: #0084D9;
+    border-color: #0084D9;
+}
+
+.btn-primary:hover {
+    background-color: #0066B3;
+    border-color: #0066B3;
+}
+
+/* Acentos azules */
+.badge-primary, 
+.table-primary,
+.alert-primary {
+    background-color: #0084D9;
+}
+
+/* Links azul */
+a {
+    color: #0084D9;
+}
+
+a:hover {
+    color: #0066B3;
+}
+
+/* Responsive navbar */
+@media (max-width: 768px) {
+    .top-navbar {
+        padding: 0.5rem !important;
+    }
+    
+    .logo-text {
+        display: none;
+    }
+    
+    .page-wrapper {
+        padding: 10px;
+    }
+}
+
+/* ============> FORMULARIOS <============ */
+.form-control:focus,
+.form-select:focus {
+    border-color: #0084D9;
+    box-shadow: 0 0 0 0.2rem rgba(0, 132, 217, 0.25);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 132, 217, 0.05);
+}
+
+/* Accents azul */
+hr {
+    border-color: rgba(0, 132, 217, 0.2);
+}
+
+.text-info {
+    color: #0084D9 !important;
+}
+
+.bg-info {
+    background-color: rgba(0, 132, 217, 0.1) !important;
 }

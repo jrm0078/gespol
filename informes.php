@@ -4,7 +4,19 @@
     /* Responsive TinyMCE */
     .tox-tinymce {
         max-width: 100% !important;
-        border: 1px solid #dee2e6 !important;
+        border: 1px solid #0084D9 !important;
+    }
+    
+    .card-header {
+        border-bottom: 3px solid #0084D9 !important;
+        background: linear-gradient(to right, rgba(0, 132, 217, 0.05), transparent) !important;
+    }
+    
+    /* Acentos azules */
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #0084D9 !important;
+        box-shadow: 0 0 0 0.2rem rgba(0, 132, 217, 0.25) !important;
     }
     
     /* Container responsivo */
@@ -132,7 +144,7 @@
                             </button>
                         </div>
                         <div class="col-12 col-sm-6 col-lg-auto">
-                            <button class="btn btn-info w-100" onclick="descargarPDF()">
+                            <button class="btn btn-primary w-100" onclick="descargarPDF()">
                                 <i class="fas fa-file-pdf"></i> PDF
                             </button>
                         </div>
