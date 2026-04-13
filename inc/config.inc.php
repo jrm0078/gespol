@@ -2,7 +2,7 @@
 
 define ('cdi_servername', 'localhost');
 define ('cdi_username','gespol');
-define ('cdi_password','');
+define ('cdi_password','practicas93');
 define ('cdi_dbname','gespol');
 
 
