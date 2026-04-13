@@ -10,10 +10,18 @@
 /* ============> NAVBAR AZUL <============ */
 .topbar {
     background: linear-gradient(135deg, #0084D9 0%, #0066B3 100%);
+    min-height: 75px;
 }
 
 .top-navbar {
     background: linear-gradient(135deg, #0084D9 0%, #0066B3 100%) !important;
+    min-height: 75px;
+}
+
+.navbar-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
 }
 
 #main-wrapper[data-layout="vertical"] .topbar .navbar-collapse[data-navbarbg="skin1"], 
@@ -47,7 +55,7 @@
 /* ============> MEJORA DE ENCUADRE <============ */
 .page-wrapper {
     background: #f7f7f7;
-    min-height: calc(100vh - 60px);
+    min-height: calc(100vh - 75px);
     padding: 15px;
 }
 
@@ -56,8 +64,11 @@
 }
 
 .navbar {
-    padding: 0.5rem 1rem !important;
+    padding: 0.75rem 1.5rem !important;
     box-shadow: 0 2px 10px rgba(0, 132, 217, 0.15);
+    min-height: 75px !important;
+    display: flex;
+    align-items: center;
 }
 
 /* Navbar text color */
