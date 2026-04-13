@@ -40,7 +40,7 @@ $app->run();
 //CARGA TABLA (DATATABLES) DE USUARIOS
 function CargatablaUsuarios() {
  	
-	$table = "usuarios";	 
+	$table = "usuario";	 
 	$primaryKey = "id";
 	$campos = "id,id,nombre,email,rol"; 
 	$tiposcampo = "numero,numero,texto,texto,texto";
@@ -69,7 +69,7 @@ function CargaUsuario(){
 	$query = "SELECT " .
 				"id,nombre,email,rol " .
 			 "FROM " .
-				"usuarios " .
+				"usuario " .
 			 "WHERE " .
 				$where;
 	
@@ -112,7 +112,7 @@ function ActualizaUsuario(){
 	}
 
 
-	$tabla = "usuarios";
+	$tabla = "usuario";
 	$campos = "nombre,email,contrasenia,rol";
 	$valores = $nombre . "#,#" . $email . "#,#" . $passEncriptado . "#,#" . $rol;
 	$where = "id=" . $id;
@@ -149,7 +149,7 @@ function EliminarUsuario(){
 		exit();
 	}
 
-	$tabla = "usuarios";
+	$tabla = "usuario";
 	$where = "id=" . $id;
 
 	echo delete($tabla,$where);
