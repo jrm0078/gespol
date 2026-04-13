@@ -28,9 +28,9 @@
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
     <title>Administración</title>
 	<!-- DataTables CSS -->
-	<link href="libs/DataTables/DataTables-1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
+	<link href="libs/DataTables/DataTables_OLD/DataTables-1.10.22/css/jquery.dataTables.min.css" rel="stylesheet">
 	<!-- DataTables BUTTONS CSS -->
-	<link href="libs/DataTables/Buttons-1.7.0/css/buttons.dataTables.min.css" rel="stylesheet">	
+	<link href="libs/DataTables/DataTables_OLD/Buttons-1.6.5/css/buttons.dataTables.min.css" rel="stylesheet">	
 	
 	<!-- CSS sweetalerts-->	
 	<link href="libs/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">	
@@ -312,15 +312,15 @@
     <!--Menu sidebar -->
     <script src="js/dist/sidebarmenu.js?v=1"></script>
 	<!--DataTables -->	
-	<script src="libs/DataTables/DataTables-1.10.24/js/jquery.dataTables.min.js?v=1"></script>
+	<script src="libs/DataTables/DataTables_OLD/DataTables-1.10.22/js/jquery.dataTables.min.js?v=1"></script>
 	<!--Buttons DataTables -->	
-	<script src="libs/DataTables/Buttons-1.7.0/js/dataTables.buttons.min.js?v=1"></script>
-	<script src="libs/DataTables/Buttons-1.7.0/js/buttons.flash.min.js?v=1"></script>
-	<script src="libs/DataTables/JSZip-2.5.0/jszip.min.js?v=1"></script>
-	<script src="libs/DataTables/pdfmake-0.1.36/pdfmake.min.js?v=1"></script>
-	<script src="libs/DataTables/pdfmake-0.1.36/vfs_fonts.js?v=1"></script>
-	<script src="libs/DataTables/Buttons-1.7.0/js/buttons.html5.min.js?v=1"></script>
-	<script src="libs/DataTables/Buttons-1.7.0/js/buttons.print.min.js?v=1"></script>		
+	<script src="libs/DataTables/DataTables_OLD/Buttons-1.6.5/js/dataTables.buttons.min.js?v=1"></script>
+	<script src="libs/DataTables/DataTables_OLD/Buttons-1.6.5/js/buttons.flash.min.js?v=1"></script>
+	<script src="libs/DataTables/DataTables_OLD/JSZip-2.5.0/jszip.min.js?v=1"></script>
+	<script src="libs/DataTables/DataTables_OLD/pdfmake-0.1.36/pdfmake.min.js?v=1"></script>
+	<script src="libs/DataTables/DataTables_OLD/pdfmake-0.1.36/vfs_fonts.js?v=1"></script>
+	<script src="libs/DataTables/DataTables_OLD/Buttons-1.6.5/js/buttons.html5.min.js?v=1"></script>
+	<script src="libs/DataTables/DataTables_OLD/Buttons-1.6.5/js/buttons.print.min.js?v=1"></script>		
 	<!--Select2 -->	
 	<script src="libs/select2/dist/js/select2.full.min.js?v=1"></script>
     <script src="libs/select2/dist/js/select2.min.js?v=1"></script>
