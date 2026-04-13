@@ -6,7 +6,7 @@
 	{ 
 		//Si no hay sesión activa, lo direccionamos al login.php (inicio de sesión) 
 		echo('<script>' .
-				' window.location="/backend_final/login.php"; ' .
+				' window.location="/login.php"; ' .
 			'</script>'); 
 		exit(); 
 	}	

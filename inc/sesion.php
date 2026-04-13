@@ -85,7 +85,7 @@ function cerrarsesion() {
 	//Literalmente la destruimos 
 	$_SESSION["validacion"] = "ko"; 
 	//Redireccionamos a index.php (al inicio de sesión) 
-	header("Location: /backend_final/login.php");  
+	header("Location: /login.php");  
 }
 
 function cerrarsesioncliente() {
@@ -94,7 +94,7 @@ function cerrarsesioncliente() {
 	//Literalmente la destruimos 
 	$_SESSION["validacioncliente"] = "ko"; 
 	//Redireccionamos a index.php (al inicio de sesión) 
-	header("Location: /backend_final/index.php");	
+header("Location: /index.php");
 
 }
 

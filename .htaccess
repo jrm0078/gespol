@@ -1,6 +1,6 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /backend_final/
+    RewriteBase /
     
     # Skip rewriting for real files and directories
     RewriteCond %{REQUEST_FILENAME} !-f
