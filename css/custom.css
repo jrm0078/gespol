@@ -18,6 +18,13 @@
     min-height: 75px;
 }
 
+/* Sidebar visible */
+.left-sidebar {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
 .navbar-header {
     display: flex;
     align-items: center;

@@ -8573,11 +8573,11 @@ Notify
   transition: 0.2s ease-in;
   box-shadow: 1px 0px 7px rgba(0, 0, 0, 0.05);
   background: #fff;
-  height: 64px; }
+  height: 75px; }
   .topbar .navbar-collapse {
     padding: 0px 10px 0 0; }
   .topbar .top-navbar {
-    min-height: 64px;
+    min-height: 75px;
     padding: 0px; }
     .topbar .top-navbar .dropdown-toggle::after {
       display: none; }
