@@ -22,7 +22,11 @@ $contrasenas_a_probar = [
     'test',
     'admin',
     'gespol123',
+    'gespol93',           // Añadida por sugerencia del usuario
     'cdipruebas',
+    'cdipruebas123',
+    'gespol@123',
+    'Gespol123',
 ];
 
 echo "<h2>🔍 Probando credenciales de BD...</h2>";
