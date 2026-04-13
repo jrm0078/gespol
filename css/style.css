@@ -8800,9 +8800,9 @@ Main sidebar
   position: absolute;
   width: 250px;
   height: 100%;
-  top: 0px;
+  top: 75px;
   z-index: 10;
-  padding-top: 75px;
+  padding-top: 0px;
   background: #fff;
   box-shadow: 1px 0px 20px rgba(0, 0, 0, 0.08);
   transition: 0.2s ease-in; }
