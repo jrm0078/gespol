@@ -1,5 +1,63 @@
 <?php include("inc/seguridad.php"); ?>
 
+<style>
+    /* Responsive TinyMCE */
+    .tox-tinymce {
+        max-width: 100% !important;
+        border: 1px solid #dee2e6 !important;
+    }
+    
+    /* Container responsivo */
+    .container-fluid {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    /* Cards responsive */
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    /* Responsive botones */
+    @media (max-width: 768px) {
+        .btn {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+        }
+        .card-header {
+            padding: 0.75rem 1rem;
+        }
+        .card-body {
+            padding: 0.75rem;
+        }
+        h5 {
+            font-size: 1.1rem;
+        }
+    }
+    
+    /* Full width inputs y botones en mobile */
+    @media (max-width: 576px) {
+        .form-control, .form-select, textarea {
+            font-size: 16px !important; /* Evita zoom en iOS */
+        }
+        .row.g-2 {
+            row-gap: 0.75rem;
+        }
+        .btn {
+            padding: 0.5rem 0.5rem;
+            font-size: 0.85rem;
+        }
+        .btn-sm {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+    }
+</style>
+
 <div class="container-fluid">
 
     <div class="card shadow mb-4">
@@ -14,19 +72,19 @@
                     <h5 class="m-0"><i class="fas fa-list"></i> 1. Seleccionar Plantilla</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="form-group">
+                    <div class="row g-2">
+                        <div class="col-12 col-md-8">
+                            <div class="form-group mb-0">
                                 <label class="font-weight-bold">Plantilla *</label>
                                 <select id="selectPlantilla" class="form-control form-control-lg" onchange="cargarPlantilla()">
                                     <option value="">-- Seleccionar una plantilla --</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label class="font-weight-bold">&nbsp;</label>
-                                <button class="btn btn-warning btn-sm" onclick="limpiar()" title="Limpiar formulario">
+                        <div class="col-12 col-md-4">
+                            <div class="form-group mb-0">
+                                <label class="font-weight-bold" style="display: block; height: 24px;">&nbsp;</label>
+                                <button class="btn btn-warning btn-sm w-100" onclick="limpiar()" title="Limpiar formulario">
                                     <i class="fas fa-eraser"></i> Limpiar
                                 </button>
                             </div>
@@ -41,7 +99,7 @@
                     <h5 class="m-0"><i class="fas fa-filter"></i> 2. Aplicar Filtros</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row" id="filtrosContainer">
+                    <div class="row g-2" id="filtrosContainer">
                         <!-- Los filtros se cargan dinámicamente -->
                     </div>
                     <div class="row">
@@ -57,7 +115,7 @@
             <!-- SECCIÓN 3: EDITOR DE DOCUMENTO -->
             <div id="editorSection" style="display:none;" class="card mb-3">
                 <div class="card-header bg-light">
-                    <h5 class="m-0"><i class="fas fa-edit"></i> 3. Editar Documento</h5>
+                    <h5 class="m-0"><i class="fas fa-edit"></i> 3. Contenido HTML</h5>
                 </div>
                 <div class="card-body">
                     <textarea id="documento-editor"></textarea>
@@ -67,22 +125,32 @@
             <!-- SECCIÓN 4: ACCIONES -->
             <div class="card">
                 <div class="card-body text-center">
-                    <div class="btn-group" role="group">
-                        <button class="btn btn-danger" onclick="generarDocumento()" title="Aplicar cambios">
-                            <i class="fas fa-sync"></i> Actualizar Documento
-                        </button>
-                        <button class="btn btn-info" onclick="descargarPDF()" title="Exportar a PDF">
-                            <i class="fas fa-file-pdf"></i> Descargar PDF
-                        </button>
-                        <button class="btn btn-secondary" onclick="imprimirDocumento()" title="Imprimir documento">
-                            <i class="fas fa-print"></i> Imprimir
-                        </button>
-                        <button class="btn btn-success" onclick="guardarDocumento()" title="Guardar en servidor">
-                            <i class="fas fa-save"></i> Guardar
-                        </button>
-                        <button class="btn btn-light" onclick="limpiar()" title="Limpiar todo">
-                            <i class="fas fa-times"></i> Volver
-                        </button>
+                    <div class="row g-2">
+                        <div class="col-12 col-sm-6 col-lg-auto">
+                            <button class="btn btn-danger w-100" onclick="generarDocumento()">
+                                <i class="fas fa-sync"></i> Actualizar
+                            </button>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-auto">
+                            <button class="btn btn-info w-100" onclick="descargarPDF()">
+                                <i class="fas fa-file-pdf"></i> PDF
+                            </button>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-auto">
+                            <button class="btn btn-secondary w-100" onclick="imprimirDocumento()">
+                                <i class="fas fa-print"></i> Imprimir
+                            </button>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-auto">
+                            <button class="btn btn-success w-100" onclick="guardarDocumento()">
+                                <i class="fas fa-save"></i> Guardar
+                            </button>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-auto">
+                            <button class="btn btn-light w-100" onclick="limpiar()">
+                                <i class="fas fa-times"></i> Limpiar
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -105,10 +173,16 @@ function inicializarTinyMCE() {
         tinymce.get('documento-editor').remove();
     }
     
+    // Detectar altura según pantalla
+    let altura = 500;
+    if (window.innerWidth < 768) {
+        altura = 300;
+    }
+    
     tinymce.init({
         selector: '#documento-editor',
         language: 'es',
-        height: 500,
+        height: altura,
         menubar: 'file edit view insert format tools',
         plugins: 'advlist autolink lists link image charmap anchor searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking table',
         toolbar: 'undo redo | styleselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | fullscreen | table',
@@ -192,7 +266,7 @@ function cargarFiltros(filtros) {
     
     filtros.forEach(filtro => {
         const col = document.createElement('div');
-        col.className = 'col-md-6 mb-3';
+        col.className = 'col-12 col-md-6 mb-3';
         
         if (filtro.tipo_filtro === 'text') {
             col.innerHTML = `

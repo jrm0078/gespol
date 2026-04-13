@@ -4,15 +4,74 @@
     .filtro-row { background: #f9f9f9; }
     #referenciaColumnas { background: #f0f8ff; padding: 15px; border-radius: 5px; }
     .columna-reference { padding: 8px; background: white; margin: 5px 0; border-left: 3px solid #007bff; }
+    
+    /* Responsive TinyMCE y Editor */
+    .tox-tinymce {
+        max-width: 100% !important;
+        border: 1px solid #dee2e6 !important;
+    }
+    
+    /* Container responsivo */
+    .container-fluid {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    /* Formulario responsive */
+    .row.mb-3 {
+        row-gap: 0.5rem;
+    }
+    
+    /* Tabla responsive */
+    #tablaPlantillas {
+        margin-bottom: 0;
+    }
+    
+    /* Responsive table */
+    @media (max-width: 768px) {
+        #tablaPlantillas thead {
+            font-size: 0.85rem;
+        }
+        #tablaPlantillas td, #tablaPlantillas th {
+            padding: 0.4rem !important;
+            font-size: 0.9rem;
+        }
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+        .card-body {
+            padding: 1rem;
+        }
+        h4 {
+            font-size: 1.25rem;
+        }
+        h5 {
+            font-size: 1.1rem;
+        }
+    }
+    
+    /* Full width inputs en mobile */
+    @media (max-width: 576px) {
+        .form-control, .form-select, textarea, input {
+            font-size: 16px !important; /* Evita zoom en iOS */
+        }
+        .btn {
+            margin-bottom: 0.5rem;
+        }
+        .table-responsive {
+            margin-bottom: 1rem;
+        }
+    }
 </style>
 
 <!-- TABLA PLANTILLAS -->
 <div id="tablaPantillas" style="display:block;">
     <div class="row mb-3">
-        <div class="col-md-8">
+        <div class="col-12 col-sm-8">
             <h4>Gestionar Plantillas</h4>
         </div>
-        <div class="col-md-4 text-right">
+        <div class="col-12 col-sm-4 text-end">
             <button class="btn btn-success btn-sm" onclick="abrirFormularioPlantillasNueva()">
                 <i class="fas fa-plus"></i> Crear Plantilla
             </button>
@@ -20,15 +79,15 @@
     </div>
     <div id="alertaPlantillasContainer"></div>
     <div class="table-responsive">
-        <table class="table table-striped table-sm">
-            <thead class="table-dark">
+        <table class="table table-striped table-sm table-hover" id="tablaPlantillas">
+            <thead class="table-dark sticky-top">
                 <tr>
-                    <th>Código</th>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Tipo</th>
-                    <th>Estado</th>
-                    <th style="width: 120px;">Acciones</th>
+                    <th style="min-width: 80px;">Código</th>
+                    <th style="min-width: 150px;">Nombre</th>
+                    <th style="min-width: 150px;">Descripción</th>
+                    <th style="min-width: 100px;">Tipo</th>
+                    <th style="min-width: 80px;">Estado</th>
+                    <th style="min-width: 100px; text-align: center;">Acciones</th>
                 </tr>
             </thead>
             <tbody id="cuerpoTablaPlantillas">
@@ -48,7 +107,7 @@
 
             <!-- DATOS BÁSICOS -->
             <div class="row mb-3">
-                <div class="col-md-6">
+                <div class="col-12 col-md-6">
                     <div class="form-group">
                         <label class="font-weight-bold">Código Plantilla *</label>
                         <input type="text" class="form-control" id="cod_plantilla_form" 
@@ -56,7 +115,7 @@
                         <small class="text-muted">Sin espacios. Ej: presupuesto_1</small>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-12 col-md-6">
                     <div class="form-group">
                         <label class="font-weight-bold">Nombre *</label>
                         <input type="text" class="form-control" id="nombre_form" 
@@ -66,14 +125,14 @@
             </div>
 
             <div class="row mb-3">
-                <div class="col-md-8">
+                <div class="col-12 col-md-8">
                     <div class="form-group">
                         <label class="font-weight-bold">Descripción</label>
                         <textarea class="form-control" id="descripcion_form" rows="2" 
                                   placeholder="Descripción breve de la plantilla"></textarea>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-12 col-md-4">
                     <div class="form-group">
                         <label class="font-weight-bold">Tipo Documento</label>
                         <input type="text" class="form-control" id="tipo_documento_form" 
@@ -107,10 +166,9 @@
                 </div>
             </div>
 
-            <!-- CONTENIDO HTML CON EDITOR TINYMCE -->
+            <!-- CONTENIDO HTML -->
             <div class="form-group">
-                <label class="font-weight-bold">Contenido HTML con WYSIWYG *</label>
-                <small class="d-block text-muted mb-2">Usa variables: <code>[[nombre_variable]]</code></small>
+                <label class="font-weight-bold">Contenido HTML *</label>
                 <textarea id="contenido_form"></textarea>
             </div>
 
@@ -148,13 +206,17 @@
             </button>
 
             <!-- BOTONES -->
-            <div class="mt-4">
-                <button type="button" class="btn btn-primary" onclick="guardarPlantillaForm()">
-                    <i class="fas fa-save"></i> Guardar
-                </button>
-                <button type="button" class="btn btn-secondary mr-2" onclick="cancelarFormularioPlantillas()">
-                    <i class="fas fa-times"></i> Cancelar
-                </button>
+            <div class="mt-4 row g-2">
+                <div class="col-12 col-sm-6 col-md-auto">
+                    <button type="button" class="btn btn-primary w-100" onclick="guardarPlantillaForm()">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                </div>
+                <div class="col-12 col-sm-6 col-md-auto">
+                    <button type="button" class="btn btn-secondary w-100" onclick="cancelarFormularioPlantillas()">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -172,10 +234,16 @@ function inicializarTinyMCEForm() {
         tinymce.get('contenido_form').remove();
     }
     
+    // Detectar altura según pantalla
+    let altura = 400;
+    if (window.innerWidth < 768) {
+        altura = 250;
+    }
+    
     tinymce.init({
         selector: '#contenido_form',
         language: 'es',
-        height: 400,
+        height: altura,
         menubar: 'file edit view insert format tools',
         plugins: 'advlist autolink lists link image charmap anchor searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking table',
         toolbar: 'undo redo | styleselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | fullscreen | table',
@@ -183,7 +251,7 @@ function inicializarTinyMCEForm() {
         valid_elements: '*[*]',
         extended_valid_elements: '*[*]',
         entity_encoding: 'raw',
-        placeholder: 'Contenido en WYSIWYG con variables [[variable]]'
+        placeholder: 'Contenido HTML'
     });
 }
 
