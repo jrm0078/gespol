@@ -94,7 +94,7 @@ function cerrarsesioncliente() {
 	//Literalmente la destruimos 
 	$_SESSION["validacioncliente"] = "ko"; 
 	//Redireccionamos a index.php (al inicio de sesión) 
-header("Location: /index.php");
+header("Location: /gespol/index.php");
 
 }
 

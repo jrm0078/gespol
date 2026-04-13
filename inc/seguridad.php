@@ -6,7 +6,7 @@
 	{ 
 		//Si no hay sesión activa, lo direccionamos al login.php (inicio de sesión) 
 		echo('<script>' .
-				' window.location="/login.php"; ' .
+				' window.location="/gespol/login.php"; ' .
 			'</script>'); 
 		exit(); 
 	}	
