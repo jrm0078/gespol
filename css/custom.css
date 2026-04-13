@@ -69,12 +69,16 @@
     font-size: 1.3rem;
 }
 
+/* Fixed topbar */
+#main-wrapper {
+    padding-top: 75px;
+}
+
 /* ============> MEJORA DE ENCUADRE <============ */
 .page-wrapper {
     background: #f7f7f7;
     min-height: calc(100vh - 75px);
     padding: 25px 15px 15px 15px;
-    margin-top: 10px;
 }
 
 /* Fixed sidebar layout */
