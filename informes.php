@@ -25,15 +25,9 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label class="font-weight-bold">&nbsp;</label>
-                                <div class="d-grid gap-2" style="display: grid; grid-template-columns: 1fr 1fr;">
-                                    <button class="btn btn-warning btn-sm" onclick="limpiar()" title="Limpiar formulario">
-                                        <i class="fas fa-eraser"></i> Limpiar
-                                    </button>
-                                    <button class="btn btn-info btn-sm" onclick="CargarPagina('admin_plantillas.php', 'Plantillas', 'fas fa-cogs')" 
-                                            title="Administrar plantillas">
-                                        <i class="fas fa-cog"></i> Administrar
-                                    </button>
-                                </div>
+                                <button class="btn btn-warning btn-sm" onclick="limpiar()" title="Limpiar formulario">
+                                    <i class="fas fa-eraser"></i> Limpiar
+                                </button>
                             </div>
                         </div>
                     </div>
