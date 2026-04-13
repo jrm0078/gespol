@@ -1,5 +1,9 @@
 <?php include("inc/seguridad.php"); ?>
 
+<link rel="stylesheet" href="libs/tinymce/skins/content/default/content.css">
+<script src="libs/tinymce/tinymce.min.js"></script>
+<script src="libs/tinymce/langs/es.js"></script>
+
 <style>
     .filtro-row { background: #f9f9f9; }
     #referenciaColumnas { background: #f0f8ff; padding: 15px; border-radius: 5px; }
@@ -107,11 +111,11 @@
                 </div>
             </div>
 
-            <!-- CONTENIDO HTML CON EDITOR SUMMERNOTE -->
+            <!-- CONTENIDO HTML CON EDITOR TINYMCE -->
             <div class="form-group">
                 <label class="font-weight-bold">Contenido HTML con WYSIWYG *</label>
-                <small class="d-block text-muted mb-2">Usa variables: <code>{%%nombre_variable%%}</code></small>
-                <textarea id="contenido_form" class="summernoteForm"></textarea>
+                <small class="d-block text-muted mb-2">Usa variables: <code>[[nombre_variable]]</code></small>
+                <textarea id="contenido_form"></textarea>
             </div>
 
             <!-- ESTADO -->
@@ -165,25 +169,26 @@
 var APIPantillas = 'inc/plantillas/ajax_plantillas.php';
 var plantillaEnEdicionForm = null;
 
-// Inicializar Summernote para formulario
-function inicializarSummernoteForm() {
-    if ($('.summernoteForm').length > 0 && typeof $.fn.summernote !== 'undefined') {
-        $('.summernoteForm').summernote({
-            height: 400,
-            lang: 'es-ES',
-            placeholder: 'Contenido en WYSIWYG con variables {%%variable%%}',
-            toolbar: [
-                ['style', ['style']],
-                ['font', ['bold', 'underline', 'clear']],
-                ['fontname', ['fontname']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['table', ['table']],
-                ['insert', ['link', 'picture']],
-                ['view', ['fullscreen', 'codeview', 'help']]
-            ]
-        });
+// Inicializar TinyMCE para formulario
+function inicializarTinyMCEForm() {
+    // Destruir instancia anterior si existe
+    if (tinymce.get('contenido_form')) {
+        tinymce.get('contenido_form').remove();
     }
+    
+    tinymce.init({
+        selector: '#contenido_form',
+        language: 'es',
+        height: 400,
+        menubar: 'file edit view insert format tools',
+        plugins: 'advlist autolink lists link image charmap anchor searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking table',
+        toolbar: 'undo redo | styleselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | fullscreen | table',
+        branding: false,
+        valid_elements: '*[*]',
+        extended_valid_elements: '*[*]',
+        entity_encoding: 'raw',
+        placeholder: 'Contenido en WYSIWYG con variables [[variable]]'
+    });
 }
 
 // Cargar plantillas al iniciar
@@ -221,7 +226,7 @@ function abrirFormularioPlantillasNueva() {
     $('#cod_plantilla_form').prop('disabled', false);
     limpiarFormularioPlantillas();
     ocultarTablaPlantillas();
-    setTimeout(() => inicializarSummernoteForm(), 100);
+    setTimeout(() => inicializarTinyMCEForm(), 100);
     actualizarColumnasPlantillas();
 }
 
@@ -241,8 +246,11 @@ function abrirFormularioPlantillasEditar(cod) {
             $('#estado_form').prop('checked', data.data.estado == 1);
             
             setTimeout(function() {
-                inicializarSummernoteForm();
-                $('.summernoteForm').summernote('code', data.data.contenido || '');
+                inicializarTinyMCEForm();
+                // Cargar contenido después de que TinyMCE esté listo
+                setTimeout(function() {
+                    tinymce.get('contenido_form').setContent(data.data.contenido || '');
+                }, 200);
             }, 100);
             
             cargarFiltrosPlantillas(data.data.filtros || []);
@@ -415,7 +423,7 @@ function actualizarColumnasPlantillas() {
             let html = '';
             cols.forEach(col => {
                 const columna = col.split(' ').pop();
-                html += `<div class="columna-reference"><code>{%%${columna}%%}</code></div>`;
+                html += `<div class="columna-reference"><code>[[${columna}]]</code></div>`;
             });
             container.html(html);
         }
@@ -428,7 +436,7 @@ function actualizarColumnasPlantillas() {
 function guardarPlantillaForm() {
     const cod = $('#cod_plantilla_form').val().trim();
     const nombre = $('#nombre_form').val().trim();
-    const contenido = $('.summernoteForm').summernote('code');
+    const contenido = tinymce.get('contenido_form') ? tinymce.get('contenido_form').getContent() : '';
     const sql = $('#sql_consulta_form').val().trim();
     
     if (!cod || !nombre || !contenido || !sql) {
@@ -493,8 +501,8 @@ function limpiarFormularioPlantillas() {
     $('#tipo_documento_form').val('');
     $('#sql_consulta_form').val('SELECT * FROM tabla WHERE id = [[id]]');
     $('#estado_form').prop('checked', true);
-    if ($('.summernoteForm').length > 0 && typeof $.fn.summernote !== 'undefined') {
-        $('.summernoteForm').summernote('code', '');
+    if (tinymce.get('contenido_form')) {
+        tinymce.get('contenido_form').setContent('');
     }
     $('#bodyFiltrosPlantillas').html('');
     plantillaEnEdicionForm = null;
@@ -536,7 +544,7 @@ function mostrarAlertaPlantillas(mensaje, tipo) {
 // Inicializar cuando se carga el formulario
 $(document).ready(function() {
     cargarPlantillasListado();
-    inicializarSummernoteForm();
+    inicializarTinyMCEForm();
     
     // Actualizar columnas cuando cambia SQL
     $(document).on('input', '#sql_consulta_form', function() {

@@ -1,4 +1,9 @@
 <?php include("inc/seguridad.php"); ?>
+
+<link rel="stylesheet" href="libs/tinymce/skins/content/default/content.css">
+<script src="libs/tinymce/tinymce.min.js"></script>
+<script src="libs/tinymce/langs/es.js"></script>
+
 <div class="container-fluid">
 
     <div class="card shadow mb-4">
@@ -59,9 +64,7 @@
                     <h5 class="m-0"><i class="fas fa-edit"></i> 3. Editar Documento</h5>
                 </div>
                 <div class="card-body">
-                    <div class="form-group">
-                        <textarea id="documento-editor" class="form-control" rows="20" style="font-family: monospace;"></textarea>
-                    </div>
+                    <textarea id="documento-editor"></textarea>
                 </div>
             </div>
 
@@ -98,6 +101,27 @@
 // Usar var para permitir redeclaración
 var plantillaActual = null;
 var datosFormulario = {};
+
+// Inicializar TinyMCE para el editor de documentos
+function inicializarTinyMCE() {
+    // Destruir instancia anterior si existe
+    if (tinymce.get('documento-editor')) {
+        tinymce.get('documento-editor').remove();
+    }
+    
+    tinymce.init({
+        selector: '#documento-editor',
+        language: 'es',
+        height: 500,
+        menubar: 'file edit view insert format tools',
+        plugins: 'advlist autolink lists link image charmap anchor searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking table',
+        toolbar: 'undo redo | styleselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | fullscreen | table',
+        branding: false,
+        valid_elements: '*[*]',
+        extended_valid_elements: '*[*]',
+        entity_encoding: 'raw'
+    });
+}
 
 // Cargar plantillas disponibles
 function cargarPlantillasDisponibles() {
@@ -141,8 +165,17 @@ function cargarPlantilla() {
                 datosFormulario = {};
                 
                 // Mostrar editor
-                document.getElementById('documento-editor').value = plantillaActual.contenido;
                 document.getElementById('editorSection').style.display = 'block';
+                
+                // Inicializar TinyMCE y cargar contenido
+                setTimeout(function() {
+                    inicializarTinyMCE();
+                    setTimeout(function() {
+                        if (tinymce.get('documento-editor')) {
+                            tinymce.get('documento-editor').setContent(plantillaActual.contenido);
+                        }
+                    }, 100);
+                }, 100);
                 
                 // Mostrar filtros si existen
                 if (plantillaActual.filtros && plantillaActual.filtros.length > 0) {
@@ -225,24 +258,28 @@ function generarDocumento() {
 
 // Descargar PDF
 function descargarPDF() {
-    const contenido = document.getElementById('documento-editor').value;
+    const editor = tinymce.get('documento-editor');
+    const contenido = editor ? editor.getContent() : '';
     
-    if (!contenido) {
+    if (!contenido || contenido === '') {
         alert('No hay contenido para descargar');
         return;
     }
     
     const ventana = window.open('', '', 'height=600,width=800');
-    ventana.document.write('<pre>' + contenido + '</pre>');
+    ventana.document.write('<html><head><title>Documento</title></head><body>');
+    ventana.document.write(contenido);
+    ventana.document.write('</body></html>');
     ventana.document.close();
     ventana.print();
 }
 
 // Imprimir documento
 function imprimirDocumento() {
-    const contenido = document.getElementById('documento-editor').value;
+    const editor = tinymce.get('documento-editor');
+    const contenido = editor ? editor.getContent() : '';
     
-    if (!contenido) {
+    if (!contenido || contenido === '') {
         alert('No hay contenido para imprimir');
         return;
     }
@@ -260,9 +297,10 @@ function guardarDocumento() {
         return;
     }
     
-    const contenido_final = document.getElementById('documento-editor').value;
+    const editor = tinymce.get('documento-editor');
+    const contenido_final = editor ? editor.getContent() : '';
     
-    if (!contenido_final) {
+    if (!contenido_final || contenido_final === '') {
         alert('El documento no puede estar vacío');
         return;
     }
@@ -280,7 +318,12 @@ function guardarDocumento() {
 // Limpiar formulario
 function limpiar() {
     document.getElementById('selectPlantilla').value = '';
-    document.getElementById('documento-editor').value = '';
+    
+    const editor = tinymce.get('documento-editor');
+    if (editor) {
+        editor.setContent('');
+    }
+    
     document.getElementById('filtroSection').style.display = 'none';
     document.getElementById('editorSection').style.display = 'none';
     datosFormulario = {};
@@ -288,4 +331,7 @@ function limpiar() {
 }
 
 // Inicializar
-cargarPlantillasDisponibles();
+$(document).ready(function() {
+    cargarPlantillasDisponibles();
+    inicializarTinyMCE();
+});
