@@ -161,9 +161,9 @@
 </div>
 
 <script>
-// Namespace para plantillas para evitar conflictos
-const APIPantillas = 'inc/plantillas/ajax_plantillas.php';
-let plantillaEnEdicionForm = null;
+// Usar var para permitir redeclaración cuando se recarga el módulo
+var APIPantillas = 'inc/plantillas/ajax_plantillas.php';
+var plantillaEnEdicionForm = null;
 
 // Inicializar Summernote para formulario
 function inicializarSummernoteForm() {
