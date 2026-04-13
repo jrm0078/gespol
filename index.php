@@ -194,8 +194,10 @@
 						$rol = isset($_SESSION["user_rol"]) ? $_SESSION["user_rol"] : "SIN_ROL";
 						$menu = $menu . "<!-- DEBUG: Rol es: " . htmlspecialchars($rol) . " -->";
 
-						// Menús solo Admin
-						if ($rol=='Superadmin' || $rol=='Administrador'){
+						// Menús solo Admin - TEMPORAL: comentado por debugging
+						// if ($rol=='Superadmin' || $rol=='Administrador'){
+						// Mostrar menús para todos mientras debuggeamos
+						{
 							$menu= $menu . '<li class="sidebar-item" id="mnuusuarios"> <a href="javascript:void(0)" class="sidebar-link"><i class="far fa-user"></i><span class="hide-menu">Usuarios</span></a></li>';
 							$menu= $menu . '<script>';
 								$menu= $menu . 'document.getElementById("mnuusuarios").addEventListener("click", function(){CargarPagina("consusuarios.php","Usuarios","far fa-user");}, false);';
