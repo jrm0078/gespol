@@ -12,7 +12,7 @@ $usuario = 'gespol';
 $bd = 'gespol';
 $puerto = 3306;
 
-$contrasenas = ['', 'gespol', '1234', 'password', 'admin', 'gespol93', 'gespol123', '123456', 'test'];
+$contrasenas = ['', 'gespol', '1234', 'password', 'admin', 'gespol93', 'practicas93', 'gespol123', '123456', 'test'];
 
 $con_exitosa = false;
 $conn = null;
