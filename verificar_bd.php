@@ -9,14 +9,18 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Conexión BD
-$servername = "localhost";
-$username = "root";  // Cambia si tu usuario es distinto
-$password = "";      // Cambia si tienes contraseña
-$dbname = "basededatos";  // Cambia si el nombre es distinto
+// Incluir config para obtener credenciales correctas
+require_once 'inc/config.inc.php';
+
+// Conexión BD usando credenciales de config
+$servername = cdi_servername;
+$username = cdi_username;
+$password = cdi_password;
+$dbname = cdi_dbname;
+$port = 3306;  // Puerto correcto de Plesk
 
 try {
-    $conn = new mysqli($servername, $username, $password, $dbname);
+    $conn = new mysqli($servername, $username, $password, $dbname, $port);
     
     if ($conn->connect_error) {
         die("❌ Error de conexión: " . $conn->connect_error);
