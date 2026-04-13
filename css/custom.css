@@ -21,7 +21,9 @@
 .navbar-header {
     display: flex;
     align-items: center;
-    padding: 10px 0;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
 }
 
 #main-wrapper[data-layout="vertical"] .topbar .navbar-collapse[data-navbarbg="skin1"], 
@@ -33,7 +35,15 @@
 
 #main-wrapper[data-layout="vertical"] .topbar .top-navbar .navbar-header[data-logobg="skin6"], 
 #main-wrapper[data-layout="horizontal"] .topbar .top-navbar .navbar-header[data-logobg="skin6"] {
-    background: linear-gradient(135deg, #0084D9 0%, #0066B3 100%) !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.navbar-header {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 /* Logo styling */
