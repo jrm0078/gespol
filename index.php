@@ -85,8 +85,7 @@
 		<source src="sounds/alerta.mp3" type="audio/mpeg">
 	</audio>		
 	
-	
-    <div id="main-wrapper">
+    <div id="main-wrapper" data-layout="vertical" data-sidebar-position="fixed" data-sidebar-type="full">
         <!-- ============================================================== -->
         <!-- Topbar header - style you can find in pages.scss -->
         <!-- ============================================================== -->
