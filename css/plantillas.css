@@ -1,0 +1,249 @@
+/* ============================================
+   MÓDULO PLANTILLAS - Estilos customizados
+   Bootstrap 4 base - Sin conflictos
+   ============================================ */
+
+/* -------- ALERTAS -------- */
+.alert-plantillas {
+    margin-bottom: 1.5rem;
+    border-radius: 0.25rem;
+}
+
+/* -------- CARDS PLANTILLAS -------- */
+.card-plantillas {
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    border: none;
+    margin-bottom: 1.5rem;
+}
+
+.card-plantillas .card-header {
+    border-bottom: 1px solid #e3e6f0;
+    color: #fff;
+    font-weight: 700;
+    padding: 1rem 1.25rem;
+}
+
+.card-plantillas .card-body {
+    padding: 1.5rem;
+}
+
+/* -------- FILTROS -------- */
+.plantilla-filtro-group {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.plantilla-filtro-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* -------- VARIABLES -------- */
+.plantilla-variable {
+    font-family: monospace;
+    background-color: #e9ecef;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.2rem;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+/* -------- EDITOR PLANTILLA -------- */
+#documento-editor {
+    font-family: 'Courier New', monospace;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+#documento-editor:focus {
+    background-color: #fff;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* -------- TABLA PLANTILLAS -------- */
+.table-plantillas {
+    margin-bottom: 0;
+}
+
+.table-plantillas thead {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table-plantillas th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    color: #495057;
+    border-top: none;
+}
+
+.table-plantillas tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.table-plantillas code {
+    background-color: #e9ecef;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.2rem;
+    color: #d63031;
+}
+
+/* -------- BOTONES PLANTILLAS -------- */
+.btn-plantilla {
+    font-weight: 600;
+    border-radius: 0.25rem;
+    transition: all 0.3s ease;
+}
+
+.btn-plantilla:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.btn-plantilla-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: #fff;
+}
+
+.btn-plantilla-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+/* -------- FORMULARIO PLANTILLAS -------- */
+.form-plantilla {
+    max-width: 100%;
+}
+
+.form-plantilla .form-group label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-plantilla .form-control {
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.form-plantilla .form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-plantilla textarea.form-control {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+/* -------- SECCIONES -------- */
+.section-plantilla {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 0.25rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #007bff;
+}
+
+.section-plantilla h5 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* -------- REFERENCIAS -------- */
+.referencia-columnas {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-left: 4px solid #6c757d;
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.referencia-columnas h6 {
+    color: #0066cc;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.referencia-columnas small {
+    font-family: monospace;
+    line-height: 1.6;
+}
+
+/* -------- BADGES -------- */
+.badge-activo {
+    background-color: #28a745;
+    color: #fff;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.25rem;
+    font-size: 0.85rem;
+}
+
+.badge-inactivo {
+    background-color: #dc3545;
+    color: #fff;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.25rem;
+    font-size: 0.85rem;
+}
+
+/* -------- RESPONSIVO -------- */
+@media (max-width: 768px) {
+    .section-plantilla {
+        padding: 1rem;
+        border-left-width: 3px;
+    }
+    
+    #documento-editor {
+        font-size: 0.9rem;
+    }
+    
+    .table-sm th,
+    .table-sm td {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* -------- COLORES PERSONALIZADO -------- */
+.text-plantilla-primary {
+    color: #007bff;
+}
+
+.text-plantilla-success {
+    color: #28a745;
+}
+
+.text-plantilla-danger {
+    color: #dc3545;
+}
+
+.text-plantilla-warning {
+    color: #ffc107;
+}
+
+.bg-plantilla-light {
+    background-color: #f8f9fa;
+}
+
+.bg-plantilla-primary {
+    background-color: #007bff;
+    color: #fff;
+}

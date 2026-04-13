@@ -52,6 +52,9 @@
     <link href="css/style.min.css" rel="stylesheet">
 	<link href="css/custom.css" rel="stylesheet">
 	
+	<!-- CSS Plantillas -->
+	<link href="css/plantillas.css" rel="stylesheet">
+	
 
 
 
@@ -210,7 +213,19 @@
 							$menu= $menu . '<script>';
 								$menu= $menu . 'document.getElementById("mnuusuarios").addEventListener("click", function(){CargarPagina("consusuarios.php","Usuarios","far fa-user");}, false);';
 							$menu= $menu . '</script>';
+							
+							// MENÚ PLANTILLAS (Admin)
+							$menu= $menu . '<li class="sidebar-item" id="mnuplantillas"> <a href="javascript:void(0)" class="sidebar-link"><i class="mdi mdi-file-document"></i><span class="hide-menu">Plantillas</span></a></li>';
+							$menu= $menu . '<script>';
+								$menu= $menu . 'document.getElementById("mnuplantillas").addEventListener("click", function(){CargarPagina("admin_plantillas.php","Plantillas","mdi mdi-file-document");}, false);';
+							$menu= $menu . '</script>';
 						}
+
+						// MENÚ INFORMES (Todos los usuarios autenticados)
+						$menu= $menu . '<li class="sidebar-item" id="mnuinformes"> <a href="javascript:void(0)" class="sidebar-link"><i class="mdi mdi-file-chart"></i><span class="hide-menu">Informes</span></a></li>';
+						$menu= $menu . '<script>';
+							$menu= $menu . 'document.getElementById("mnuinformes").addEventListener("click", function(){CargarPagina("informes.php","Informes","mdi mdi-file-chart");}, false);';
+						$menu= $menu . '</script>';
 
 						echo $menu;										
 					?>
