@@ -1,5 +1,8 @@
+<!DOCTYPE html>
+<html>
 <?php include("inc/seguridad.php"); ?>
 
+<head>
 
 <script>
 	var user_codigo = '<?php echo  $_SESSION["user_codigo"];?>';
@@ -7,9 +10,6 @@
 	var user_rol = '<?php echo  $_SESSION["user_rol"];?>';
 	var user_email = '<?php echo  $_SESSION["user_email"];?>';
 </script>
-
-
-<head>
 
 	<!-- PARA EVITAR LA CACHÉ -->
     <meta http-equiv="Expires" content="0">
@@ -55,7 +55,9 @@
 	<!-- CSS Plantillas -->
 	<link href="css/plantillas.css" rel="stylesheet">
 	
-
+	<!-- TinyMCE CSS -->
+	<link rel="stylesheet" href="libs/tinymce/skins/content/default/content.css">
+	
 
 	<!-- REMOVIDAS: Referencias CDN para IE8 (obsoleto) - Todas las librerías ahora son locales por seguridad -->
 </head>
@@ -290,6 +292,10 @@
     <script src="libs/bootstrap/dist/js/bootstrap.min.js?v=1"></script>
 	<!-- swettalert2 para alert tipo msgbox -->
 	<script src="libs/sweetalert2/dist/sweetalert2.all.min.js?v=1"></script>	
+	
+	<!-- TinyMCE 6.8.2 - Editor WYSIWYG GLOBAL -->
+	<script src="libs/tinymce/tinymce.min.js"></script>
+	<script src="libs/tinymce/langs/es.js"></script>
 	<!-- ============================================================== -->
 	
     <!-- ============================================================== -->

@@ -1,9 +1,5 @@
 <?php include("inc/seguridad.php"); ?>
 
-<link rel="stylesheet" href="libs/tinymce/skins/content/default/content.css">
-<script src="libs/tinymce/tinymce.min.js"></script>
-<script src="libs/tinymce/langs/es.js"></script>
-
 <style>
     .filtro-row { background: #f9f9f9; }
     #referenciaColumnas { background: #f0f8ff; padding: 15px; border-radius: 5px; }

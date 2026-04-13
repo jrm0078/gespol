@@ -1,9 +1,5 @@
 <?php include("inc/seguridad.php"); ?>
 
-<link rel="stylesheet" href="libs/tinymce/skins/content/default/content.css">
-<script src="libs/tinymce/tinymce.min.js"></script>
-<script src="libs/tinymce/langs/es.js"></script>
-
 <div class="container-fluid">
 
     <div class="card shadow mb-4">
