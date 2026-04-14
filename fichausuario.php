@@ -60,10 +60,15 @@
 						<div class="form-group row">
 							<label for="txtcontrasenia" class="col-sm-3 text-right control-label col-form-label">Contraseña</label>
 							<div class="col-sm-6">
-								<input type="password" class="form-control" id="txtcontrasenia" placeholder="" maxlength="" style="display: block;">
+							<div class="input-group">
+								<input type="password" class="form-control" id="txtcontrasenia" placeholder="Dejar vacío para no cambiar" maxlength="255">
+								<div class="input-group-append">
+									<button class="btn btn-outline-secondary" type="button" id="btnMostrarPass" tabindex="-1">
+										<i class="fa fa-eye" id="iconoPass"></i>
+									</button>
+								</div>
 							</div>
-						</div>		
-
+							<small class="form-text text-muted" id="helpContrasenia">Dejar vacío para mantener la contraseña actual.</small>
 						<div class="form-group row">
 							<label class="col-sm-3 text-right control-label col-form-label">Rol</label>
 							<div class="col-md-6">

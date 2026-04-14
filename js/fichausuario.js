@@ -10,9 +10,22 @@
 		CargarPagina('consusuarios.php','Usuarios','far fa-user');
 	}, false);		
 		
-	$('#txtid').on("change", function(e) { txtid_changue(); });		
+	$('#txtid').on("change", function(e) { txtid_changue(); });
+
+	// Mostrar/ocultar contraseña
+	document.getElementById("btnMostrarPass").addEventListener('click', function() {
+		var input = document.getElementById("txtcontrasenia");
+		var icono = document.getElementById("iconoPass");
+		if (input.type === "password") {
+			input.type = "text";
+			icono.className = "fa fa-eye-slash";
+		} else {
+			input.type = "password";
+			icono.className = "fa fa-eye";
+		}
+	}, false);
 	
-	
+
 	//FIN EVENTOS
 
 	//VARIABLES PÚBLICAS DE LA PÁGINA
@@ -81,6 +94,7 @@ function CargaDatos(){
 
 				document.getElementById("btnActualizar").innerHTML = "<i class='fa fa-check'></i> Actualizar";
 				document.getElementById("btnEliminar").style.visibility = "visible";
+				document.getElementById("txtcontrasenia").placeholder = "Dejar vacío para no cambiar";
 				
 
 			}
@@ -91,6 +105,8 @@ function CargaDatos(){
 				document.getElementById("txtnombre").value = "";
 				document.getElementById("txtemail").value = "";
 				document.getElementById("txtcontrasenia").value = "";
+				document.getElementById("txtcontrasenia").placeholder = "Contraseña (obligatoria)";
+				document.getElementById("helpContrasenia").textContent = "Introduce una contraseña para el nuevo usuario.";
 				CmbSeleccionaValor($("#cmbrol"),"Usuario");
 				
 				document.getElementById("btnActualizar").innerHTML = "<i class='fa fa-check'></i> Crear";	
