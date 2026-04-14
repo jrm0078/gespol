@@ -90,13 +90,6 @@ function CargaTabla(){
 				"sNext": "Siguiente",
 		   }
 		},
-		"columns": [
-			null,
-			{ "data": 1 },
-			{ "data": 2 },
-			{ "data": 3 },
-			{ "data": 4 }
-		],
 		"columnDefs": [ {
 			"targets": 0,
 			"data": null,

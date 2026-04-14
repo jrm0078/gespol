@@ -87,15 +87,36 @@
     padding: 25px 15px 15px 15px;
 }
 
-/* Fixed sidebar layout */
-#main-wrapper[data-layout="vertical"][data-sidebar-position="fixed"] .page-wrapper {
+/* Fixed sidebar layout - estado FULL (250px) */
+#main-wrapper[data-layout="vertical"][data-sidebar-position="fixed"]:not([data-sidebartype="mini-sidebar"]) .page-wrapper {
     margin-left: 250px;
 }
 
-#main-wrapper[data-layout="vertical"][data-sidebar-position="fixed"] .left-sidebar {
+#main-wrapper[data-layout="vertical"][data-sidebar-position="fixed"]:not([data-sidebartype="mini-sidebar"]) .left-sidebar {
     width: 250px;
     top: 75px;
     left: 0;
+    z-index: 10;
+}
+
+/* Mini-sidebar: sidebar estrecho, no empuja el contenido al hacer hover */
+#main-wrapper[data-layout="vertical"][data-sidebartype="mini-sidebar"] .page-wrapper {
+    margin-left: 65px;
+}
+
+#main-wrapper[data-layout="vertical"][data-sidebartype="mini-sidebar"] .left-sidebar {
+    width: 65px;
+    overflow: hidden;
+    position: fixed;
+    top: 75px;
+    left: 0;
+}
+
+#main-wrapper[data-layout="vertical"][data-sidebartype="mini-sidebar"] .left-sidebar:hover {
+    width: 250px;
+    overflow-y: auto;
+    z-index: 100;
+    /* El hover es overlay, NO empuja el contenido */
 }
 
 #main-wrapper {
