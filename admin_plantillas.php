@@ -272,8 +272,14 @@ function inicializarTinyMCEForm() {
         entity_encoding: 'raw',
         placeholder: 'Contenido HTML',
         setup: function(editor) {
-            editor.on('input change NodeChange keyup', function() {
-                formDirty = true;
+            editor.on('init', function() {
+                // Adjuntamos el listener DESPUÉS del init para que los eventos
+                // de inicialización (NodeChange, etc.) no marquen el form como sucio.
+                setTimeout(function() {
+                    editor.on('input keyup ExecCommand', function() {
+                        formDirty = true;
+                    });
+                }, 300);
             });
         }
     });
@@ -684,7 +690,8 @@ function cancelarFormularioPlantillas() {
         confirmButtonColor: '#d33',
         cancelButtonColor: '#6c757d',
         confirmButtonText: 'Sí, descartar',
-        cancelButtonText: 'Seguir editando'
+        cancelButtonText: 'Seguir editando',
+        returnFocus: false
     }).then(function(result) {
         if (result.isConfirmed) {
             formDirty = false;
