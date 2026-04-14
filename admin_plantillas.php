@@ -129,6 +129,7 @@
                         <label class="font-weight-bold">Código Plantilla *</label>
                         <input type="text" class="form-control" id="cod_plantilla_form" 
                                placeholder="ej: presupuesto_1" maxlength="50" required>
+                        <div class="invalid-feedback" id="cod_error">Este código ya existe.</div>
                         <small class="text-muted">Sin espacios. Ej: presupuesto_1</small>
                     </div>
                 </div>
@@ -137,6 +138,7 @@
                         <label class="font-weight-bold">Nombre *</label>
                         <input type="text" class="form-control" id="nombre_form" 
                                placeholder="Nombre de la plantilla" required>
+                        <div class="invalid-feedback">El nombre es obligatorio.</div>
                     </div>
                 </div>
             </div>
@@ -303,7 +305,14 @@ function cargarPlantillasListado() {
                         + '</td>'
                         + '</tr>';
                 });
-                $('#cuerpoTablaPlantillas').html(html || '<tr><td colspan="6" class="text-center text-muted">No hay plantillas creadas</td></tr>');
+                $('#cuerpoTablaPlantillas').html(html || `
+                    <tr><td colspan="6">
+                        <div class="text-center py-5 text-muted">
+                            <i class="fas fa-file-alt" style="font-size:2.5rem;opacity:0.25;"></i>
+                            <p class="mt-3 mb-1 font-weight-bold">No hay plantillas creadas</p>
+                            <small>Haz clic en <b>Crear Plantilla</b> para añadir la primera</small>
+                        </div>
+                    </td></tr>`);
                 initDataTablePlantillas();
             } else {
                 $('#alertaPlantillasContainer').html('<div class="alert alert-danger">Error del servidor: ' + (data.error || 'desconocido') + '</div>');
@@ -318,6 +327,7 @@ function cargarPlantillasListado() {
 // Abrir formulario NUEVA plantilla
 function abrirFormularioPlantillasNueva() {
     plantillaEnEdicionForm = null;
+    window._editandoCod = false;
     $('#tituloFormularioPlantillas').text('Nueva Plantilla');
     $('#cod_plantilla_form').prop('disabled', false);
     limpiarFormularioPlantillas();
@@ -328,6 +338,7 @@ function abrirFormularioPlantillasNueva() {
 
 // Abrir formulario EDITAR plantilla
 function abrirFormularioPlantillasEditar(cod) {
+    window._editandoCod = true;
     $.get(APIPantillas + '?action=obtener_completa&cod=' + cod, function(data) {
         if (data.success) {
             plantillaEnEdicionForm = cod;
@@ -530,13 +541,37 @@ function actualizarColumnasPlantillas() {
 
 // Guardar plantilla
 function guardarPlantillaForm() {
-    const cod = $('#cod_plantilla_form').val().trim();
-    const nombre = $('#nombre_form').val().trim();
+    const cod     = $('#cod_plantilla_form').val().trim();
+    const nombre  = $('#nombre_form').val().trim();
+    const sql     = $('#sql_consulta_form').val().trim();
     const contenido = tinymce.get('contenido_form') ? tinymce.get('contenido_form').getContent() : '';
-    const sql = $('#sql_consulta_form').val().trim();
-    
-    if (!cod || !nombre || !contenido || !sql) {
-        mostrarAlertaPlantillas('Todos los campos requeridos deben estar completos', 'warning');
+
+    // Validaciones con feedback visual
+    var errores = [];
+    if (!cod) {
+        $('#cod_plantilla_form').addClass('is-invalid');
+        errores.push('El código es obligatorio');
+    } else {
+        $('#cod_plantilla_form').removeClass('is-invalid').addClass('is-valid');
+    }
+    if (!nombre) {
+        $('#nombre_form').addClass('is-invalid');
+        errores.push('El nombre es obligatorio');
+    } else {
+        $('#nombre_form').removeClass('is-invalid').addClass('is-valid');
+    }
+    if (!sql) {
+        $('#sql_consulta_form').addClass('is-invalid');
+        errores.push('La consulta SQL es obligatoria');
+    } else {
+        $('#sql_consulta_form').removeClass('is-invalid').addClass('is-valid');
+    }
+    if (!contenido || contenido === '<p></p>') {
+        errores.push('El contenido HTML del documento es obligatorio');
+    }
+
+    if (errores.length > 0) {
+        mostrarAlertaPlantillas(errores.join('<br>'), 'warning');
         return;
     }
     
@@ -602,6 +637,7 @@ function eliminarPlantillaForm(cod, nombre) {
 
 // Limpiar formulario
 function limpiarFormularioPlantillas() {
+    $('#cod_plantilla_form, #nombre_form, #sql_consulta_form').removeClass('is-valid is-invalid');
     $('#cod_plantilla_form').val('');
     $('#nombre_form').val('');
     $('#descripcion_form').val('');
@@ -617,8 +653,32 @@ function limpiarFormularioPlantillas() {
 
 // Cancelar edición
 function cancelarFormularioPlantillas() {
-    limpiarFormularioPlantillas();
-    mostrarTablaPlantillas();
+    var cod     = $('#cod_plantilla_form').val().trim();
+    var nombre  = $('#nombre_form').val().trim();
+    var tieneContenido = tinymce.get('contenido_form') ? tinymce.get('contenido_form').getContent() !== '' : false;
+
+    if (cod || nombre || tieneContenido) {
+        Swal.fire({
+            title: '¿Descartar cambios?',
+            text: 'Tienes datos sin guardar. Si sales ahora se perderán.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, descartar',
+            cancelButtonText: 'Seguir editando'
+        }).then(function(result) {
+            if (result.isConfirmed) {
+                // Limpiar clases de validación
+                $('#cod_plantilla_form, #nombre_form, #sql_consulta_form').removeClass('is-valid is-invalid');
+                limpiarFormularioPlantillas();
+                mostrarTablaPlantillas();
+            }
+        });
+    } else {
+        limpiarFormularioPlantillas();
+        mostrarTablaPlantillas();
+    }
 }
 
 // Mostrar/ocultar tabla
@@ -711,6 +771,37 @@ $(document).ready(function() {
     inicializarTinyMCEForm();
     $(document).on('input', '#sql_consulta_form', function() {
         actualizarColumnasPlantillas();
+    });
+
+    // Validación en tiempo real: código único y sin espacios
+    $(document).on('input', '#cod_plantilla_form', function() {
+        var val = $(this).val();
+        // Reemplazar espacios automáticamente
+        if (val !== val.replace(/\s/g, '_')) {
+            $(this).val(val.replace(/\s/g, '_'));
+        }
+    });
+    $(document).on('blur', '#cod_plantilla_form', function() {
+        var cod      = $(this).val().trim();
+        var esEditar = $('#cod_plantilla_form').prop('disabled') || window._editandoCod;
+        if (!cod || esEditar) return;
+        $.getJSON(API_PLANTILLAS + '?action=obtener_completa&cod=' + encodeURIComponent(cod), function(resp) {
+            if (resp.success && resp.data) {
+                $('#cod_plantilla_form').removeClass('is-valid').addClass('is-invalid');
+                $('#cod_error').text('Este código ya existe: "' + cod + '"');
+            } else {
+                $('#cod_plantilla_form').removeClass('is-invalid').addClass('is-valid');
+            }
+        });
+    });
+
+    // Validación en tiempo real: nombre no vacío
+    $(document).on('blur', '#nombre_form', function() {
+        if (!$(this).val().trim()) {
+            $(this).addClass('is-invalid').removeClass('is-valid');
+        } else {
+            $(this).addClass('is-valid').removeClass('is-invalid');
+        }
     });
 });
 </script>

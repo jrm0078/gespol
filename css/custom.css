@@ -7,6 +7,26 @@
     background:rgba(238, 245, 249, 0.8);
 }
 
+/* ============> SIDEBAR ÍTEM ACTIVO <============ */
+#sidebarnav .sidebar-item.active > .sidebar-link,
+#sidebarnav .sidebar-item.active > .sidebar-link:hover {
+    background: linear-gradient(to right, rgba(0,132,217,0.15), rgba(0,132,217,0.05)) !important;
+    border-left: 3px solid #0084D9 !important;
+    color: #0066B3 !important;
+    font-weight: 600;
+}
+#sidebarnav .sidebar-item.active > .sidebar-link i {
+    color: #0084D9 !important;
+}
+#sidebarnav .sidebar-item > .sidebar-link {
+    border-left: 3px solid transparent;
+    transition: background 0.18s, border-color 0.18s;
+}
+#sidebarnav .sidebar-item > .sidebar-link:hover {
+    background: rgba(0,132,217,0.07) !important;
+    border-left-color: rgba(0,132,217,0.3) !important;
+}
+
 /* ============> NAVBAR AZUL <============ */
 .topbar {
     background: linear-gradient(135deg, #0084D9 0%, #0066B3 100%);
@@ -84,7 +104,11 @@
 .page-wrapper {
     background: #f7f7f7;
     min-height: calc(100vh - 75px);
-    padding: 25px 15px 15px 15px;
+    padding: 0 15px 15px 15px;
+}
+
+.page-breadcrumb {
+    padding: 10px 5px 6px !important;
 }
 
 /* Sidebar: solo ajustar top para que quede debajo del navbar fijo */

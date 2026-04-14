@@ -11,6 +11,23 @@ function CargarPagina(pagina,titulo,icono,id1,id2,id3,id4,id5,id6,id7,id8,id9,id
 	
 	document.getElementById("titulopagina").innerHTML = "<i class='" + icono + "'></i> " + titulo;
 
+	// Marcar ítem activo en sidebar
+	document.querySelectorAll('#sidebarnav .sidebar-item').forEach(function(item) {
+		item.classList.remove('active');
+		var link = item.querySelector('.sidebar-link');
+		if (link) link.classList.remove('active');
+	});
+	// Buscar el ítem cuyo listener cargará esta página
+	var items = document.querySelectorAll('#sidebarnav .sidebar-item');
+	items.forEach(function(item) {
+		var txt = item.getAttribute('data-pagina');
+		if (txt === pagina) {
+			item.classList.add('active');
+			var link = item.querySelector('.sidebar-link');
+			if (link) link.classList.add('active');
+		}
+	});
+
 
 	//GUARDAMOS LOS PARÁMETROS DE LLAMADA A LA PANTALLA EN COOKIES	
 	window.localStorage.setItem('pag_id1',(id1===undefined? "" : id1));

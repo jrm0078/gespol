@@ -68,6 +68,37 @@
             padding: 0.25rem 0.5rem;
         }
     }
+
+    /* Select2 — tema azul */
+    .select2-container--default .select2-selection--single {
+        height: 38px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        padding: 5px 10px;
+        font-size: 0.95rem;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 26px;
+        color: #495057;
+        padding-left: 0;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 36px;
+    }
+    .select2-container--default.select2-container--focus .select2-selection--single,
+    .select2-container--default.select2-container--open .select2-selection--single {
+        border-color: #0084D9;
+        box-shadow: 0 0 0 0.2rem rgba(0,132,217,0.25);
+        outline: none;
+    }
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        background-color: #0084D9;
+    }
+    .select2-container .select2-selection--single .select2-selection__clear {
+        font-size: 1.1rem;
+        color: #999;
+        margin-right: 5px;
+    }
 </style>
 
 <div class="container-fluid">
@@ -88,7 +119,7 @@
             <h6 class="m-0 font-weight-bold" style="color:#0066B3;"><i class="fas fa-list mr-1"></i> 1. Seleccionar Plantilla</h6>
         </div>
         <div class="card-body py-3">
-            <select id="selectPlantilla" class="form-control form-control-lg" onchange="cargarPlantilla()">
+            <select id="selectPlantilla" class="form-control" onchange="cargarPlantilla()" style="width:100%">
                 <option value="">-- Selecciona una plantilla --</option>
             </select>
         </div>
@@ -147,6 +178,23 @@ $(document).ready(function() {
     inicializarTinyMCE();
 });
 
+// Inicializar Select2 en el selector
+function initSelect2Plantillas() {
+    if (typeof $.fn.select2 !== 'undefined') {
+        $('#selectPlantilla').select2({
+            placeholder: '-- Selecciona una plantilla --',
+            allowClear: true,
+            width: '100%',
+            language: {
+                noResults: function() { return 'No se encontraron plantillas'; },
+                searching: function() { return 'Buscando...'; }
+            }
+        }).on('change', function() {
+            cargarPlantilla();
+        });
+    }
+}
+
 // ============================================================
 // TINYMCE
 // ============================================================
@@ -179,13 +227,14 @@ function cargarPlantillasDisponibles() {
         success: function(response) {
             if (response.success && response.data) {
                 const select = document.getElementById('selectPlantilla');
-                select.innerHTML = '<option value="">-- Seleccionar una plantilla --</option>';
+                select.innerHTML = '<option value=""></option>';
                 response.data.forEach(function(p) {
                     const opt = document.createElement('option');
                     opt.value = p.cod_plantilla;
-                    opt.textContent = p.nombre + (p.descripcion ? ' - ' + p.descripcion : '');
+                    opt.textContent = p.nombre + (p.descripcion ? ' — ' + p.descripcion : '');
                     select.appendChild(opt);
                 });
+                initSelect2Plantillas();
             }
         }
     });
@@ -521,7 +570,11 @@ function guardarDocumento() {
 // LIMPIAR
 // ============================================================
 function limpiar() {
-    document.getElementById('selectPlantilla').value = '';
+    if (typeof $.fn.select2 !== 'undefined') {
+        $('#selectPlantilla').val('').trigger('change');
+    } else {
+        document.getElementById('selectPlantilla').value = '';
+    }
     document.getElementById('filtrosContainer').innerHTML = '';
     document.getElementById('filtroSection').style.display  = 'none';
     document.getElementById('editorSection').style.display  = 'none';
