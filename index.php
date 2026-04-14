@@ -150,13 +150,24 @@
                         <!-- User profile and search -->
                         <!-- ============================================================== -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href="" style="height: 38px;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="images/user1.jpg" id="imgusuario1" alt="user" class="rounded-circle" width="31"></a>
-                            <div class="dropdown-menu dropdown-menu-right user-dd animated flipInY">
+                            <a class="nav-link dropdown-toggle waves-effect waves-dark pro-pic d-flex align-items-center" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 0 8px; height: 60px;">
+                                <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#fff,#cce4f7);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid rgba(255,255,255,0.5);">
+                                    <i class="fas fa-user" style="color:#0066B3;font-size:0.95rem;"></i>
+                                </div>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right user-dd animated flipInY" style="min-width:200px;">
                                 <span class="with-arrow"><span class="bg-primary"></span></span>
-
-								<a class="dropdown-item" ><?php echo $_SESSION["user_descripcion"];?></a>
+                                <div class="px-3 py-2 d-flex align-items-center">
+                                    <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0066B3,#0099e6);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                        <i class="fas fa-user" style="color:#fff;font-size:1rem;"></i>
+                                    </div>
+                                    <div class="ml-2">
+                                        <div class="font-weight-bold" style="font-size:0.9rem;"><?php echo htmlspecialchars($_SESSION['user_descripcion'] ?? ''); ?></div>
+                                        <div class="text-muted" style="font-size:0.75rem;"><?php echo htmlspecialchars($_SESSION['user_rol'] ?? ''); ?></div>
+                                    </div>
+                                </div>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="inc/sesion.php/cerrarsesion"><i class="fa fa-power-off mr-1 ml-1"></i> Cerrar Sesión</a>
+                                <a class="dropdown-item" href="inc/cerrarsesion.php"><i class="fas fa-sign-out-alt mr-2 text-danger"></i> Cerrar Sesión</a>
                             </div>
                         </li>
                         <!-- ============================================================== -->

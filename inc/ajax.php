@@ -36,6 +36,9 @@ try {
 
     // Ejecutar la acción
     switch ($action) {
+        case 'login':
+            actionLogin();
+            break;
         case 'CargatablaUsuarios':
             CargatablaUsuarios();
             break;
@@ -59,5 +62,47 @@ try {
 }
 
 exit;
-?>
 
+// ============================================================
+// LOGIN
+// ============================================================
+function actionLogin() {
+    $usuario  = isset($_POST['usuario'])  ? trim($_POST['usuario'])  : '';
+    $password = isset($_POST['password']) ? $_POST['password']       : '';
+
+    if (empty($usuario) || empty($password)) {
+        echo json_encode(['validacion' => 'error', 'error' => 'Usuario y contraseña son obligatorios']);
+        return;
+    }
+
+    try {
+        $db   = getConnection();
+        $stmt = $db->prepare("SELECT id, nombre, email, contrasenia, rol FROM usuario WHERE (email = ? OR nombre = ?) AND activo = 1 LIMIT 1");
+        $stmt->execute([$usuario, $usuario]);
+        $row  = $stmt->fetch(PDO::FETCH_ASSOC);
+        $db   = null;
+
+        if (!$row) {
+            echo json_encode(['validacion' => 'error', 'error' => 'Usuario no encontrado o inactivo']);
+            return;
+        }
+
+        if (!password_verify($password, $row['contrasenia'])) {
+            echo json_encode(['validacion' => 'error', 'error' => 'Contraseña incorrecta']);
+            return;
+        }
+
+        session_start();
+        $_SESSION['validacion']       = 'ok';
+        $_SESSION['user_codigo']      = $row['id'];
+        $_SESSION['user_descripcion'] = $row['nombre'];
+        $_SESSION['user_email']       = $row['email'];
+        $_SESSION['user_rol']         = $row['rol'];
+
+        echo json_encode(['validacion' => 'ok']);
+
+    } catch (Exception $e) {
+        echo json_encode(['validacion' => 'error', 'error' => $e->getMessage()]);
+    }
+}
+?>
