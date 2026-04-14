@@ -40,6 +40,17 @@
 .card-header-blue i {
     color: #fff !important;
 }
+/* Los iconos dentro del botón blanco NO deben ser blancos */
+.card-header-blue .btn-header-white,
+.card-header-blue .btn-header-white i {
+    color: #0066B3 !important;
+}
+.card-header-blue .btn-header-white:hover,
+.card-header-blue .btn-header-white:hover i,
+.card-header-blue .btn-header-white:focus,
+.card-header-blue .btn-header-white:focus i {
+    color: #fff !important;
+}
 
 /* ============> SIDEBAR ÍTEM ACTIVO <============ */
 #sidebarnav .sidebar-item.active > .sidebar-link,

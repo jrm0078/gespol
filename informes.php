@@ -97,6 +97,15 @@
         color: #999;
         margin-right: 5px;
     }
+    /* Icono del botón blanco en header azul */
+    .card-header-blue .btn-header-white i,
+    .card-header-blue .btn-header-white {
+        color: #0066B3 !important;
+    }
+    .card-header-blue .btn-header-white:hover i,
+    .card-header-blue .btn-header-white:hover {
+        color: #fff !important;
+    }
 </style>
 
 <div class="container-fluid">
