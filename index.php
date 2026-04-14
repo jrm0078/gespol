@@ -330,15 +330,9 @@
 	<script src="js/genericas.js?v=1"></script>
 	<script src="js/func_aplicacion.js?v=1"></script>
 	<script src="js/index.js?v=1"></script>
-		<!-- Sidebar toggle handler -->
+		<!-- Sidebar toggle handler - disabled to use template defaults -->
 	<script>
-	$(document).ready(function() {
-		$('.sidebartoggler').on('click', function(e) {
-			e.preventDefault();
-			e.stopPropagation();
-			return false;
-		});
-	});
+	// Toggle funcionará con los scripts del template (app.min.js, etc)
 	</script>	
 </body>
 
