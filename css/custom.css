@@ -51,6 +51,13 @@
 #sidebarnav {
     padding-top: 4px !important;
 }
+/* Quitar el padding-top que deja el scroll-sidebar antes del primer item */
+.scroll-sidebar {
+    padding-top: 0 !important;
+}
+.sidebar-nav {
+    padding-top: 0 !important;
+}
 
 /* ============> NAVBAR AZUL <============ */
 .topbar {

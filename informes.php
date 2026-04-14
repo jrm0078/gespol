@@ -152,8 +152,11 @@
                 <button class="btn btn-sm btn-success" onclick="guardarDocumento()" title="Guardar en base de datos">
                     <i class="fas fa-save"></i> <span class="d-none d-md-inline">Guardar</span>
                 </button>
-                <button class="btn btn-sm btn-danger" onclick="descargarPDF()" title="Descargar / Imprimir PDF">
-                    <i class="fas fa-file-pdf"></i> <span class="d-none d-md-inline">Descargar PDF</span>
+                <button class="btn btn-sm btn-primary" onclick="imprimirDocumento()" title="Imprimir documento">
+                    <i class="fas fa-print"></i> <span class="d-none d-md-inline">Imprimir</span>
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="descargarPDF()" title="Descargar PDF">
+                    <i class="fas fa-file-pdf"></i> <span class="d-none d-md-inline">PDF</span>
                 </button>
             </div>
         </div>
@@ -210,6 +213,7 @@ function inicializarTinyMCE() {
         plugins: 'advlist autolink lists link image charmap anchor searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking table',
         toolbar: 'undo redo | styleselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | fullscreen | table',
         branding: false,
+        statusbar: false,
         valid_elements: '*[*]',
         extended_valid_elements: '*[*]',
         entity_encoding: 'raw'
