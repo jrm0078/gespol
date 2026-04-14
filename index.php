@@ -239,7 +239,7 @@
             <div class="page-breadcrumb">
                 <div class="row">
                     <div class="col-5 align-self-center">
-                        <h4 id="titulopagina" class="page-title">Inicio</h4>
+                        <h4 id="titulopagina" class="page-title"><i class="mdi mdi-home"></i> Inicio</h4>
                     </div>
 
                 </div>
