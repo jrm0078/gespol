@@ -689,7 +689,15 @@ function cancelarFormularioPlantillas() {
         if (result.isConfirmed) {
             formDirty = false;
             $('#cod_plantilla_form, #nombre_form, #sql_consulta_form').removeClass('is-valid is-invalid');
-            limpiarFormularioPlantillas();
+            // TinyMCE ya está destruido — llamar a limpiar sin intentar usarlo
+            $('#cod_plantilla_form').val('');
+            $('#nombre_form').val('');
+            $('#descripcion_form').val('');
+            $('#tipo_documento_form').val('');
+            $('#sql_consulta_form').val('SELECT * FROM tabla WHERE id = [[id]]');
+            $('#estado_form').prop('checked', true);
+            $('#bodyFiltrosPlantillas').html('');
+            plantillaEnEdicionForm = null;
             mostrarTablaPlantillas();
         } else {
             // Reinicializar el editor con el contenido que tenía
