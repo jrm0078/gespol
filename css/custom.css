@@ -93,6 +93,14 @@
     top: 75px !important;
 }
 
+/* Cuando sidebar hover expande el logo (expand-logo 250px), también desplazar el navbar-collapse
+   para que el toggle no quede tapado */
+#main-wrapper[data-sidebartype="mini-sidebar"] .topbar .top-navbar .navbar-header.expand-logo + .navbar-collapse,
+#main-wrapper[data-sidebartype="mini-sidebar"] .topbar .top-navbar .navbar-header.expand-logo ~ .navbar-collapse {
+    margin-left: 250px !important;
+    transition: margin-left 0.2s ease-in;
+}
+
 #main-wrapper {
     overflow-x: hidden;
 }
