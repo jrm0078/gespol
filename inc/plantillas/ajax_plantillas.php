@@ -36,10 +36,10 @@ switch($action) {
         ejecutarSelectFiltro();
         break;
     case 'crear':
-        crearPlantilla();
+        actionCrear();
         break;
     case 'editar':
-        editarPlantilla();
+        actionEditar();
         break;
     case 'eliminar':
         eliminarPlantillaAction();
@@ -335,7 +335,7 @@ function obtenerDatosFiltrados() {
 /**
  * Crear nueva plantilla (POST JSON)
  */
-function crearPlantilla() {
+function actionCrear() {
     $input = file_get_contents('php://input');
     $data  = json_decode($input, true);
 
@@ -381,7 +381,7 @@ function crearPlantilla() {
 /**
  * Editar plantilla existente (POST JSON, cod en GET)
  */
-function editarPlantilla() {
+function actionEditar() {
     $cod   = isset($_GET['cod']) ? $_GET['cod'] : '';
     $input = file_get_contents('php://input');
     $data  = json_decode($input, true);

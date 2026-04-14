@@ -88,7 +88,7 @@
     <div class="card shadow-sm">
         <div class="card-header d-flex justify-content-between align-items-center py-2" style="background: linear-gradient(to right, #0084D9, #0066B3); border-bottom: 3px solid #005fa3;">
             <h5 class="m-0 text-white"><i class="mdi mdi-file-document mr-2"></i>Gestionar Plantillas</h5>
-            <button class="btn btn-light btn-sm font-weight-bold" onclick="abrirFormularioPlantillasNueva()">
+            <button class="btn btn-sm font-weight-bold" onclick="abrirFormularioPlantillasNueva()" style="background:#fff;color:#0066B3;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.2);">
                 <i class="fas fa-plus"></i> Crear Plantilla
             </button>
         </div>
