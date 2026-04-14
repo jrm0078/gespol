@@ -42,8 +42,8 @@ function CargatablaUsuarios() {
  	
 	$table = "usuario";	 
 	$primaryKey = "id";
-	$campos = "id,nombre,email,rol"; 
-	$tiposcampo = "numero,texto,texto,texto";
+	$campos = "id,id,nombre,email,rol"; 
+	$tiposcampo = "numero,numero,texto,texto,texto";
 	$joinQuery = ""; 
 	$database = "";
 	$extraWhere = "";

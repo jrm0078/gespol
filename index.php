@@ -85,7 +85,7 @@
 		<source src="sounds/alerta.mp3" type="audio/mpeg">
 	</audio>		
 	
-    <div id="main-wrapper" data-layout="vertical" data-sidebar-position="fixed" data-sidebar-type="full">
+    <div id="main-wrapper" data-layout="vertical" data-sidebar-position="fixed" data-sidebartype="full">
         <!-- ============================================================== -->
         <!-- Topbar header - style you can find in pages.scss -->
         <!-- ============================================================== -->
@@ -125,7 +125,7 @@
                     
 					
 					<ul class="navbar-nav float-left mr-auto">
-                        <li class="nav-item d-none d-md-block"><a class="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0);" onclick="return false;" data-sidebar-type="mini-sidebar"><i class="mdi mdi-menu font-24"></i></a></li>
+                        <li class="nav-item d-none d-md-block"><a class="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0);" data-sidebartype="mini-sidebar"><i class="mdi mdi-menu font-24"></i></a></li>
 
 					<p style="color: white; font-size: 1.4rem; font-weight: 600; margin: 0; padding-left: 15px; display: flex; align-items: center; letter-spacing: 0.5px;">Panel de Administración</p>
                     </ul>
@@ -330,9 +330,10 @@
 	<script src="js/genericas.js?v=1"></script>
 	<script src="js/func_aplicacion.js?v=1"></script>
 	<script src="js/index.js?v=1"></script>
-		<!-- Sidebar toggle handler - disabled to use template defaults -->
+		<!-- Toggle del Sidebar - Manejado por app.min.js -->
 	<script>
-	// Toggle funcionará con los scripts del template (app.min.js, etc)
+	// No es necesario agregar handlers personalizados
+	// app.min.js already handles .sidebartoggler clicks
 	</script>	
 </body>
 

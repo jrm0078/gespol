@@ -8385,7 +8385,7 @@ Card
   -moz-transition: all .25s ease;
   transition: all .25s ease; }
   .card-hover:hover {
-    webkit-transform: translateY(-4px) scale(1.01);
+    -webkit-transform: translateY(-4px) scale(1.01);
     -moz-transform: translateY(-4px) scale(1.01);
     -ms-transform: translateY(-4px) scale(1.01);
     -o-transform: translateY(-4px) scale(1.01);
@@ -11756,7 +11756,7 @@ body .jqstooltip {
   padding: 10px 20px;
   background: #2962FF;
   color: #fff;
-  ext-align: center;
+  text-align: center;
   pointer-events: none;
   z-index: 1;
   -webkit-transition: opacity .2s linear;
