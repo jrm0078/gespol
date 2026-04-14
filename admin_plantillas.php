@@ -274,28 +274,33 @@ function inicializarTinyMCEForm() {
 
 // Cargar plantillas al iniciar
 function cargarPlantillasListado() {
-    $.get(APIPantillas + '?action=listar', function(data) {
-        if (data.success) {
-            let html = '';
-            data.data.forEach(plantilla => {
-                const estado = plantilla.estado == 1 ? '<span class="badge badge-success">Activa</span>' : '<span class="badge badge-danger">Inactiva</span>';
-                html += `<tr>
-                    <td><code>${plantilla.cod_plantilla}</code></td>
-                    <td>${plantilla.nombre}</td>
-                    <td><small>${plantilla.descripcion || ''}</small></td>
-                    <td><small>${plantilla.tipo_documento || ''}</small></td>
-                    <td>${estado}</td>
-                    <td>
-                        <button class="btn btn-sm btn-primary" onclick="abrirFormularioPlantillasEditar('${plantilla.cod_plantilla}')">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger" onclick="eliminarPlantillaForm('${plantilla.cod_plantilla}', '${plantilla.nombre}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>`;
-            });
-            $('#cuerpoTablaPlantillas').html(html);
+    $.ajax({
+        url: APIPantillas + '?action=listar',
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            if (data.success) {
+                let html = '';
+                data.data.forEach(plantilla => {
+                    const estado = plantilla.estado == 1 ? '<span class="badge badge-success">Activa</span>' : '<span class="badge badge-danger">Inactiva</span>';
+                    html += `<tr>
+                        <td><code>${plantilla.cod_plantilla}</code></td>
+                        <td>${plantilla.nombre}</td>
+                        <td><small>${plantilla.descripcion || ''}</small></td>
+                        <td><small>${plantilla.tipo_documento || ''}</small></td>
+                        <td>${estado}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="abrirFormularioPlantillasEditar('${plantilla.cod_plantilla}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="eliminarPlantillaForm('${plantilla.cod_plantilla}', '${plantilla.nombre}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+                });
+                $('#cuerpoTablaPlantillas').html(html);
+            }
         }
     });
 }
