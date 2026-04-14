@@ -17,10 +17,10 @@
 }
 .btn-header-white:hover,
 .btn-header-white:focus {
-    background: rgba(0,0,0,0.18) !important;
+    background: #005fa3 !important;
     color: #fff !important;
-    border-color: rgba(255,255,255,0.6) !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    border-color: #fff !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
 /* Card headers azules (cabeceras de página) */
@@ -28,6 +28,17 @@
     background: linear-gradient(to right, #0084D9, #0066B3) !important;
     border-bottom: 3px solid #005fa3 !important;
     border-left: none !important;
+    color: #fff !important;
+}
+.card-header-blue h1,
+.card-header-blue h2,
+.card-header-blue h3,
+.card-header-blue h4,
+.card-header-blue h5,
+.card-header-blue h6,
+.card-header-blue span,
+.card-header-blue i {
+    color: #fff !important;
 }
 
 /* ============> SIDEBAR ÍTEM ACTIVO <============ */
