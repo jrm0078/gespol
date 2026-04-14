@@ -277,30 +277,38 @@ function cargarPlantillasListado() {
     $.ajax({
         url: APIPantillas + '?action=listar',
         type: 'GET',
-        dataType: 'json',
-        success: function(data) {
-            if (data.success) {
-                let html = '';
-                data.data.forEach(plantilla => {
-                    const estado = plantilla.estado == 1 ? '<span class="badge badge-success">Activa</span>' : '<span class="badge badge-danger">Inactiva</span>';
-                    html += `<tr>
-                        <td><code>${plantilla.cod_plantilla}</code></td>
-                        <td>${plantilla.nombre}</td>
-                        <td><small>${plantilla.descripcion || ''}</small></td>
-                        <td><small>${plantilla.tipo_documento || ''}</small></td>
-                        <td>${estado}</td>
-                        <td>
-                            <button class="btn btn-sm btn-primary" onclick="abrirFormularioPlantillasEditar('${plantilla.cod_plantilla}')">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="eliminarPlantillaForm('${plantilla.cod_plantilla}', '${plantilla.nombre}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>`;
-                });
-                $('#cuerpoTablaPlantillas').html(html);
+        dataType: 'text',
+        success: function(rawText) {
+            var data;
+            try {
+                data = JSON.parse(rawText);
+            } catch(e) {
+                $('#alertaPlantillasContainer').html('<div class="alert alert-danger">Error JSON - Respuesta recibida:<br><pre style="font-size:11px;max-height:150px;overflow:auto">' + $('<div>').text(rawText).html() + '</pre></div>');
+                return;
             }
+            if (data.success) {
+                var html = '';
+                data.data.forEach(function(plantilla) {
+                    var estado = plantilla.estado == 1 ? '<span class="badge badge-success">Activa</span>' : '<span class="badge badge-danger">Inactiva</span>';
+                    html += '<tr>'
+                        + '<td><code>' + plantilla.cod_plantilla + '</code></td>'
+                        + '<td>' + plantilla.nombre + '</td>'
+                        + '<td><small>' + (plantilla.descripcion || '') + '</small></td>'
+                        + '<td><small>' + (plantilla.tipo_documento || '') + '</small></td>'
+                        + '<td>' + estado + '</td>'
+                        + '<td>'
+                        + '<button class="btn btn-sm btn-primary mr-1" onclick="abrirFormularioPlantillasEditar(\'' + plantilla.cod_plantilla + '\')"><i class="fas fa-edit"></i></button>'
+                        + '<button class="btn btn-sm btn-danger" onclick="eliminarPlantillaForm(\'' + plantilla.cod_plantilla + '\',\'' + plantilla.nombre + '\')"><i class="fas fa-trash"></i></button>'
+                        + '</td>'
+                        + '</tr>';
+                });
+                $('#cuerpoTablaPlantillas').html(html || '<tr><td colspan="6" class="text-center text-muted">No hay plantillas creadas</td></tr>');
+            } else {
+                $('#alertaPlantillasContainer').html('<div class="alert alert-danger">Error del servidor: ' + (data.error || 'desconocido') + '</div>');
+            }
+        },
+        error: function(xhr, status, err) {
+            $('#alertaPlantillasContainer').html('<div class="alert alert-danger">Error HTTP ' + xhr.status + ': ' + err + '</div>');
         }
     });
 }
