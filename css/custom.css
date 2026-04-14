@@ -7,6 +7,11 @@
     background:rgba(238, 245, 249, 0.8);
 }
 
+/* SweetAlert2 siempre por encima de TinyMCE (z-index ~1300) */
+.swal2-container {
+    z-index: 999999 !important;
+}
+
 /* ============> BOTONES BLANCOS (cabeceras azules) <============ */
 .btn-header-white {
     background: #fff !important;
