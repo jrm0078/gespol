@@ -334,7 +334,27 @@
 	<script>
 	// No es necesario agregar handlers personalizados
 	// app.min.js already handles .sidebartoggler clicks
-	</script>	
+	</script>
+
+	<!-- Fix para mantener el toggle visible y funcional -->
+	<style>
+	.sidebartoggler {
+		display: block !important;
+		visibility: visible !important;
+		opacity: 1 !important;
+	}
+	li.nav-item.d-none {
+		display: none !important;
+	}
+	li.nav-item.d-md-block {
+		display: block !important;
+	}
+	@media (max-width: 768px) {
+		li.nav-item.d-none.d-md-block {
+			display: none !important;
+		}
+	}
+	</style>	
 </body>
 
 
