@@ -97,13 +97,13 @@
                     <!-- ============================================================== -->
                     <!-- Logo -->
                     <!-- ============================================================== -->
-                    <a class="navbar-brand d-flex align-items-center" href="javascript:void(0);" style="min-width: 200px; padding: 10px 0; cursor: default;">
-                        <!-- Logo icon -->
-                        <b class="logo-icon" style="font-size: 1.8rem; margin-right: 12px; display: flex; align-items: center;">
+                    <a class="navbar-brand d-flex align-items-center" href="javascript:void(0);" style="padding: 10px 0; cursor: default; overflow: hidden; width: 100%;">
+                        <!-- Logo icon - siempre visible -->
+                        <b class="logo-icon" style="font-size: 1.5rem; display: flex; align-items: center; justify-content: center; min-width: 40px; flex-shrink: 0;">
                             <i class="fas fa-cloud" style="color: white;"></i>
                         </b>
-                        <!-- Logo text -->
-                        <span class="logo-text" style="color: white; font-weight: bold; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; white-space: nowrap;">
+                        <!-- Logo text - se oculta en mini-sidebar via style.css -->
+                        <span class="logo-text" style="color: white; font-weight: bold; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; white-space: nowrap; margin-left: 10px;">
                             CDiCloud
                         </span>
                     </a>
@@ -125,7 +125,7 @@
                     
 					
 					<ul class="navbar-nav float-left mr-auto">
-						<li class="nav-item"><a class="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0);" data-sidebartype="mini-sidebar"><i class="mdi mdi-menu font-24"></i></a></li>
+						<li class="nav-item"><a class="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0);"><i class="mdi mdi-menu font-24"></i></a></li>
 						<li class="nav-item d-flex align-items-center"><span style="color: white; font-size: 1.4rem; font-weight: 600; padding-left: 10px; letter-spacing: 0.5px;">Panel de Administración</span></li>
                     </ul>
                     <!-- ============================================================== -->
@@ -329,7 +329,22 @@
 	<script src="js/genericas.js?v=1"></script>
 	<script src="js/func_aplicacion.js?v=1"></script>
 	<script src="js/index.js?v=1"></script>
-		<!-- Toggle del Sidebar - Manejado por app.min.js -->
+	<script>
+	// Toggle del sidebar - reemplaza el handler de app.min.js para que funcione correctamente
+	$(document).ready(function() {
+		setTimeout(function() {
+			$('.sidebartoggler').off('click').on('click', function(e) {
+				e.preventDefault();
+				var $w = $('#main-wrapper');
+				if ($w.hasClass('mini-sidebar')) {
+					$w.removeClass('mini-sidebar').attr('data-sidebartype', 'full');
+				} else {
+					$w.addClass('mini-sidebar').attr('data-sidebartype', 'mini-sidebar');
+				}
+			});
+		}, 300);
+	});
+	</script>
 
 </body>
 
