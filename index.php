@@ -97,7 +97,7 @@
                     <!-- ============================================================== -->
                     <!-- Logo -->
                     <!-- ============================================================== -->
-                    <a class="navbar-brand d-flex align-items-center" href="javascript:void(0);" style="padding: 10px 0; cursor: default; overflow: hidden; width: 100%;">
+                    <a class="navbar-brand d-flex align-items-center" href="javascript:void(0);" onclick="document.getElementById('titulopagina').innerHTML='<i class=\'mdi mdi-home\'></i> Inicio'; document.getElementById('panelcentral').innerHTML='';" style="padding: 10px 0; cursor: pointer; overflow: hidden; width: 100%;">
                         <!-- Logo icon - siempre visible -->
                         <b class="logo-icon" style="font-size: 1.5rem; display: flex; align-items: center; justify-content: center; min-width: 40px; flex-shrink: 0;">
                             <i class="fas fa-cloud" style="color: white;"></i>
