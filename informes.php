@@ -584,18 +584,16 @@ function escHtml(str) {
 }
 
 function mostrarAlerta(mensaje, tipo) {
-    var id  = 'alert-' + Date.now();
-    var div = document.createElement('div');
-    div.id        = id;
-    div.className = 'alert alert-' + tipo + ' alert-dismissible fade show';
-    div.role      = 'alert';
-    div.innerHTML = mensaje + '<button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>';
-    var container = document.querySelector('.container-fluid');
-    if (container) container.insertBefore(div, container.firstChild);
-    setTimeout(function() {
-        var el = document.getElementById(id);
-        if (el) el.remove();
-    }, 4000);
+    var icon = tipo === 'danger' ? 'error' : tipo === 'warning' ? 'warning' : tipo === 'success' ? 'success' : 'info';
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: icon,
+        title: mensaje,
+        showConfirmButton: false,
+        timer: tipo === 'success' ? 3000 : 4500,
+        timerProgressBar: true
+    });
 }
 
 </script>

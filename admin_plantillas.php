@@ -577,14 +577,25 @@ function guardarPlantillaForm() {
 
 // Eliminar plantilla
 function eliminarPlantillaForm(cod, nombre) {
-    if (!confirm('¿Confirmas que quieres eliminar esta plantilla?')) return;
-    
-    $.post(APIPantillas + '?action=eliminar&cod_plantilla=' + cod, function(data) {
-        if (data.success) {
-            mostrarAlertaPlantillas('Plantilla eliminada correctamente', 'success');
-            cargarPlantillasListado();
-        } else {
-            mostrarAlertaPlantillas(data.error || 'Error al eliminar', 'danger');
+    Swal.fire({
+        title: '¿Eliminar plantilla?',
+        html: '<b>' + nombre + '</b><br><small class="text-muted">Esta acción no se puede deshacer</small>',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then(function(result) {
+        if (result.isConfirmed) {
+            $.post(APIPantillas + '?action=eliminar&cod_plantilla=' + cod, function(data) {
+                if (data.success) {
+                    mostrarAlertaPlantillas('Plantilla eliminada correctamente', 'success');
+                    cargarPlantillasListado();
+                } else {
+                    mostrarAlertaPlantillas(data.error || 'Error al eliminar', 'danger');
+                }
+            });
         }
     });
 }
@@ -621,20 +632,18 @@ function mostrarTablaPlantillas() {
     $('#formularioPlantillasSection').hide();
 }
 
-// Mostrar alerta
+// Mostrar alerta con SweetAlert2
 function mostrarAlertaPlantillas(mensaje, tipo) {
-    const alert = `<div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
-        ${mensaje}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>`;
-    
-    $('#alertaPlantillasContainer').html(alert);
-    
-    setTimeout(() => {
-        $('#alertaPlantillasContainer').html('');
-    }, 5000);
+    var icon = tipo === 'danger' ? 'error' : tipo === 'warning' ? 'warning' : tipo === 'success' ? 'success' : 'info';
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: icon,
+        title: mensaje,
+        showConfirmButton: false,
+        timer: tipo === 'success' ? 3000 : 4500,
+        timerProgressBar: true
+    });
 }
 
 var dtPlantillas = null;
