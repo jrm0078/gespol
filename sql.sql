@@ -70,6 +70,19 @@ CREATE TABLE plantillas_documentos (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Datos de prueba
-INSERT INTO plantillas_maestro (cod_plantilla, nombre, descripcion, tipo_documento, contenido, estado) VALUES
-('presupuesto_1', 'Presupuesto Standard', 'Plantilla de presupuesto básico', 'PDF', '<h2>PRESUPUESTO</h2><p>Cliente: {%%cliente%%}</p><p>Monto: {%%monto%%}</p>', 1),
-('contrato_1', 'Contrato Standard', 'Plantilla de contrato básico', 'PDF', '<h2>CONTRATO</h2><p>Fecha: {%%fecha%%}</p><p>Partes: {%%partes%%}</p>', 1);
+INSERT INTO plantillas_maestro (cod_plantilla, nombre, descripcion, tipo_documento, contenido, sql_consulta, estado) VALUES
+('ficha_usuario', 'Ficha de Usuario', 'Ficha con datos del usuario seleccionado', 'PDF',
+'<h2 style="color:#0084D9;border-bottom:2px solid #0084D9;padding-bottom:8px;">FICHA DE USUARIO</h2>
+<table width="100%" cellpadding="6" style="border-collapse:collapse;margin-top:12px;">
+  <tr><td style="background:#f0f8ff;font-weight:bold;width:30%;border:1px solid #ccc;">Nombre</td><td style="border:1px solid #ccc;">[[nombre]]</td></tr>
+  <tr><td style="background:#f0f8ff;font-weight:bold;border:1px solid #ccc;">Email</td><td style="border:1px solid #ccc;">[[email]]</td></tr>
+  <tr><td style="background:#f0f8ff;font-weight:bold;border:1px solid #ccc;">Rol</td><td style="border:1px solid #ccc;">[[rol]]</td></tr>
+  <tr><td style="background:#f0f8ff;font-weight:bold;border:1px solid #ccc;">Estado</td><td style="border:1px solid #ccc;">[[activo]]</td></tr>
+</table>
+<p style="margin-top:20px;font-size:11px;color:#999;">Generado el [[fecha_generacion]]</p>',
+'SELECT nombre, email, rol, IF(activo=1,''Activo'',''Inactivo'') as activo, DATE_FORMAT(NOW(),''%d/%m/%Y'') as fecha_generacion FROM usuario WHERE id = ?',
+1);
+
+INSERT INTO plantillas_filtros (cod_plantilla, nombre_filtro, etiqueta, tipo_filtro, tabla_datos, campo_clave, campo_valor, sql_query, orden, requerido, activo) VALUES
+('ficha_usuario', 'id_usuario', 'Usuario', 'select_table', 'usuario', 'id', 'nombre', NULL, 1, 1, 1);
+

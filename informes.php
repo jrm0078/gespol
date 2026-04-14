@@ -174,27 +174,29 @@
 
 <script>
 
-// Usar var para permitir redeclaración
 var plantillaActual = null;
-var datosFormulario = {};
+var datosFormulario  = {};
+var API_PLANTILLAS   = 'inc/plantillas/ajax_plantillas.php';
 
-// Inicializar TinyMCE para el editor de documentos
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+$(document).ready(function() {
+    cargarPlantillasDisponibles();
+    inicializarTinyMCE();
+});
+
+// ============================================================
+// TINYMCE
+// ============================================================
 function inicializarTinyMCE() {
-    // Destruir instancia anterior si existe
     if (tinymce.get('documento-editor')) {
         tinymce.get('documento-editor').remove();
     }
-    
-    // Detectar altura según pantalla
-    let altura = 500;
-    if (window.innerWidth < 768) {
-        altura = 300;
-    }
-    
     tinymce.init({
         selector: '#documento-editor',
         language: 'es',
-        height: altura,
+        height: (window.innerWidth < 768) ? 300 : 500,
         menubar: 'file edit view insert format tools',
         plugins: 'advlist autolink lists link image charmap anchor searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking table',
         toolbar: 'undo redo | styleselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | fullscreen | table',
@@ -205,215 +207,395 @@ function inicializarTinyMCE() {
     });
 }
 
-// Cargar plantillas disponibles
+// ============================================================
+// CARGAR LISTA DE PLANTILLAS
+// ============================================================
 function cargarPlantillasDisponibles() {
     $.ajax({
-        url: 'inc/plantillas/ajax_plantillas.php?action=listar',
+        url: API_PLANTILLAS + '?action=listar_activas',
         type: 'GET',
         dataType: 'json',
         success: function(response) {
             if (response.success && response.data) {
                 const select = document.getElementById('selectPlantilla');
                 select.innerHTML = '<option value="">-- Seleccionar una plantilla --</option>';
-                
-                response.data.forEach(plantilla => {
-                    const option = document.createElement('option');
-                    option.value = plantilla.cod_plantilla;
-                    option.textContent = plantilla.nombre;
-                    select.appendChild(option);
+                response.data.forEach(function(p) {
+                    const opt = document.createElement('option');
+                    opt.value = p.cod_plantilla;
+                    opt.textContent = p.nombre + (p.descripcion ? ' - ' + p.descripcion : '');
+                    select.appendChild(opt);
                 });
             }
         }
     });
 }
 
-// Cargar plantilla seleccionada
+// ============================================================
+// SELECCIONAR PLANTILLA
+// ============================================================
 function cargarPlantilla() {
     const cod = document.getElementById('selectPlantilla').value;
-    
+
     if (!cod) {
-        document.getElementById('filtroSection').style.display = 'none';
-        document.getElementById('editorSection').style.display = 'none';
+        limpiar();
         return;
     }
-    
+
     $.ajax({
-        url: 'inc/plantillas/ajax_plantillas.php?action=obtener_completa&cod=' + cod,
+        url: API_PLANTILLAS + '?action=obtener_completa&cod=' + encodeURIComponent(cod),
         type: 'GET',
         dataType: 'json',
         success: function(response) {
             if (response.success) {
                 plantillaActual = response.data;
-                datosFormulario = {};
-                
-                // Mostrar editor
+                datosFormulario  = {};
+
+                // Cargar filtros dinámicos desde el endpoint enriched
+                cargarFiltrosDinamicos(cod);
+
+                // Mostrar editor con contenido base
                 document.getElementById('editorSection').style.display = 'block';
-                
-                // Inicializar TinyMCE y cargar contenido
                 setTimeout(function() {
                     inicializarTinyMCE();
                     setTimeout(function() {
-                        if (tinymce.get('documento-editor')) {
-                            tinymce.get('documento-editor').setContent(plantillaActual.contenido);
-                        }
-                    }, 100);
+                        var ed = tinymce.get('documento-editor');
+                        if (ed) ed.setContent(plantillaActual.contenido || '');
+                    }, 150);
                 }, 100);
-                
-                // Mostrar filtros si existen
-                if (plantillaActual.filtros && plantillaActual.filtros.length > 0) {
-                    cargarFiltros(plantillaActual.filtros);
-                    document.getElementById('filtroSection').style.display = 'block';
-                } else {
-                    document.getElementById('filtroSection').style.display = 'none';
-                }
+
+            } else {
+                mostrarAlerta('Error al cargar plantilla: ' + response.error, 'danger');
             }
         }
     });
 }
 
-// Cargar filtros dinámicos
-function cargarFiltros(filtros) {
-    const container = document.getElementById('filtrosContainer');
-    container.innerHTML = '';
-    
-    filtros.forEach(filtro => {
-        const col = document.createElement('div');
-        col.className = 'col-12 col-md-6 mb-3';
-        
-        if (filtro.tipo_filtro === 'text') {
-            col.innerHTML = `
-                <div class="form-group">
-                    <label class="font-weight-bold">${filtro.etiqueta}</label>
-                    <input type="text" class="form-control" id="filtro_${filtro.nombre_filtro}" 
-                           placeholder="${filtro.etiqueta}">
-                </div>
-            `;
-        } else if (filtro.tipo_filtro === 'number') {
-            col.innerHTML = `
-                <div class="form-group">
-                    <label class="font-weight-bold">${filtro.etiqueta}</label>
-                    <input type="number" class="form-control" id="filtro_${filtro.nombre_filtro}" 
-                           placeholder="${filtro.etiqueta}">
-                </div>
-            `;
-        } else if (filtro.tipo_filtro === 'date') {
-            col.innerHTML = `
-                <div class="form-group">
-                    <label class="font-weight-bold">${filtro.etiqueta}</label>
-                    <input type="date" class="form-control" id="filtro_${filtro.nombre_filtro}">
-                </div>
-            `;
+// ============================================================
+// CARGAR FILTROS DINÁMICAMENTE (CON VALORES)
+// ============================================================
+function cargarFiltrosDinamicos(cod) {
+    $.ajax({
+        url: API_PLANTILLAS + '?action=obtener_filtros&cod=' + encodeURIComponent(cod),
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            if (!response.success || !response.data || response.data.length === 0) {
+                document.getElementById('filtroSection').style.display = 'none';
+                return;
+            }
+
+            const container = document.getElementById('filtrosContainer');
+            container.innerHTML = '';
+
+            response.data.forEach(function(filtro) {
+                const col = document.createElement('div');
+                col.className = 'col-12 col-md-6 mb-3';
+
+                const tipo = filtro.tipo_filtro || 'text';
+                let html = '<div class="form-group">';
+                html += '<label class="font-weight-bold">' + escHtml(filtro.etiqueta) + (filtro.requerido ? ' <span class="text-danger">*</span>' : '') + '</label>';
+
+                if (tipo === 'select_table' || tipo === 'select_sql') {
+                    if (filtro.tiene_parametros && filtro.parametros_requeridos && filtro.parametros_requeridos.length > 0) {
+                        // Inputs para los parámetros
+                        filtro.parametros_requeridos.forEach(function(pname) {
+                            html += '<input type="text" class="form-control form-control-sm mb-1 param-input" '
+                                  + 'data-param-name="' + escHtml(pname) + '" '
+                                  + 'data-filtro-parent="' + escHtml(filtro.nombre_filtro) + '" '
+                                  + 'placeholder="Valor para [[' + escHtml(pname) + ']]">';
+                        });
+                        html += '<select id="filtro_' + escHtml(filtro.nombre_filtro) + '" '
+                              + 'class="form-control filtro-input" '
+                              + 'data-filtro="' + escHtml(filtro.nombre_filtro) + '" '
+                              + 'data-tipo="' + tipo + '" '
+                              + 'data-tiene-parametros="true">'
+                              + '<option value="">-- Completa los parámetros arriba --</option></select>';
+                    } else {
+                        html += '<select id="filtro_' + escHtml(filtro.nombre_filtro) + '" '
+                              + 'class="form-control filtro-input" '
+                              + 'data-filtro="' + escHtml(filtro.nombre_filtro) + '" '
+                              + 'data-tipo="' + tipo + '">'
+                              + '<option value="">-- Seleccionar ' + escHtml(filtro.etiqueta.toLowerCase()) + ' --</option>';
+                        if (filtro.valores && filtro.valores.length > 0) {
+                            filtro.valores.forEach(function(v) {
+                                html += '<option value="' + escHtml(String(v.id)) + '">' + escHtml(String(v.valor)) + '</option>';
+                            });
+                        }
+                        html += '</select>';
+                    }
+                } else if (tipo === 'number') {
+                    html += '<input type="number" id="filtro_' + escHtml(filtro.nombre_filtro) + '" '
+                          + 'class="form-control filtro-input" data-filtro="' + escHtml(filtro.nombre_filtro) + '" '
+                          + 'placeholder="' + escHtml(filtro.etiqueta) + '">';
+                } else if (tipo === 'date') {
+                    html += '<input type="date" id="filtro_' + escHtml(filtro.nombre_filtro) + '" '
+                          + 'class="form-control filtro-input" data-filtro="' + escHtml(filtro.nombre_filtro) + '">';
+                } else {
+                    html += '<input type="text" id="filtro_' + escHtml(filtro.nombre_filtro) + '" '
+                          + 'class="form-control filtro-input" data-filtro="' + escHtml(filtro.nombre_filtro) + '" '
+                          + 'placeholder="' + escHtml(filtro.etiqueta) + '">';
+                }
+
+                html += '</div>';
+                col.innerHTML = html;
+                container.appendChild(col);
+            });
+
+            // Listener para param-inputs (select_sql con parámetros dinámicos)
+            container.addEventListener('blur', function(e) {
+                if (e.target.classList.contains('param-input')) {
+                    var parentFiltro = e.target.getAttribute('data-filtro-parent');
+                    cargarOpcionesConParametros(parentFiltro, container);
+                }
+            }, true);
+
+            document.getElementById('filtroSection').style.display = 'block';
         }
-        
-        container.appendChild(col);
     });
 }
 
-// Aplicar filtro
+// Cargar opciones de un select_sql con parámetros
+function cargarOpcionesConParametros(nombreFiltro, container) {
+    if (!plantillaActual) return;
+
+    var paramInputs = container.querySelectorAll('.param-input[data-filtro-parent="' + nombreFiltro + '"]');
+    var params = {};
+    var allFilled = true;
+    paramInputs.forEach(function(inp) {
+        var pname = inp.getAttribute('data-param-name');
+        var val   = inp.value.trim();
+        params[pname] = val;
+        if (!val) allFilled = false;
+    });
+    if (!allFilled) return;
+
+    var url = API_PLANTILLAS + '?action=ejecutar_select_filtro'
+            + '&cod='    + encodeURIComponent(plantillaActual.cod_plantilla)
+            + '&filtro=' + encodeURIComponent(nombreFiltro)
+            + '&parametros=' + encodeURIComponent(JSON.stringify(params));
+
+    $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            if (!data.success) return;
+            var sel = document.getElementById('filtro_' + nombreFiltro);
+            if (!sel) return;
+            sel.innerHTML = '<option value="">-- Seleccionar --</option>';
+            data.data.forEach(function(v) {
+                var opt = document.createElement('option');
+                opt.value   = v.id;
+                opt.textContent = v.valor;
+                sel.appendChild(opt);
+            });
+        }
+    });
+}
+
+// ============================================================
+// APLICAR FILTRO → obtener datos y reemplazar variables
+// ============================================================
 function aplicarFiltro() {
-    // Por ahora, no hacemos nada especial
-    // En una versión mejorada, aquí ejecutaríamos SQL dinámico
-    generarDocumento();
-}
-
-// Generar documento (reemplazar variables)
-function generarDocumento() {
     if (!plantillaActual) {
-        alert('Selecciona una plantilla primero');
+        mostrarAlerta('Selecciona una plantilla primero', 'warning');
         return;
     }
-    
-    // Recopilar datos del formulario
-    datosFormulario = {};
-    
-    // Si hay filtros, recopilar sus valores
-    const filtros = document.querySelectorAll('[id^="filtro_"]');
-    filtros.forEach(filtro => {
-        const nombre = filtro.id.replace('filtro_', '');
-        datosFormulario[nombre] = filtro.value;
+
+    var filtros = {};
+    var todosCompletos = true;
+
+    document.querySelectorAll('.filtro-input').forEach(function(el) {
+        var nombre = el.getAttribute('data-filtro');
+        var valor  = el.value;
+        filtros[nombre] = valor;
+        if (!valor) todosCompletos = false;
     });
-    
-    // Por ahora, solo mostramos el contenido original
-    // La funcionalidad completa requiere backend
-    console.log('Datos formulario:', datosFormulario);
+
+    if (!todosCompletos) {
+        mostrarAlerta('Completa todos los filtros requeridos', 'warning');
+        return;
+    }
+
+    $.ajax({
+        url: API_PLANTILLAS + '?action=obtener_datos_filtrados'
+           + '&cod='     + encodeURIComponent(plantillaActual.cod_plantilla)
+           + '&filtros=' + encodeURIComponent(JSON.stringify(filtros)),
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                datosFormulario = response.data;
+                var contenido = reemplazarVariables(plantillaActual.contenido, response.data);
+
+                var ed = tinymce.get('documento-editor');
+                if (ed) ed.setContent(contenido);
+                document.getElementById('editorSection').style.display = 'block';
+                mostrarAlerta('Documento cargado correctamente', 'success');
+            } else {
+                mostrarAlerta('Error: ' + response.error, 'danger');
+            }
+        }
+    });
 }
 
-// Descargar PDF
+// ============================================================
+// REEMPLAZAR VARIABLES EN CONTENIDO (cliente-side)
+// Soporta [[var]], {%%var%%}, {{var}}, -var-
+// ============================================================
+function reemplazarVariables(contenido, datos) {
+    if (!datos || typeof datos !== 'object') return contenido;
+
+    // Caso: array de registros (tabla repetible)
+    if (Array.isArray(datos) && datos.length > 0) {
+        var rowRegex = /<tr[^>]*>[\s\S]*?\[\[[\s\S]*?\]\][\s\S]*?<\/tr>/gi;
+        var rowMatch = contenido.match(rowRegex);
+        if (rowMatch && rowMatch.length > 0) {
+            var rowTemplate = rowMatch[0];
+            var allRows = '';
+            datos.forEach(function(record) {
+                var row = rowTemplate;
+                for (var key in record) {
+                    if (record.hasOwnProperty(key)) {
+                        var val = record[key] !== null ? String(record[key]) : '';
+                        row = row.split('[[' + key + ']]').join(val);
+                    }
+                }
+                allRows += row;
+            });
+            contenido = contenido.replace(rowRegex, allRows);
+        }
+        return contenido;
+    }
+
+    // Caso: objeto único
+    for (var key in datos) {
+        if (datos.hasOwnProperty(key)) {
+            var val = datos[key] !== null ? String(datos[key]) : '';
+            contenido = contenido.split('[[' + key + ']]').join(val);
+            contenido = contenido.split('{%%' + key + '%%}').join(val);
+            contenido = contenido.split('{{' + key + '}}').join(val);
+            contenido = contenido.split('-' + key + '-').join(val);
+        }
+    }
+    return contenido;
+}
+
+// ============================================================
+// GENERAR DOCUMENTO (re-aplica filtros desde el editor)
+// ============================================================
+function generarDocumento() {
+    aplicarFiltro();
+}
+
+// ============================================================
+// DESCARGAR PDF (imprime en ventana nueva)
+// ============================================================
 function descargarPDF() {
-    const editor = tinymce.get('documento-editor');
-    const contenido = editor ? editor.getContent() : '';
-    
-    if (!contenido || contenido === '') {
-        alert('No hay contenido para descargar');
+    if (!plantillaActual) {
+        mostrarAlerta('Selecciona una plantilla primero', 'warning');
         return;
     }
-    
-    const ventana = window.open('', '', 'height=600,width=800');
-    ventana.document.write('<html><head><title>Documento</title></head><body>');
+    var ed = tinymce.get('documento-editor');
+    var contenido = ed ? ed.getContent() : '';
+    if (!contenido || contenido === '<p></p>') {
+        mostrarAlerta('Genera el documento primero', 'warning');
+        return;
+    }
+    var nombre = (plantillaActual ? plantillaActual.nombre : 'documento').replace(/\s+/g, '_');
+    var ventana = window.open('', '_blank', 'height=700,width=900');
+    ventana.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + nombre + '</title>');
+    ventana.document.write('<style>@page{margin:15mm} body{font-family:Arial,sans-serif;font-size:12px;color:#333;padding:0;margin:0} table{border-collapse:collapse;width:100%} td,th{border:1px solid #ccc;padding:4px 8px}</style>');
+    ventana.document.write('</head><body>');
     ventana.document.write(contenido);
     ventana.document.write('</body></html>');
     ventana.document.close();
-    ventana.print();
+    ventana.focus();
+    setTimeout(function() { ventana.print(); }, 400);
 }
 
-// Imprimir documento
+// ============================================================
+// IMPRIMIR DOCUMENTO
+// ============================================================
 function imprimirDocumento() {
-    const editor = tinymce.get('documento-editor');
-    const contenido = editor ? editor.getContent() : '';
-    
-    if (!contenido || contenido === '') {
-        alert('No hay contenido para imprimir');
-        return;
-    }
-    
-    const ventana = window.open('', '', 'height=600,width=800');
-    ventana.document.write('<pre style="font-family: Arial; padding: 20px;">' + contenido + '</pre>');
-    ventana.document.close();
-    ventana.print();
+    descargarPDF();
 }
 
-// Guardar documento
+// ============================================================
+// GUARDAR DOCUMENTO EN BD
+// ============================================================
 function guardarDocumento() {
     if (!plantillaActual) {
-        alert('Selecciona una plantilla');
+        mostrarAlerta('Selecciona una plantilla primero', 'warning');
         return;
     }
-    
-    const editor = tinymce.get('documento-editor');
-    const contenido_final = editor ? editor.getContent() : '';
-    
-    if (!contenido_final || contenido_final === '') {
-        alert('El documento no puede estar vacío');
+    var ed = tinymce.get('documento-editor');
+    var contenido_final = ed ? ed.getContent() : '';
+    if (!contenido_final || contenido_final.trim() === '' || contenido_final === '<p></p>') {
+        mostrarAlerta('El documento está vacío. Genera el documento con datos válidos primero', 'warning');
         return;
     }
-    
-    // Por ahora mostramos un mensaje
-    // La funcionalidad completa requiere endpoint backend adicional
-    alert('Guardando documento...');
-    console.log('Datos para guardar:', {
-        cod_plantilla: plantillaActual.cod_plantilla,
-        contenido_final: contenido_final,
-        datos: datosFormulario
+
+    $.ajax({
+        url: API_PLANTILLAS + '?action=guardar_documento',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            cod_plantilla:   plantillaActual.cod_plantilla,
+            contenido_final: contenido_final,
+            datos:           datosFormulario
+        }),
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                mostrarAlerta('Documento guardado correctamente', 'success');
+            } else {
+                mostrarAlerta('Error al guardar: ' + response.error, 'danger');
+            }
+        }
     });
 }
 
-// Limpiar formulario
+// ============================================================
+// LIMPIAR
+// ============================================================
 function limpiar() {
     document.getElementById('selectPlantilla').value = '';
-    
-    const editor = tinymce.get('documento-editor');
-    if (editor) {
-        editor.setContent('');
-    }
-    
-    document.getElementById('filtroSection').style.display = 'none';
-    document.getElementById('editorSection').style.display = 'none';
-    datosFormulario = {};
-    plantillaActual = null;
+    document.getElementById('filtrosContainer').innerHTML = '';
+    document.getElementById('filtroSection').style.display  = 'none';
+    document.getElementById('editorSection').style.display  = 'none';
+    var ed = tinymce.get('documento-editor');
+    if (ed) ed.setContent('');
+    datosFormulario  = {};
+    plantillaActual  = null;
 }
 
-// Inicializar
-$(document).ready(function() {
-    cargarPlantillasDisponibles();
-    inicializarTinyMCE();
-});
+// ============================================================
+// HELPERS
+// ============================================================
+function escHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g,  '&amp;')
+        .replace(/</g,  '&lt;')
+        .replace(/>/g,  '&gt;')
+        .replace(/"/g,  '&quot;')
+        .replace(/'/g,  '&#39;');
+}
+
+function mostrarAlerta(mensaje, tipo) {
+    var id  = 'alert-' + Date.now();
+    var div = document.createElement('div');
+    div.id        = id;
+    div.className = 'alert alert-' + tipo + ' alert-dismissible fade show';
+    div.role      = 'alert';
+    div.innerHTML = mensaje + '<button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>';
+    var container = document.querySelector('.container-fluid');
+    if (container) container.insertBefore(div, container.firstChild);
+    setTimeout(function() {
+        var el = document.getElementById(id);
+        if (el) el.remove();
+    }, 4000);
+}
+
+</script>

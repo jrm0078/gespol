@@ -80,7 +80,8 @@ function CrearPlantilla($cod_plantilla, $nombre, $descripcion, $tipo_documento,
               (cod_plantilla, nombre, descripcion, tipo_documento, contenido, sql_consulta, estado)
               VALUES ('$cod_sql', '$nom_sql', '$desc_sql', '$tipo_sql', '$cont_sql', '$sql_sql', $estado)";
     
-    if (insert($query)) {
+    $result = ejecutaqueryPHP($query);
+    if ($result === 'OK') {
         return json_encode(['validacion' => 'ok', 'mensaje' => 'Plantilla creada correctamente']);
     } else {
         return json_encode(['validacion' => 'ko', 'error' => 'Error al crear la plantilla']);
@@ -126,7 +127,8 @@ function ActualizarPlantilla($cod_plantilla, $nombre, $descripcion, $tipo_docume
                   estado = $estado
               WHERE cod_plantilla = '$cod_sql'";
     
-    if (update($query)) {
+    $result = ejecutaqueryPHP($query);
+    if ($result === 'OK') {
         return json_encode(['validacion' => 'ok', 'mensaje' => 'Plantilla actualizada correctamente']);
     } else {
         return json_encode(['validacion' => 'ko', 'error' => 'Error al actualizar la plantilla']);
@@ -138,7 +140,8 @@ function EliminarPlantilla($cod_plantilla) {
     
     $query = "DELETE FROM plantillas_maestro WHERE cod_plantilla = '$cod_sql'";
     
-    if (delete($query)) {
+    $result = ejecutaqueryPHP($query);
+    if ($result === 'OK') {
         return json_encode(['validacion' => 'ok', 'mensaje' => 'Plantilla eliminada correctamente']);
     } else {
         return json_encode(['validacion' => 'ko', 'error' => 'Error al eliminar la plantilla']);
@@ -177,13 +180,15 @@ function AgregarFiltro($cod_plantilla, $nombre_filtro, $etiqueta, $tipo_filtro,
               VALUES ('$cod_sql', '$nom_sql', '$eti_sql', '$tipo_sql', '$tab_sql', 
                       '$camp_sql', '$camp2_sql', '$sql_sql', $orden, $requerido, 1)";
     
-    return insert($query);
+    $result = ejecutaqueryPHP($query);
+    return $result === 'OK';
 }
 
 function EliminarFiltrosPorPlantilla($cod_plantilla) {
     $cod_sql = CadSql($cod_plantilla);
     $query = "DELETE FROM plantillas_filtros WHERE cod_plantilla = '$cod_sql'";
-    return delete($query);
+    $result = ejecutaqueryPHP($query);
+    return $result === 'OK';
 }
 
 // ============================================
@@ -226,7 +231,8 @@ function GuardarDocumento($cod_plantilla, $id_usuario, $contenido_final, $datos_
               (cod_plantilla, id_usuario, contenido_final, datos_json)
               VALUES ('$cod_sql', $id_usuario, '$cont_sql', '$datos_sql')";
     
-    if (insert($query)) {
+    $result = ejecutaqueryPHP($query);
+    if ($result === 'OK') {
         return json_encode(['validacion' => 'ok', 'mensaje' => 'Documento guardado correctamente']);
     } else {
         return json_encode(['validacion' => 'ko', 'error' => 'Error al guardar el documento']);

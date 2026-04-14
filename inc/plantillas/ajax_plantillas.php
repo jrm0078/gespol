@@ -15,9 +15,11 @@ include("../seguridad.php");
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
 switch($action) {
-    // GET
     case 'listar':
-        listarPlantillas();
+        listarPlantillas(false);
+        break;
+    case 'listar_activas':
+        listarPlantillas(true);
         break;
     case 'obtener_completa':
         obtenerCompleta();
@@ -25,8 +27,12 @@ switch($action) {
     case 'obtener_filtros':
         obtenerFiltrosAction();
         break;
-    
-    // POST
+    case 'obtener_datos_filtrados':
+        obtenerDatosFiltrados();
+        break;
+    case 'ejecutar_select_filtro':
+        ejecutarSelectFiltro();
+        break;
     case 'crear':
         crearPlantilla();
         break;
@@ -36,7 +42,9 @@ switch($action) {
     case 'eliminar':
         eliminarPlantillaAction();
         break;
-    
+    case 'guardar_documento':
+        guardarDocumentoAction();
+        break;
     default:
         echo json_encode(['success' => false, 'error' => 'Acción no reconocida']);
 }
@@ -46,29 +54,23 @@ switch($action) {
 // ==========================================
 
 /**
- * Listar todas las plantillas
+ * Listar plantillas. $soloActivas=true filtra estado=1
  */
-function listarPlantillas() {
-    $plantillas = ObtenerPlantillasAdmin();
+function listarPlantillas($soloActivas = false) {
+    $plantillas_json = $soloActivas ? ObtenerPlantillas() : ObtenerPlantillasAdmin();
+    $data = json_decode($plantillas_json, true) ?? [];
     
-    if ($plantillas) {
-        $data = json_decode($plantillas, true);
-        $formatted = [];
-        
-        foreach ($data as $plant) {
-            $formatted[] = [
-                'cod_plantilla' => $plant[0] ?? '',
-                'nombre' => $plant[1] ?? '',
-                'descripcion' => $plant[2] ?? '',
-                'tipo_documento' => $plant[3] ?? '',
-                'estado' => $plant[4] ?? 1
-            ];
-        }
-        
-        echo json_encode(['success' => true, 'data' => $formatted]);
-    } else {
-        echo json_encode(['success' => true, 'data' => []]);
+    $formatted = [];
+    foreach ($data as $plant) {
+        $formatted[] = [
+            'cod_plantilla' => $plant['cod_plantilla'] ?? '',
+            'nombre'        => $plant['nombre']        ?? '',
+            'descripcion'   => $plant['descripcion']   ?? '',
+            'tipo_documento'=> $plant['tipo_documento']?? '',
+            'estado'        => $plant['estado']        ?? 1
+        ];
     }
+    echo json_encode(['success' => true, 'data' => $formatted]);
 }
 
 /**
@@ -98,17 +100,17 @@ function obtenerCompleta() {
     if (is_array($filtros)) {
         foreach ($filtros as $f) {
             $filtered[] = [
-                'id' => $f[0] ?? '',
-                'nombre_filtro' => $f[1] ?? '',
-                'etiqueta' => $f[2] ?? '',
-                'tipo_filtro' => $f[3] ?? '',
-                'tabla_datos' => $f[4] ?? '',
-                'campo_clave' => $f[5] ?? '',
-                'campo_valor' => $f[6] ?? '',
-                'sql_query' => $f[7] ?? '',
-                'operador' => $f[8] ?? '',
-                'requerido' => $f[9] ?? 0,
-                'orden' => $f[10] ?? 999
+                'id'           => $f['id']           ?? '',
+                'nombre_filtro'=> $f['nombre_filtro'] ?? '',
+                'etiqueta'     => $f['etiqueta']      ?? '',
+                'tipo_filtro'  => $f['tipo_filtro']   ?? '',
+                'tabla_datos'  => $f['tabla_datos']   ?? '',
+                'campo_clave'  => $f['campo_clave']   ?? '',
+                'campo_valor'  => $f['campo_valor']   ?? '',
+                'sql_query'    => $f['sql_query']     ?? '',
+                'operador'     => $f['operador']      ?? '',
+                'requerido'    => $f['requerido']     ?? 0,
+                'orden'        => $f['orden']         ?? 999
             ];
         }
     }
@@ -129,7 +131,7 @@ function obtenerCompleta() {
 }
 
 /**
- * Obtener filtros de una plantilla
+ * Obtener filtros de una plantilla con valores cargados para selects
  */
 function obtenerFiltrosAction() {
     $cod = isset($_GET['cod']) ? $_GET['cod'] : '';
@@ -142,7 +144,230 @@ function obtenerFiltrosAction() {
     $filtros_json = ObtenerFiltros($cod);
     $filtros = json_decode($filtros_json, true) ?? [];
     
+    // Enriquecer cada filtro con sus valores posibles
+    foreach ($filtros as &$filtro) {
+        $tipo = $filtro['tipo_filtro'] ?? 'select_table';
+        $filtro['valores'] = [];
+        $filtro['tiene_parametros'] = false;
+        $filtro['parametros_requeridos'] = [];
+        
+        if ($tipo === 'select_table') {
+            try {
+                $tabla       = preg_replace('/[^a-zA-Z0-9_]/', '', $filtro['tabla_datos'] ?? '');
+                $campo_clave = preg_replace('/[^a-zA-Z0-9_]/', '', $filtro['campo_clave'] ?? 'id');
+                $campo_valor = preg_replace('/[^a-zA-Z0-9_]/', '', $filtro['campo_valor'] ?? 'nombre');
+                if ($tabla) {
+                    try {
+                        $sql = "SELECT `{$campo_clave}` as id, `{$campo_valor}` as valor FROM `{$tabla}` WHERE activo = 1 ORDER BY `{$campo_valor}`";
+                        $rows = selectPHP($sql);
+                    } catch (Exception $e1) {
+                        $sql = "SELECT `{$campo_clave}` as id, `{$campo_valor}` as valor FROM `{$tabla}` ORDER BY `{$campo_valor}`";
+                        $rows = selectPHP($sql);
+                    }
+                    if (is_array($rows)) {
+                        $filtro['valores'] = $rows;
+                    }
+                }
+            } catch (Exception $e) {
+                // silencio
+            }
+        } elseif ($tipo === 'select_sql') {
+            $sql = $filtro['sql_query'] ?? '';
+            if (!empty($sql)) {
+                $has_params = preg_match_all('/\[\[(\w+)\]\]/', $sql, $matches);
+                if ($has_params > 0) {
+                    $filtro['tiene_parametros'] = true;
+                    $filtro['parametros_requeridos'] = $matches[1];
+                } else {
+                    try {
+                        $rows = selectPHP($sql);
+                        if (is_array($rows)) {
+                            foreach ($rows as $row) {
+                                $keys = array_values($row);
+                                $filtro['valores'][] = ['id' => $keys[0], 'valor' => $keys[1] ?? $keys[0]];
+                            }
+                        }
+                    } catch (Exception $e) {
+                        // silencio
+                    }
+                }
+            }
+        }
+    }
+    unset($filtro);
+    
     echo json_encode(['success' => true, 'data' => $filtros]);
+}
+
+/**
+ * Ejecutar SELECT de un filtro con parámetros nombrados [[param]]
+ */
+function ejecutarSelectFiltro() {
+    $cod           = isset($_GET['cod'])    ? $_GET['cod']    : '';
+    $nombre_filtro = isset($_GET['filtro']) ? $_GET['filtro'] : '';
+    $params_json   = isset($_GET['parametros']) ? $_GET['parametros'] : '{}';
+    
+    if (!$cod || !$nombre_filtro) {
+        echo json_encode(['success' => false, 'error' => 'Parámetros requeridos']);
+        return;
+    }
+    
+    $params = json_decode($params_json, true) ?? [];
+    
+    $filtros_json = ObtenerFiltros($cod);
+    $filtros = json_decode($filtros_json, true) ?? [];
+    
+    $filtro_config = null;
+    foreach ($filtros as $f) {
+        if ($f['nombre_filtro'] === $nombre_filtro) {
+            $filtro_config = $f;
+            break;
+        }
+    }
+    
+    if (!$filtro_config) {
+        echo json_encode(['success' => false, 'error' => 'Filtro no encontrado']);
+        return;
+    }
+    
+    $sql = $filtro_config['sql_query'] ?? '';
+    if (empty($sql)) {
+        echo json_encode(['success' => false, 'error' => 'SQL vacío']);
+        return;
+    }
+    
+    try {
+        $has_params = preg_match_all('/\[\[(\w+)\]\]/', $sql, $matches);
+        $param_values = [];
+        if ($has_params > 0) {
+            foreach ($matches[1] as $pname) {
+                $param_values[] = $params[$pname] ?? null;
+            }
+            $sql = preg_replace('/\[\[\w+\]\]/', '?', $sql);
+        }
+        
+        $db   = getConnection();
+        $stmt = $db->prepare($sql);
+        $stmt->execute($param_values);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $db   = null;
+        
+        $valores = [];
+        foreach ($rows as $row) {
+            $keys = array_values($row);
+            $valores[] = ['id' => $keys[0], 'valor' => $keys[1] ?? $keys[0]];
+        }
+        echo json_encode(['success' => true, 'data' => $valores]);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    }
+}
+
+/**
+ * Obtener datos con filtros aplicados (ejecuta el SQL de la plantilla)
+ */
+function obtenerDatosFiltrados() {
+    $cod         = isset($_GET['cod'])     ? $_GET['cod']     : '';
+    $filtros_raw = isset($_GET['filtros']) ? $_GET['filtros'] : '{}';
+    
+    if (empty($cod)) {
+        echo json_encode(['success' => false, 'error' => 'Código de plantilla requerido']);
+        return;
+    }
+    
+    $filtros_vals = json_decode($filtros_raw, true) ?? [];
+    
+    $plantilla = ObtenerPlantilla($cod);
+    if (!$plantilla) {
+        echo json_encode(['success' => false, 'error' => 'Plantilla no encontrada']);
+        return;
+    }
+    
+    $sql_consulta = $plantilla['sql_consulta'] ?? '';
+    if (empty($sql_consulta)) {
+        echo json_encode(['success' => false, 'error' => 'La plantilla no tiene SQL configurado']);
+        return;
+    }
+    
+    try {
+        $db = getConnection();
+        
+        // Detectar parámetros nombrados [[param_name]]
+        $has_named = preg_match_all('/\[\[(\w+)\]\]/', $sql_consulta, $named_matches);
+        $param_values = [];
+        
+        if ($has_named > 0) {
+            foreach ($named_matches[1] as $pname) {
+                $param_values[] = $filtros_vals[$pname] ?? null;
+            }
+            $sql_consulta = preg_replace('/\[\[\w+\]\]/', '?', $sql_consulta);
+        } else {
+            // Sin parámetros nombrados: recopilar valores en orden de filtros configurados
+            $filtros_json = ObtenerFiltros($cod);
+            $filtros_cfg  = json_decode($filtros_json, true) ?? [];
+            foreach ($filtros_cfg as $fc) {
+                $val = $filtros_vals[$fc['nombre_filtro']] ?? null;
+                if ($val !== null && $val !== '') {
+                    $param_values[] = $val;
+                }
+            }
+        }
+        
+        $stmt = $db->prepare($sql_consulta);
+        $stmt->execute($param_values);
+        $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $db = null;
+        
+        if (empty($datos)) {
+            echo json_encode(['success' => false, 'error' => 'No se encontraron datos con los filtros aplicados']);
+            return;
+        }
+        
+        $respuesta = (count($datos) === 1) ? $datos[0] : $datos;
+        echo json_encode(['success' => true, 'data' => $respuesta]);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    }
+}
+
+/**
+ * Guardar documento generado en BD
+ */
+function guardarDocumentoAction() {
+    $input = file_get_contents('php://input');
+    $data  = json_decode($input, true);
+    
+    if (!$data) {
+        echo json_encode(['success' => false, 'error' => 'JSON inválido']);
+        return;
+    }
+    
+    $cod_plantilla  = $data['cod_plantilla']  ?? '';
+    $contenido_final= $data['contenido_final']?? '';
+    $datos_json     = json_encode($data['datos'] ?? []);
+    
+    if (empty($cod_plantilla) || empty(trim($contenido_final)) || $contenido_final === '<p></p>') {
+        echo json_encode(['success' => false, 'error' => 'Código y contenido son requeridos']);
+        return;
+    }
+    
+    // Obtener id_usuario de sesión si existe
+    $id_usuario = isset($_SESSION['id']) ? (int)$_SESSION['id'] : 'NULL';
+    
+    $cod_sql     = CadSql($cod_plantilla);
+    $cont_sql    = CadSql($contenido_final);
+    $datos_sql   = CadSql($datos_json);
+    $usuario_val = ($id_usuario === 'NULL') ? 'NULL' : $id_usuario;
+    
+    $query = "INSERT INTO plantillas_documentos (cod_plantilla, id_usuario, contenido_final, datos_json)
+              VALUES ('$cod_sql', $usuario_val, '$cont_sql', '$datos_sql')";
+    
+    $result = ejecutaqueryPHP($query);
+    if ($result === 'OK') {
+        echo json_encode(['success' => true, 'message' => 'Documento guardado correctamente']);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Error al guardar el documento']);
+    }
 }
 
 // ==========================================
@@ -278,88 +503,3 @@ function eliminarPlantillaAction() {
 
 ?>
 
-    
-    $variables_json = ObtenerVariables($cod);
-    $variables = json_decode($variables_json, true);
-    
-    echo json_encode(['validacion' => 'ok', 'data' => $variables]);
-}
-
-function CargaTablasPlantillas() {
-    $tabla = "plantillas_maestro";
-    $primaryKey = "cod_plantilla";
-    $campos = "cod_plantilla,cod_plantilla,nombre,descripcion,tipo_documento,estado";
-    $tiposcampo = "texto,texto,texto,texto,texto,numero";
-    $joinQuery = "";
-    
-    echo CargaTablaPHP($tabla, $campos, $tiposcampo, $primaryKey, $joinQuery);
-}
-
-function CrearPlantilla_Handler() {
-    $lmodo = isset($_POST['lmodo']) ? $_POST['lmodo'] : 'nuevo';
-    $cod = isset($_POST['cod_plantilla']) ? $_POST['cod_plantilla'] : '';
-    $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : '';
-    $descripcion = isset($_POST['descripcion']) ? $_POST['descripcion'] : '';
-    $tipo = isset($_POST['tipo_documento']) ? $_POST['tipo_documento'] : '';
-    $contenido = isset($_POST['contenido']) ? $_POST['contenido'] : '';
-    $sql = isset($_POST['sql_consulta']) ? $_POST['sql_consulta'] : '';
-    
-    $resultado = CrearPlantilla($cod, $nombre, $descripcion, $tipo, $contenido, $sql, 1);
-    echo $resultado;
-}
-
-function ActualizarPlantilla_Handler() {
-    $cod = isset($_POST['cod_plantilla']) ? $_POST['cod_plantilla'] : '';
-    $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : '';
-    $descripcion = isset($_POST['descripcion']) ? $_POST['descripcion'] : '';
-    $tipo = isset($_POST['tipo_documento']) ? $_POST['tipo_documento'] : '';
-    $contenido = isset($_POST['contenido']) ? $_POST['contenido'] : '';
-    $sql = isset($_POST['sql_consulta']) ? $_POST['sql_consulta'] : '';
-    $estado = isset($_POST['estado']) ? $_POST['estado'] : 1;
-    
-    $resultado = ActualizarPlantilla($cod, $nombre, $descripcion, $tipo, $contenido, $sql, $estado);
-    echo $resultado;
-}
-
-function EliminarPlantilla_Handler() {
-    $cod = isset($_POST['cod_plantilla']) ? $_POST['cod_plantilla'] : '';
-    
-    if (empty($cod)) {
-        echo json_encode(['validacion' => 'ko', 'error' => 'Código requerido']);
-        return;
-    }
-    
-    $resultado = EliminarPlantilla($cod);
-    echo $resultado;
-}
-
-function ReemplazarVariables_Handler() {
-    $contenido = isset($_POST['contenido']) ? $_POST['contenido'] : '';
-    $datos = isset($_POST['datos']) ? json_decode($_POST['datos'], true) : [];
-    
-    $contenido_final = ReemplazarVariables($contenido, $datos);
-    
-    echo json_encode([
-        'validacion' => 'ok',
-        'data' => [
-            'contenido' => $contenido_final
-        ]
-    ]);
-}
-
-function GuardarDocumento_Handler() {
-    $cod_plantilla = isset($_POST['cod_plantilla']) ? $_POST['cod_plantilla'] : '';
-    $id_usuario = isset($_SESSION['user_codigo']) ? $_SESSION['user_codigo'] : null;
-    $contenido_final = isset($_POST['contenido_final']) ? $_POST['contenido_final'] : '';
-    $datos_json = isset($_POST['datos']) ? json_decode($_POST['datos'], true) : [];
-    
-    if (empty($contenido_final)) {
-        echo json_encode(['validacion' => 'ko', 'error' => 'El contenido no puede estar vacío']);
-        return;
-    }
-    
-    $resultado = GuardarDocumento($cod_plantilla, $id_usuario, $contenido_final, $datos_json);
-    echo $resultado;
-}
-
-?>
