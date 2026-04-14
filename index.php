@@ -114,8 +114,6 @@
                     <!-- Toggle which is visible on mobile only -->
                     <!-- ============================================================== -->
                     <a class="topbartoggler d-block d-md-none waves-effect waves-light" href="javascript:void(0)" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i class="ti-more"></i></a>
-                    <!-- Toggle sidebar - SIEMPRE visible en desktop, fuera del collapse -->
-                    <a class="nav-link sidebartoggler waves-effect waves-light d-none d-md-flex" href="javascript:void(0);" data-sidebartype="mini-sidebar" style="align-items: center; justify-content: center; padding: 8px 12px; color: white; order: 3;"><i class="mdi mdi-menu font-24"></i></a>
                 </div>
                 <!-- ============================================================== -->
                 <!-- End Logo -->
@@ -127,7 +125,8 @@
                     
 					
 					<ul class="navbar-nav float-left mr-auto">
-					<p style="color: white; font-size: 1.4rem; font-weight: 600; margin: 0; padding-left: 15px; display: flex; align-items: center; letter-spacing: 0.5px;">Panel de Administración</p>
+						<li class="nav-item"><a class="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0);" data-sidebartype="mini-sidebar"><i class="mdi mdi-menu font-24"></i></a></li>
+						<li class="nav-item d-flex align-items-center"><span style="color: white; font-size: 1.4rem; font-weight: 600; padding-left: 10px; letter-spacing: 0.5px;">Panel de Administración</span></li>
                     </ul>
                     <!-- ============================================================== -->
                     <!-- Right side toggle and nav items -->
