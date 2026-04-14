@@ -38,7 +38,8 @@ function Cargar(){
 	//CARGA DE COMBOS
 	CmbIniciar($('#cmbrol'));
 	
-	CmbCargaValor($('#cmbrol'),'Administrador','Administrador');
+	CmbCargaValor($('#cmbrol'),'Superadmin','Superadmin');
+	CmbCargaValor($('#cmbrol'),'Admin','Admin');
 	CmbCargaValor($('#cmbrol'),'Usuario','Usuario');	
 	
 	

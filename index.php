@@ -114,6 +114,8 @@
                     <!-- Toggle which is visible on mobile only -->
                     <!-- ============================================================== -->
                     <a class="topbartoggler d-block d-md-none waves-effect waves-light" href="javascript:void(0)" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i class="ti-more"></i></a>
+                    <!-- Toggle sidebar - SIEMPRE visible en desktop, fuera del collapse -->
+                    <a class="nav-link sidebartoggler waves-effect waves-light d-none d-md-flex" href="javascript:void(0);" data-sidebartype="mini-sidebar" style="align-items: center; justify-content: center; padding: 8px 12px; color: white; order: 3;"><i class="mdi mdi-menu font-24"></i></a>
                 </div>
                 <!-- ============================================================== -->
                 <!-- End Logo -->
@@ -125,8 +127,6 @@
                     
 					
 					<ul class="navbar-nav float-left mr-auto">
-                        <li class="nav-item d-none d-md-block"><a class="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0);" data-sidebartype="mini-sidebar"><i class="mdi mdi-menu font-24"></i></a></li>
-
 					<p style="color: white; font-size: 1.4rem; font-weight: 600; margin: 0; padding-left: 15px; display: flex; align-items: center; letter-spacing: 0.5px;">Panel de Administración</p>
                     </ul>
                     <!-- ============================================================== -->
@@ -331,30 +331,7 @@
 	<script src="js/func_aplicacion.js?v=1"></script>
 	<script src="js/index.js?v=1"></script>
 		<!-- Toggle del Sidebar - Manejado por app.min.js -->
-	<script>
-	// No es necesario agregar handlers personalizados
-	// app.min.js already handles .sidebartoggler clicks
-	</script>
 
-	<!-- Fix para mantener el toggle visible y funcional -->
-	<style>
-	.sidebartoggler {
-		display: block !important;
-		visibility: visible !important;
-		opacity: 1 !important;
-	}
-	li.nav-item.d-none {
-		display: none !important;
-	}
-	li.nav-item.d-md-block {
-		display: block !important;
-	}
-	@media (max-width: 768px) {
-		li.nav-item.d-none.d-md-block {
-			display: none !important;
-		}
-	}
-	</style>	
 </body>
 
 
