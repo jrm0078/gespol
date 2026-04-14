@@ -19,7 +19,7 @@ session_start();
         body {
             margin: 0;
             min-height: 100vh;
-            background: linear-gradient(135deg, #003d6b 0%, #0066B3 45%, #0099e6 100%);
+            background: #eef2f7;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -33,7 +33,7 @@ session_start();
             max-width: 420px;
             background: #fff;
             border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            box-shadow: 0 8px 32px rgba(0, 102, 179, 0.13), 0 2px 8px rgba(0,0,0,0.07);
             overflow: hidden;
         }
 

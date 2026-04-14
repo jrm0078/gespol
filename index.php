@@ -247,7 +247,7 @@
             <!-- ============================================================== -->
             <!-- Bread crumb and right sidebar toggle -->
             <!-- ============================================================== -->
-            <div class="page-breadcrumb">
+            <div class="page-breadcrumb" style="padding: 10px 20px 5px;">
                 <div class="row">
                     <div class="col-5 align-self-center">
                         <h4 id="titulopagina" class="page-title"><i class="mdi mdi-home"></i> Inicio</h4>
