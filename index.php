@@ -125,7 +125,7 @@
                     
 					
 					<ul class="navbar-nav float-left mr-auto">
-                        <li class="nav-item d-none d-md-block"><a class="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0)" data-sidebar-type="mini-sidebar"><i class="mdi mdi-menu font-24"></i></a></li>
+                        <li class="nav-item d-none d-md-block"><a class="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0);" onclick="return false;" data-sidebar-type="mini-sidebar"><i class="mdi mdi-menu font-24"></i></a></li>
 
 					<p style="color: white; font-size: 1.4rem; font-weight: 600; margin: 0; padding-left: 15px; display: flex; align-items: center; letter-spacing: 0.5px;">Panel de Administración</p>
                     </ul>
@@ -330,8 +330,23 @@
 	<script src="js/genericas.js?v=1"></script>
 	<script src="js/func_aplicacion.js?v=1"></script>
 	<script src="js/index.js?v=1"></script>
-	
-	
+		<!-- Sidebar toggle handler -->
+	<script>
+	$(document).ready(function() {
+		$('.sidebartoggler').on('click', function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			var wrapper = $('#main-wrapper');
+			
+			// Toggle mini-sidebar
+			if (wrapper.hasClass('mini-sidebar-shown')) {
+				wrapper.removeClass('mini-sidebar-shown');
+			} else {
+				wrapper.addClass('mini-sidebar-shown');
+			}
+		});
+	});
+	</script>	
 </body>
 
 

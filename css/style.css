@@ -1900,7 +1900,7 @@ textarea.form-control {
 .was-validated .custom-select:valid, .custom-select.is-valid {
   border-color: #36bea6;
   padding-right: 3.29688rem;
-  background: url(../../assets/images/custom-select.png) no-repeat right 0.75rem center/8px 10px, url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2336bea6' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e") no-repeat center right 1.75rem/1.03125rem 1.03125rem; }
+  background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2336bea6' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e") no-repeat center right 1.75rem/1.03125rem 1.03125rem; }
   .was-validated .custom-select:valid:focus, .custom-select.is-valid:focus {
     border-color: #36bea6;
     box-shadow: 0 0 0 0.2rem rgba(54, 190, 166, 0.25); }
@@ -1997,7 +1997,7 @@ textarea.form-control {
 .was-validated .custom-select:invalid, .custom-select.is-invalid {
   border-color: #f62d51;
   padding-right: 3.29688rem;
-  background: url(../../assets/images/custom-select.png) no-repeat right 0.75rem center/8px 10px, url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23f62d51' viewBox='-2 -2 7 7'%3e%3cpath stroke='%23d9534f' d='M0 0l3 3m0-3L0 3'/%3e%3ccircle r='.5'/%3e%3ccircle cx='3' r='.5'/%3e%3ccircle cy='3' r='.5'/%3e%3ccircle cx='3' cy='3' r='.5'/%3e%3c/svg%3E") no-repeat center right 1.75rem/1.03125rem 1.03125rem; }
+  background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23f62d51' viewBox='-2 -2 7 7'%3e%3cpath stroke='%23d9534f' d='M0 0l3 3m0-3L0 3'/%3e%3ccircle r='.5'/%3e%3ccircle cx='3' r='.5'/%3e%3ccircle cy='3' r='.5'/%3e%3ccircle cx='3' cy='3' r='.5'/%3e%3c/svg%3E") no-repeat center right 1.75rem/1.03125rem 1.03125rem; }
   .was-validated .custom-select:invalid:focus, .custom-select.is-invalid:focus {
     border-color: #f62d51;
     box-shadow: 0 0 0 0.2rem rgba(246, 45, 81, 0.25); }
@@ -3236,7 +3236,6 @@ input[type="button"].btn-block {
   line-height: 1.5;
   color: #4F5467;
   vertical-align: middle;
-  background: url(../../assets/images/custom-select.png) no-repeat right 0.75rem center/8px 10px;
   background-color: #fff;
   border: 1px solid #e9ecef;
   border-radius: 2px;
