@@ -660,37 +660,46 @@ function limpiarFormularioPlantillas() {
 
 // Cancelar edición
 function cancelarFormularioPlantillas() {
-    // TinyMCE tiene un focus-trap que bloquea los clics en diálogos externos.
-    // Hay que quitarle el foco antes de abrir cualquier Swal.
-    if (tinymce.get('contenido_form')) {
-        tinymce.get('contenido_form').fire('blur');
-    }
-    if (document.activeElement) {
-        document.activeElement.blur();
-    }
-
-    if (formDirty) {
-        Swal.fire({
-            title: '¿Descartar cambios?',
-            text: 'Tienes datos sin guardar. Si sales ahora se perderán.',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Sí, descartar',
-            cancelButtonText: 'Seguir editando'
-        }).then(function(result) {
-            if (result.isConfirmed) {
-                formDirty = false;
-                $('#cod_plantilla_form, #nombre_form, #sql_consulta_form').removeClass('is-valid is-invalid');
-                limpiarFormularioPlantillas();
-                mostrarTablaPlantillas();
-            }
-        });
-    } else {
+    if (!formDirty) {
         limpiarFormularioPlantillas();
         mostrarTablaPlantillas();
+        return;
     }
+
+    // TinyMCE 6 tiene un focus-trap que hace que los botones de Swal no respondan.
+    // La única solución fiable es destruir el editor antes de abrir el diálogo,
+    // y reiniciarlo si el usuario decide quedarse.
+    var contenidoGuardado = '';
+    var editor = tinymce.get('contenido_form');
+    if (editor) {
+        contenidoGuardado = editor.getContent();
+        editor.destroy();
+    }
+
+    Swal.fire({
+        title: '¿Descartar cambios?',
+        text: 'Tienes datos sin guardar. Si sales ahora se perderán.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, descartar',
+        cancelButtonText: 'Seguir editando'
+    }).then(function(result) {
+        if (result.isConfirmed) {
+            formDirty = false;
+            $('#cod_plantilla_form, #nombre_form, #sql_consulta_form').removeClass('is-valid is-invalid');
+            limpiarFormularioPlantillas();
+            mostrarTablaPlantillas();
+        } else {
+            // Reinicializar el editor con el contenido que tenía
+            inicializarTinyMCEForm();
+            setTimeout(function() {
+                var ed = tinymce.get('contenido_form');
+                if (ed) ed.setContent(contenidoGuardado);
+            }, 500);
+        }
+    });
 }
 
 // Mostrar/ocultar tabla
