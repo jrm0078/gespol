@@ -96,15 +96,15 @@
     </div>
     <div id="alertaPlantillasContainer"></div>
     <div class="table-responsive">
-        <table class="table table-striped table-sm table-hover" id="tablaPlantillas">
-            <thead class="table-dark sticky-top">
+        <table id="tablaPlantillas" class="display" style="width:100%">
+            <thead>
                 <tr>
-                    <th style="min-width: 80px;">Código</th>
-                    <th style="min-width: 150px;">Nombre</th>
-                    <th style="min-width: 150px;">Descripción</th>
-                    <th style="min-width: 100px;">Tipo</th>
-                    <th style="min-width: 80px;">Estado</th>
-                    <th style="min-width: 100px; text-align: center;">Acciones</th>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Tipo</th>
+                    <th>Estado</th>
+                    <th style="min-width:100px;">Acciones</th>
                 </tr>
             </thead>
             <tbody id="cuerpoTablaPlantillas">
@@ -303,6 +303,7 @@ function cargarPlantillasListado() {
                         + '</tr>';
                 });
                 $('#cuerpoTablaPlantillas').html(html || '<tr><td colspan="6" class="text-center text-muted">No hay plantillas creadas</td></tr>');
+                initDataTablePlantillas();
             } else {
                 $('#alertaPlantillasContainer').html('<div class="alert alert-danger">Error del servidor: ' + (data.error || 'desconocido') + '</div>');
             }
@@ -635,12 +636,69 @@ function mostrarAlertaPlantillas(mensaje, tipo) {
     }, 5000);
 }
 
+var dtPlantillas = null;
+
+function initDataTablePlantillas() {
+    if ($.fn.DataTable.fnIsDataTable('#tablaPlantillas')) {
+        $('#tablaPlantillas').DataTable().destroy();
+        // Eliminar fila de filtros clonada si existe
+        if ($('#tablaPlantillas thead tr').length > 1) {
+            $('#tablaPlantillas thead tr:eq(1)').remove();
+        }
+    }
+
+    // Clonar cabecera para fila de búsqueda
+    if ($('#tablaPlantillas thead tr').length < 2) {
+        $('#tablaPlantillas thead tr').clone(true).appendTo('#tablaPlantillas thead');
+    }
+
+    // Inputs de búsqueda en columnas (excepto Acciones)
+    $('#tablaPlantillas thead tr:eq(1) th').each(function(i) {
+        if (i < 5) {
+            var title = $('#tablaPlantillas thead tr:eq(0) th').eq(i).text();
+            $(this).html('<input type="text" class="form-control form-control-sm" placeholder="Buscar ' + title + '" />');
+            $('input', this).on('keyup change', function() {
+                if (dtPlantillas.column(i).search() !== this.value) {
+                    dtPlantillas.column(i).search(this.value).draw();
+                }
+            });
+        } else {
+            $(this).html('');
+        }
+    });
+
+    dtPlantillas = $('#tablaPlantillas').DataTable({
+        'sDom': '<pf>t<pl>',
+        'bPaginate': true,
+        'bLengthChange': true,
+        'bFilter': true,
+        'bInfo': false,
+        'bAutoWidth': false,
+        'searching': true,
+        'pageLength': 25,
+        'orderCellsTop': true,
+        'fixedHeader': true,
+        'lengthMenu': [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
+        'columnDefs': [{ 'orderable': false, 'targets': 5 }],
+        'language': {
+            'emptyTable': 'No hay plantillas creadas',
+            'info': 'Mostrando página _PAGE_ de _PAGES_',
+            'infoEmpty': 'Sin resultados',
+            'infoFiltered': '(Filtrando _MAX_ registros)',
+            'lengthMenu': 'Mostrar _MENU_ registros',
+            'loadingRecords': 'Cargando...',
+            'processing': 'Procesando...',
+            'search': 'Buscar:',
+            'zeroRecords': 'No se encontraron resultados',
+            'paginate': { 'first': 'Primero', 'last': 'Último', 'next': 'Siguiente', 'previous': 'Anterior' }
+        }
+    });
+}
+
 // Inicializar cuando se carga el formulario
 $(document).ready(function() {
     cargarPlantillasListado();
     inicializarTinyMCEForm();
-    
-    // Actualizar columnas cuando cambia SQL
     $(document).on('input', '#sql_consulta_form', function() {
         actualizarColumnasPlantillas();
     });
