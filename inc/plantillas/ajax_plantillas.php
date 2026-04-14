@@ -333,6 +333,124 @@ function obtenerDatosFiltrados() {
 }
 
 /**
+ * Crear nueva plantilla (POST JSON)
+ */
+function crearPlantilla() {
+    $input = file_get_contents('php://input');
+    $data  = json_decode($input, true);
+
+    if (!$data) {
+        echo json_encode(['success' => false, 'error' => 'JSON inválido']);
+        return;
+    }
+
+    $cod         = $data['cod_plantilla']  ?? '';
+    $nombre      = $data['nombre']         ?? '';
+    $descripcion = $data['descripcion']    ?? '';
+    $tipo        = $data['tipo_documento'] ?? '';
+    $contenido   = $data['contenido']      ?? '';
+    $sql         = $data['sql_consulta']   ?? '';
+    $estado      = isset($data['estado'])  ? (int)$data['estado'] : 1;
+    $filtros     = $data['filtros']        ?? [];
+
+    $result = json_decode(CrearPlantilla($cod, $nombre, $descripcion, $tipo, $contenido, $sql, $estado), true);
+
+    if (($result['validacion'] ?? '') !== 'ok') {
+        echo json_encode(['success' => false, 'error' => $result['error'] ?? 'Error al crear']);
+        return;
+    }
+
+    foreach ($filtros as $f) {
+        AgregarFiltro(
+            $cod,
+            $f['nombre_filtro'] ?? '',
+            $f['etiqueta']      ?? '',
+            $f['tipo_filtro']   ?? 'select_table',
+            $f['tabla_datos']   ?? '',
+            $f['campo_clave']   ?? 'id',
+            $f['campo_valor']   ?? 'nombre',
+            $f['sql_query']     ?? '',
+            $f['orden']         ?? 1,
+            isset($f['requerido']) ? (int)$f['requerido'] : 0
+        );
+    }
+
+    echo json_encode(['success' => true, 'message' => 'Plantilla creada correctamente']);
+}
+
+/**
+ * Editar plantilla existente (POST JSON, cod en GET)
+ */
+function editarPlantilla() {
+    $cod   = isset($_GET['cod']) ? $_GET['cod'] : '';
+    $input = file_get_contents('php://input');
+    $data  = json_decode($input, true);
+
+    if (!$data) {
+        echo json_encode(['success' => false, 'error' => 'JSON inválido']);
+        return;
+    }
+
+    if (empty($cod)) {
+        $cod = $data['cod_plantilla'] ?? '';
+    }
+
+    $nombre      = $data['nombre']         ?? '';
+    $descripcion = $data['descripcion']    ?? '';
+    $tipo        = $data['tipo_documento'] ?? '';
+    $contenido   = $data['contenido']      ?? '';
+    $sql         = $data['sql_consulta']   ?? '';
+    $estado      = isset($data['estado'])  ? (int)$data['estado'] : 1;
+    $filtros     = $data['filtros']        ?? [];
+
+    $result = json_decode(ActualizarPlantilla($cod, $nombre, $descripcion, $tipo, $contenido, $sql, $estado), true);
+
+    if (($result['validacion'] ?? '') !== 'ok') {
+        echo json_encode(['success' => false, 'error' => $result['error'] ?? 'Error al actualizar']);
+        return;
+    }
+
+    // Reemplazar filtros
+    EliminarFiltrosPorPlantilla($cod);
+    foreach ($filtros as $f) {
+        AgregarFiltro(
+            $cod,
+            $f['nombre_filtro'] ?? '',
+            $f['etiqueta']      ?? '',
+            $f['tipo_filtro']   ?? 'select_table',
+            $f['tabla_datos']   ?? '',
+            $f['campo_clave']   ?? 'id',
+            $f['campo_valor']   ?? 'nombre',
+            $f['sql_query']     ?? '',
+            $f['orden']         ?? 1,
+            isset($f['requerido']) ? (int)$f['requerido'] : 0
+        );
+    }
+
+    echo json_encode(['success' => true, 'message' => 'Plantilla actualizada correctamente']);
+}
+
+/**
+ * Eliminar plantilla y sus filtros
+ */
+function eliminarPlantillaAction() {
+    $cod = isset($_GET['cod_plantilla']) ? $_GET['cod_plantilla'] : '';
+    if (empty($cod)) {
+        echo json_encode(['success' => false, 'error' => 'Código requerido']);
+        return;
+    }
+
+    EliminarFiltrosPorPlantilla($cod);
+    $result = json_decode(EliminarPlantilla($cod), true);
+
+    if (($result['validacion'] ?? '') === 'ok') {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => $result['error'] ?? 'Error al eliminar']);
+    }
+}
+
+/**
  * Guardar documento generado en BD
  */
 function guardarDocumentoAction() {

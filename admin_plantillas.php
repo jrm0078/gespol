@@ -209,7 +209,7 @@
                             <th>Tipo</th>
                             <th style="min-width: 300px;">Configuración</th>
                             <th>Orden</th>
-                            <th>Requerido</th>
+                            <th class="text-center">Requerido</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -252,9 +252,9 @@ function inicializarTinyMCEForm() {
     }
     
     // Detectar altura según pantalla
-    let altura = 400;
+    let altura = 600;
     if (window.innerWidth < 768) {
-        altura = 250;
+        altura = 350;
     }
     
     tinymce.init({
@@ -265,6 +265,7 @@ function inicializarTinyMCEForm() {
         plugins: 'advlist autolink lists link image charmap anchor searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking table',
         toolbar: 'undo redo | styleselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | fullscreen | table',
         branding: false,
+        statusbar: false,
         valid_elements: '*[*]',
         extended_valid_elements: '*[*]',
         entity_encoding: 'raw',
@@ -389,7 +390,7 @@ function cargarFiltrosPlantillas(filtros) {
             </td>
             <td id="config-${rowId}">${configHtml}</td>
             <td><input type="number" class="form-control form-control-sm filtro-orden" value="${filtro.orden || 1}" min="1"></td>
-            <td><input type="checkbox" class="form-check-input filtro-requerido" ${filtro.requerido === 1 ? 'checked' : ''}></td>
+            <td class="text-center align-middle"><input type="checkbox" class="filtro-requerido" style="width:18px;height:18px;cursor:pointer;" ${filtro.requerido === 1 ? 'checked' : ''}></td>
             <td><button type="button" class="btn btn-sm btn-danger" onclick="eliminarFilaFiltroPlantillas('${rowId}')"><i class="fas fa-trash"></i></button></td>
         </tr>`;
         
@@ -420,7 +421,7 @@ function agregarFilaFiltroPlantillas() {
             <input type="text" class="form-control form-control-sm filtro-campo-valor" placeholder="Valor: nombre">
         </td>
         <td><input type="number" class="form-control form-control-sm filtro-orden" value="1" min="1" required></td>
-        <td><input type="checkbox" class="form-check-input filtro-requerido" checked></td>
+        <td class="text-center align-middle"><input type="checkbox" class="filtro-requerido" style="width:18px;height:18px;cursor:pointer;" checked></td>
         <td><button type="button" class="btn btn-sm btn-danger" onclick="eliminarFilaFiltroPlantillas('${rowId}')"><i class="fas fa-trash"></i></button></td>
     </tr>`;
     
