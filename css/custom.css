@@ -7,6 +7,22 @@
     background:rgba(238, 245, 249, 0.8);
 }
 
+/* ============> BOTONES BLANCOS (cabeceras azules) <============ */
+.btn-header-white {
+    background: #fff !important;
+    color: #0066B3 !important;
+    border: 2px solid #fff !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+}
+.btn-header-white:hover,
+.btn-header-white:focus {
+    background: rgba(255,255,255,0.15) !important;
+    color: #fff !important;
+    border-color: #fff !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
 /* ============> SIDEBAR ÍTEM ACTIVO <============ */
 #sidebarnav .sidebar-item.active > .sidebar-link,
 #sidebarnav .sidebar-item.active > .sidebar-link:hover {
@@ -21,10 +37,19 @@
 #sidebarnav .sidebar-item > .sidebar-link {
     border-left: 3px solid transparent;
     transition: background 0.18s, border-color 0.18s;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
 }
 #sidebarnav .sidebar-item > .sidebar-link:hover {
     background: rgba(0,132,217,0.07) !important;
     border-left-color: rgba(0,132,217,0.3) !important;
+}
+/* Reducir el gap vertical entre items */
+#sidebarnav .sidebar-item {
+    margin-bottom: 1px !important;
+}
+#sidebarnav {
+    padding-top: 4px !important;
 }
 
 /* ============> NAVBAR AZUL <============ */

@@ -107,7 +107,7 @@
     <div class="card shadow-sm mb-3">
         <div class="card-header d-flex justify-content-between align-items-center py-2" style="background: linear-gradient(to right, #0084D9, #0066B3); border-bottom: 3px solid #005fa3;">
             <h5 class="m-0 text-white"><i class="mdi mdi-file-document mr-2"></i>Generador de Documentos</h5>
-            <button class="btn btn-sm font-weight-bold" onclick="limpiar()" title="Nueva búsqueda" style="background:#fff;color:#0066B3;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.2);">
+            <button class="btn btn-sm font-weight-bold btn-header-white" onclick="limpiar()" title="Nueva búsqueda">
                 <i class="fas fa-redo-alt"></i> Nueva
             </button>
         </div>
@@ -152,8 +152,8 @@
                 <button class="btn btn-sm btn-success" onclick="guardarDocumento()" title="Guardar en base de datos">
                     <i class="fas fa-save"></i> <span class="d-none d-md-inline">Guardar</span>
                 </button>
-                <button class="btn btn-sm btn-primary" onclick="descargarPDF()" title="Abrir PDF / Imprimir">
-                    <i class="fas fa-print"></i> <span class="d-none d-md-inline">Imprimir</span>
+                <button class="btn btn-sm btn-danger" onclick="descargarPDF()" title="Descargar / Imprimir PDF">
+                    <i class="fas fa-file-pdf"></i> <span class="d-none d-md-inline">Descargar PDF</span>
                 </button>
             </div>
         </div>

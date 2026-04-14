@@ -88,7 +88,7 @@
     <div class="card shadow-sm">
         <div class="card-header d-flex justify-content-between align-items-center py-2" style="background: linear-gradient(to right, #0084D9, #0066B3); border-bottom: 3px solid #005fa3;">
             <h5 class="m-0 text-white"><i class="mdi mdi-file-document mr-2"></i>Gestionar Plantillas</h5>
-            <button class="btn btn-sm font-weight-bold" onclick="abrirFormularioPlantillasNueva()" style="background:#fff;color:#0066B3;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.2);">
+            <button class="btn btn-sm font-weight-bold btn-header-white" onclick="abrirFormularioPlantillasNueva()">
                 <i class="fas fa-plus"></i> Crear Plantilla
             </button>
         </div>
@@ -245,6 +245,7 @@
 // Usar var para permitir redeclaración cuando se recarga el módulo
 var APIPantillas = 'inc/plantillas/ajax_plantillas.php';
 var plantillaEnEdicionForm = null;
+var formDirty = false;
 
 // Inicializar TinyMCE para formulario
 function inicializarTinyMCEForm() {
@@ -271,7 +272,12 @@ function inicializarTinyMCEForm() {
         valid_elements: '*[*]',
         extended_valid_elements: '*[*]',
         entity_encoding: 'raw',
-        placeholder: 'Contenido HTML'
+        placeholder: 'Contenido HTML',
+        setup: function(editor) {
+            editor.on('input change NodeChange keyup', function() {
+                formDirty = true;
+            });
+        }
     });
 }
 
@@ -328,6 +334,7 @@ function cargarPlantillasListado() {
 function abrirFormularioPlantillasNueva() {
     plantillaEnEdicionForm = null;
     window._editandoCod = false;
+    formDirty = false;
     $('#tituloFormularioPlantillas').text('Nueva Plantilla');
     $('#cod_plantilla_form').prop('disabled', false);
     limpiarFormularioPlantillas();
@@ -339,6 +346,7 @@ function abrirFormularioPlantillasNueva() {
 // Abrir formulario EDITAR plantilla
 function abrirFormularioPlantillasEditar(cod) {
     window._editandoCod = true;
+    formDirty = false;
     $.get(APIPantillas + '?action=obtener_completa&cod=' + cod, function(data) {
         if (data.success) {
             plantillaEnEdicionForm = cod;
@@ -637,6 +645,7 @@ function eliminarPlantillaForm(cod, nombre) {
 
 // Limpiar formulario
 function limpiarFormularioPlantillas() {
+    formDirty = false;
     $('#cod_plantilla_form, #nombre_form, #sql_consulta_form').removeClass('is-valid is-invalid');
     $('#cod_plantilla_form').val('');
     $('#nombre_form').val('');
@@ -653,11 +662,7 @@ function limpiarFormularioPlantillas() {
 
 // Cancelar edición
 function cancelarFormularioPlantillas() {
-    var cod     = $('#cod_plantilla_form').val().trim();
-    var nombre  = $('#nombre_form').val().trim();
-    var tieneContenido = tinymce.get('contenido_form') ? tinymce.get('contenido_form').getContent() !== '' : false;
-
-    if (cod || nombre || tieneContenido) {
+    if (formDirty) {
         Swal.fire({
             title: '¿Descartar cambios?',
             text: 'Tienes datos sin guardar. Si sales ahora se perderán.',
@@ -669,7 +674,7 @@ function cancelarFormularioPlantillas() {
             cancelButtonText: 'Seguir editando'
         }).then(function(result) {
             if (result.isConfirmed) {
-                // Limpiar clases de validación
+                formDirty = false;
                 $('#cod_plantilla_form, #nombre_form, #sql_consulta_form').removeClass('is-valid is-invalid');
                 limpiarFormularioPlantillas();
                 mostrarTablaPlantillas();
@@ -802,6 +807,10 @@ $(document).ready(function() {
         } else {
             $(this).addClass('is-valid').removeClass('is-invalid');
         }
+    });
+    // Marcar dirty al cambiar campos de texto
+    $(document).on('input change', '#cod_plantilla_form, #nombre_form, #descripcion_form, #tipo_documento_form, #sql_consulta_form, #estado_form', function() {
+        formDirty = true;
     });
 });
 </script>
