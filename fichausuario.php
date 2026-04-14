@@ -79,8 +79,7 @@
 					<div class="border-top">
 						<div class="card-body">
 							<button type="button" id="btnActualizar" class="btn btn-success btn-rounded"><i class="fa fa-check"></i> Actualizar</button>
-							<button type="button" id="btnEliminar" class="btn btn-danger btn-rounded"><i class="fa fa-recycle"></i> Eliminar</button>
-						</div>
+							<button type="button" id="btnEliminar" class="btn btn-danger btn-rounded"><i class="fa fa-recycle"></i> Eliminar</button>						<button type="button" id="btnAtras" class="btn btn-secondary btn-rounded"><i class="fa fa-arrow-left"></i> Atrás</button>						</div>
 					</div>
 				</form>
 			</div>

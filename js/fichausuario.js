@@ -5,7 +5,10 @@
 
 	//EVENTOS
 	document.getElementById("btnActualizar").addEventListener('click', Actualizar, false);
-	document.getElementById("btnEliminar").addEventListener('click', Eliminar, false);		
+	document.getElementById("btnEliminar").addEventListener('click', Eliminar, false);
+	document.getElementById("btnAtras").addEventListener('click', function() {
+		CargarPagina('consusuarios.php','Usuarios','far fa-user');
+	}, false);		
 		
 	$('#txtid').on("change", function(e) { txtid_changue(); });		
 	
@@ -133,13 +136,16 @@ function Actualizar() {
 		success: function (result) {
 			if (result.validacion == "ok") {
 				
+				var mensaje = lmodo == "alta" ? "Usuario Creado" : "Usuario Actualizado";
 				Swal.fire({
 				  type: 'success',
 				  title: 'OK',
-				   html: 'Usuario Actualizado.<br>'
+				  html: mensaje + '.<br>',
+				  didClose: function() {
+					// Volver a la lista de usuarios después del cierre del alert
+					CargarPagina('consusuarios.php','Usuarios','far fa-user');
+				  }
 				});
-
-				CargaDatos();
 
 			} else if (result.validacion=="warning") {
 				Swal.fire({
