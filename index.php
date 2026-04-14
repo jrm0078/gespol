@@ -97,7 +97,7 @@
                     <!-- ============================================================== -->
                     <!-- Logo -->
                     <!-- ============================================================== -->
-                    <a class="navbar-brand d-flex align-items-center" href="index.php" style="min-width: 200px; padding: 10px 0;">
+                    <a class="navbar-brand d-flex align-items-center" href="javascript:void(0);" style="min-width: 200px; padding: 10px 0; cursor: default;">
                         <!-- Logo icon -->
                         <b class="logo-icon" style="font-size: 1.8rem; margin-right: 12px; display: flex; align-items: center;">
                             <i class="fas fa-cloud" style="color: white;"></i>
@@ -336,14 +336,7 @@
 		$('.sidebartoggler').on('click', function(e) {
 			e.preventDefault();
 			e.stopPropagation();
-			var wrapper = $('#main-wrapper');
-			
-			// Toggle mini-sidebar
-			if (wrapper.hasClass('mini-sidebar-shown')) {
-				wrapper.removeClass('mini-sidebar-shown');
-			} else {
-				wrapper.addClass('mini-sidebar-shown');
-			}
+			return false;
 		});
 	});
 	</script>	

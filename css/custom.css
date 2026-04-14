@@ -80,15 +80,6 @@
     margin-top: 0;
 }
 
-/* Sidebar toggle - hide sidebar */
-#main-wrapper.mini-sidebar-shown .left-sidebar {
-    display: none !important;
-}
-
-#main-wrapper.mini-sidebar-shown .page-wrapper {
-    margin-left: 0 !important;
-}
-
 /* ============> MEJORA DE ENCUADRE <============ */
 .page-wrapper {
     background: #f7f7f7;
