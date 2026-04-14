@@ -72,101 +72,62 @@
 
 <div class="container-fluid">
 
-    <div class="card shadow mb-4">
-        <div class="card-header bg-primary border-left-primary py-3">
-            <h6 class="m-0 font-weight-bold text-white"><i class="fas fa-file-document"></i> Generador de Documentos</h6>
+    <!-- CABECERA -->
+    <div class="card shadow-sm mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center py-2" style="background: linear-gradient(to right, #0084D9, #0066B3); border-bottom: 3px solid #005fa3;">
+            <h5 class="m-0 text-white"><i class="mdi mdi-file-document mr-2"></i>Generador de Documentos</h5>
+            <button class="btn btn-sm font-weight-bold" onclick="limpiar()" title="Nueva búsqueda" style="background:#fff;color:#0066B3;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.2);">
+                <i class="fas fa-redo-alt"></i> Nueva
+            </button>
         </div>
-        <div class="card-body">
+    </div>
 
-            <!-- SECCIÓN 1: SELECCIONAR PLANTILLA -->
-            <div class="card mb-3">
-                <div class="card-header bg-light">
-                    <h5 class="m-0"><i class="fas fa-list"></i> 1. Seleccionar Plantilla</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-2">
-                        <div class="col-12 col-md-8">
-                            <div class="form-group mb-0">
-                                <label class="font-weight-bold">Plantilla *</label>
-                                <select id="selectPlantilla" class="form-control form-control-lg" onchange="cargarPlantilla()">
-                                    <option value="">-- Seleccionar una plantilla --</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <div class="form-group mb-0">
-                                <label class="font-weight-bold" style="display: block; height: 24px;">&nbsp;</label>
-                                <button class="btn btn-warning btn-sm w-100" onclick="limpiar()" title="Limpiar formulario">
-                                    <i class="fas fa-eraser"></i> Limpiar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <!-- SECCIÓN 1: SELECCIONAR PLANTILLA -->
+    <div class="card shadow-sm mb-3">
+        <div class="card-header py-2" style="background: linear-gradient(to right, rgba(0,132,217,0.08), transparent); border-left: 4px solid #0084D9;">
+            <h6 class="m-0 font-weight-bold" style="color:#0066B3;"><i class="fas fa-list mr-1"></i> 1. Seleccionar Plantilla</h6>
+        </div>
+        <div class="card-body py-3">
+            <select id="selectPlantilla" class="form-control form-control-lg" onchange="cargarPlantilla()">
+                <option value="">-- Selecciona una plantilla --</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 2: FILTROS DINÁMICOS -->
+    <div id="filtroSection" style="display:none;" class="card shadow-sm mb-3">
+        <div class="card-header py-2" style="background: linear-gradient(to right, rgba(0,132,217,0.08), transparent); border-left: 4px solid #0084D9;">
+            <h6 class="m-0 font-weight-bold" style="color:#0066B3;"><i class="fas fa-filter mr-1"></i> 2. Aplicar Filtros</h6>
+        </div>
+        <div class="card-body py-3">
+            <div class="row" id="filtrosContainer"></div>
+            <div class="mt-3">
+                <button class="btn btn-primary px-4" onclick="aplicarFiltro()">
+                    <i class="fas fa-play mr-1"></i> Cargar Documento
+                </button>
             </div>
+        </div>
+    </div>
 
-            <!-- SECCIÓN 2: FILTROS DINÁMICOS -->
-            <div id="filtroSection" style="display:none;" class="card mb-3">
-                <div class="card-header bg-light">
-                    <h5 class="m-0"><i class="fas fa-filter"></i> 2. Aplicar Filtros</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-2" id="filtrosContainer">
-                        <!-- Los filtros se cargan dinámicamente -->
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <button class="btn btn-primary" onclick="aplicarFiltro()">
-                                <i class="fas fa-search"></i> Cargar Documento
-                            </button>
-                        </div>
-                    </div>
-                </div>
+    <!-- SECCIÓN 3: EDITOR + ACCIONES -->
+    <div id="editorSection" style="display:none;" class="card shadow-sm mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center py-2" style="background: linear-gradient(to right, rgba(0,132,217,0.08), transparent); border-left: 4px solid #0084D9;">
+            <h6 class="m-0 font-weight-bold" style="color:#0066B3;"><i class="fas fa-file-alt mr-1"></i> 3. Documento Generado</h6>
+            <!-- ACCIONES en la cabecera del editor -->
+            <div class="d-flex flex-wrap" style="gap:6px;">
+                <button class="btn btn-sm" onclick="aplicarFiltro()" title="Refrescar datos" style="background:#17a2b8;color:#fff;border:none;">
+                    <i class="fas fa-sync-alt"></i> <span class="d-none d-md-inline">Actualizar</span>
+                </button>
+                <button class="btn btn-sm btn-success" onclick="guardarDocumento()" title="Guardar en base de datos">
+                    <i class="fas fa-save"></i> <span class="d-none d-md-inline">Guardar</span>
+                </button>
+                <button class="btn btn-sm btn-primary" onclick="descargarPDF()" title="Abrir PDF / Imprimir">
+                    <i class="fas fa-print"></i> <span class="d-none d-md-inline">Imprimir</span>
+                </button>
             </div>
-
-            <!-- SECCIÓN 3: EDITOR DE DOCUMENTO -->
-            <div id="editorSection" style="display:none;" class="card mb-3">
-                <div class="card-header bg-light">
-                    <h5 class="m-0"><i class="fas fa-edit"></i> 3. Contenido HTML</h5>
-                </div>
-                <div class="card-body">
-                    <textarea id="documento-editor"></textarea>
-                </div>
-            </div>
-
-            <!-- SECCIÓN 4: ACCIONES -->
-            <div class="card">
-                <div class="card-body text-center">
-                    <div class="row g-2">
-                        <div class="col-12 col-sm-6 col-lg-auto">
-                            <button class="btn btn-danger w-100" onclick="generarDocumento()">
-                                <i class="fas fa-sync"></i> Actualizar
-                            </button>
-                        </div>
-                        <div class="col-12 col-sm-6 col-lg-auto">
-                            <button class="btn btn-primary w-100" onclick="descargarPDF()">
-                                <i class="fas fa-file-pdf"></i> PDF
-                            </button>
-                        </div>
-                        <div class="col-12 col-sm-6 col-lg-auto">
-                            <button class="btn btn-secondary w-100" onclick="imprimirDocumento()">
-                                <i class="fas fa-print"></i> Imprimir
-                            </button>
-                        </div>
-                        <div class="col-12 col-sm-6 col-lg-auto">
-                            <button class="btn btn-success w-100" onclick="guardarDocumento()">
-                                <i class="fas fa-save"></i> Guardar
-                            </button>
-                        </div>
-                        <div class="col-12 col-sm-6 col-lg-auto">
-                            <button class="btn btn-light w-100" onclick="limpiar()">
-                                <i class="fas fa-times"></i> Limpiar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+        </div>
+        <div class="card-body p-2">
+            <textarea id="documento-editor"></textarea>
         </div>
     </div>
 
