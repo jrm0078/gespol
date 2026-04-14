@@ -86,7 +86,7 @@
 <div id="tablaPantillas" style="display:block;">
     <div id="alertaPlantillasContainer"></div>
     <div class="card shadow-sm">
-        <div class="card-header d-flex justify-content-between align-items-center py-2" style="background: linear-gradient(to right, #0084D9, #0066B3); border-bottom: 3px solid #005fa3;">
+        <div class="card-header card-header-blue d-flex justify-content-between align-items-center py-2">
             <h5 class="m-0 text-white"><i class="mdi mdi-file-document mr-2"></i>Gestionar Plantillas</h5>
             <button class="btn btn-sm font-weight-bold btn-header-white" onclick="abrirFormularioPlantillasNueva()">
                 <i class="fas fa-plus"></i> Crear Plantilla
@@ -116,7 +116,7 @@
 <!-- FORMULARIO CREAR/EDITAR -->
 <div id="formularioPlantillasSection" style="display:none;" class="mt-4">
     <div class="card">
-        <div class="card-header" style="background: linear-gradient(to right, #0084D9, rgba(0, 132, 217, 0.7)); border-bottom: 3px solid #0084D9; color: white;">
+        <div class="card-header card-header-blue" style="color: white;">
             <h5 class="m-0" id="tituloFormularioPlantillas">Nueva Plantilla</h5>
         </div>
         <div class="card-body">

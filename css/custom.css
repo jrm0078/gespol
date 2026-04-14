@@ -13,14 +13,21 @@
     color: #0066B3 !important;
     border: 2px solid #fff !important;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+    transition: background 0.18s, color 0.18s, box-shadow 0.18s, border-color 0.18s;
 }
 .btn-header-white:hover,
 .btn-header-white:focus {
-    background: rgba(255,255,255,0.15) !important;
+    background: rgba(0,0,0,0.18) !important;
     color: #fff !important;
-    border-color: #fff !important;
+    border-color: rgba(255,255,255,0.6) !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Card headers azules (cabeceras de página) */
+.card-header-blue {
+    background: linear-gradient(to right, #0084D9, #0066B3) !important;
+    border-bottom: 3px solid #005fa3 !important;
+    border-left: none !important;
 }
 
 /* ============> SIDEBAR ÍTEM ACTIVO <============ */
