@@ -212,7 +212,7 @@
     margin-bottom: 20px;
 }
 
-.card-header {
+.card-header:not(.card-header-blue) {
     border-bottom: 3px solid #0084D9;
     font-weight: 600;
     background: linear-gradient(to right, rgba(0, 132, 217, 0.05), transparent);

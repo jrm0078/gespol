@@ -11,12 +11,10 @@
         border: 1px solid #bee5eb !important;
     }
     
-    .card-header {
+    .card-header:not(.card-header-blue) {
         border-bottom: 3px solid #0084D9 !important;
         background: linear-gradient(to right, rgba(0, 132, 217, 0.05), transparent) !important;
     }
-    
-    /* Container responsivo */
     .container-fluid {
         padding-left: 0.5rem;
         padding-right: 0.5rem;

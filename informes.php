@@ -7,12 +7,10 @@
         border: 1px solid #0084D9 !important;
     }
     
-    .card-header {
+    .card-header:not(.card-header-blue) {
         border-bottom: 3px solid #0084D9 !important;
         background: linear-gradient(to right, rgba(0, 132, 217, 0.05), transparent) !important;
     }
-    
-    /* Acentos azules */
     .form-control:focus,
     .form-select:focus {
         border-color: #0084D9 !important;
