@@ -61,17 +61,9 @@ function CargatablaUsuarios() {
 //DEVUELVE USUARIO PASADO POR POST
 function CargaUsuario(){
 	
-	$where = "";
-	$id = $_POST["id"];
+	$id = intval($_POST["id"]);
 
-	$where = "id = " . $id;
-	
-	$query = "SELECT " .
-				"id,nombre,email,rol " .
-			 "FROM " .
-				"usuario " .
-			 "WHERE " .
-				$where;
+	$query = "SELECT id,nombre,email,rol FROM usuario WHERE id = " . $id;
 	
 	echo select($query);
 }
@@ -136,11 +128,11 @@ function ActualizaUsuario(){
 //SI HAY CUALQUIER PROBLEMA DEVUELVE CADENA DE TEXTO CON EL ERROR DE ELIMINACIÓN
 function EliminarUsuario(){
 
-	$id = CadSql($_POST["id"]);
+	$id = intval($_POST["id"]);
 
 	$mensajewarning="";
 
-	if ($_POST["id"] == "1") {
+	if ($id === 1) {
 		$mensajewarning = $mensajewarning . "No se puede eliminar el usuario Administrador principal<br>";
 	}
 

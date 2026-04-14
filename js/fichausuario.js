@@ -92,10 +92,10 @@ function CargaDatos(){
 				document.getElementById("txtcontrasenia").value = "";
 				CmbSeleccionaValor($("#cmbrol"),result.rol);
 
-				document.getElementById("btnActualizar").innerHTML = "<i class='fa fa-check'></i> Actualizar";
-				document.getElementById("btnEliminar").style.visibility = "visible";
+				document.getElementById("tituloFichaUsuario").innerHTML = "<i class='fas fa-user-edit mr-2'></i>" + result.nombre;
+				document.getElementById("btnActualizar").innerHTML = "<i class='fa fa-check mr-1'></i> Actualizar";
+				document.getElementById("btnEliminar").style.display = "inline-block";
 				document.getElementById("txtcontrasenia").placeholder = "Dejar vacío para no cambiar";
-				
 
 			}
 			else {
@@ -108,9 +108,10 @@ function CargaDatos(){
 				document.getElementById("txtcontrasenia").placeholder = "Contraseña (obligatoria)";
 				document.getElementById("helpContrasenia").textContent = "Introduce una contraseña para el nuevo usuario.";
 				CmbSeleccionaValor($("#cmbrol"),"Usuario");
-				
-				document.getElementById("btnActualizar").innerHTML = "<i class='fa fa-check'></i> Crear";	
-				document.getElementById("btnEliminar").style.visibility = "hidden";		
+
+				document.getElementById("tituloFichaUsuario").innerHTML = "<i class='fas fa-user-plus mr-2'></i>Nuevo Usuario";
+				document.getElementById("btnActualizar").innerHTML = "<i class='fa fa-check mr-1'></i> Crear";	
+				document.getElementById("btnEliminar").style.display = "none";		
 			}
 		},
 		error: function (resultado, desc, err) {
@@ -152,39 +153,36 @@ function Actualizar() {
 		async: false,		
 		success: function (result) {
 			if (result.validacion == "ok") {
-				
-				var mensaje = lmodo == "alta" ? "Usuario Creado" : "Usuario Actualizado";
+				var mensaje = lmodo == "alta" ? "Usuario creado correctamente" : "Usuario actualizado correctamente";
 				Swal.fire({
-				  type: 'success',
-				  title: 'OK',
-				  html: mensaje + '.<br>',
-				  didClose: function() {
-					// Volver a la lista de usuarios después del cierre del alert
+				  icon: 'success',
+				  title: mensaje,
+				  timer: 1500,
+				  showConfirmButton: false
+				}).then(function() {
 					CargarPagina('consusuarios.php','Usuarios','far fa-user');
-				  }
 				});
 
 			} else if (result.validacion=="warning") {
 				Swal.fire({
-				  type: 'warning',
+				  icon: 'warning',
 				  title: 'Datos incorrectos',
 				  html: result.mensaje
 				});
 				
 			} else {
 				Swal.fire({
-				  type: 'error',
-				  title: 'ops!',
-				  html: 'Ha ocurrido un error al actualizar la solución. ' +  result.error
+				  icon: 'error',
+				  title: 'Error',
+				  html: 'Ha ocurrido un error al guardar. ' + result.error
 				});
 			}
 		},
 		error: function (result,desc,err) {
-			//ERROR SISTEMA NO ESPERADO
 			Swal.fire({
-			  type: 'error',
-			  title: 'ops!',
-			  html: "Ocurrió un problema inesperado:" + " " + result.statusText + "  " + desc + "  " + err
+			  icon: 'error',
+			  title: 'Error inesperado',
+			  text: result.statusText
 			});	
 		}
 	});		
@@ -193,14 +191,14 @@ function Actualizar() {
 function Eliminar() {
 	
 	Swal.fire({
-	  title: '¿Estás seguro?',
-	  html: "El usuario actual va a ser eliminado",
-	  type: 'warning',
+	  title: '¿Eliminar usuario?',
+	  text: 'Esta acción no se puede deshacer.',
+	  icon: 'warning',
 	  showCancelButton: true,
-	  confirmButtonColor: '#3085d6',
-	  cancelButtonColor: '#d33',
-	  cancelButtonText: 'No, cancelar',
-	  confirmButtonText: 'Sí, Eliminar!'
+	  confirmButtonColor: '#d33',
+	  cancelButtonColor: '#6c757d',
+	  cancelButtonText: 'Cancelar',
+	  confirmButtonText: 'Sí, eliminar'
 	}).then((contestacion) => {
 	  if (contestacion.value) {
 
@@ -218,34 +216,34 @@ function Eliminar() {
 			success: function (result) {
 				if (result.validacion == "ok") {
 					Swal.fire({
-					  type: 'success',
-					  title: 'OK',
-					  html: 'Usuario Eliminado.'
-					});	
-					
-					CargaDatos();
+					  icon: 'success',
+					  title: 'Usuario eliminado',
+					  timer: 1200,
+					  showConfirmButton: false
+					}).then(function() {
+						CargarPagina('consusuarios.php','Usuarios','far fa-user');
+					});
 					
 				} else if (result.validacion=="warning") {
 					Swal.fire({
-					  type: 'warning',
-					  title: 'Datos incorrectos',
+					  icon: 'warning',
+					  title: 'Aviso',
 					  html: result.mensaje
 					});
 					
 				} else {
 					Swal.fire({
-					  type: 'error',
-					  title: 'ops!',
-					  html: 'Ha ocurrido un error. ' +  result.error
+					  icon: 'error',
+					  title: 'Error',
+					  html: 'Ha ocurrido un error. ' + result.error
 					});
 				}
 			},
 			error: function (result,desc,err) {
-				//ERROR SISTEMA NO ESPERADO
 				Swal.fire({
-				  type: 'error',
-				  title: 'ops!',
-				  html: 'Ocurrió un problema inesperado:' + " " + result.statusText + "  " + desc + "  " + err
+				  icon: 'error',
+				  title: 'Error inesperado',
+				  text: result.statusText
 				});	
 			}
 		});			
