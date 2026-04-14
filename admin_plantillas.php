@@ -660,6 +660,15 @@ function limpiarFormularioPlantillas() {
 
 // Cancelar edición
 function cancelarFormularioPlantillas() {
+    // TinyMCE tiene un focus-trap que bloquea los clics en diálogos externos.
+    // Hay que quitarle el foco antes de abrir cualquier Swal.
+    if (tinymce.get('contenido_form')) {
+        tinymce.get('contenido_form').fire('blur');
+    }
+    if (document.activeElement) {
+        document.activeElement.blur();
+    }
+
     if (formDirty) {
         Swal.fire({
             title: '¿Descartar cambios?',
