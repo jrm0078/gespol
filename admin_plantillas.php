@@ -84,17 +84,15 @@
 
 <!-- TABLA PLANTILLAS -->
 <div id="tablaPantillas" style="display:block;">
-    <div class="row mb-3">
-        <div class="col-12 col-sm-8">
-            <h4>Gestionar Plantillas</h4>
-        </div>
-        <div class="col-12 col-sm-4 text-end">
-            <button class="btn btn-success btn-sm" onclick="abrirFormularioPlantillasNueva()">
+    <div id="alertaPlantillasContainer"></div>
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center py-2" style="background: linear-gradient(to right, #0084D9, #0066B3); border-bottom: 3px solid #005fa3;">
+            <h5 class="m-0 text-white"><i class="mdi mdi-file-document mr-2"></i>Gestionar Plantillas</h5>
+            <button class="btn btn-light btn-sm font-weight-bold" onclick="abrirFormularioPlantillasNueva()">
                 <i class="fas fa-plus"></i> Crear Plantilla
             </button>
         </div>
-    </div>
-    <div id="alertaPlantillasContainer"></div>
+        <div class="card-body p-2">
     <div class="table-responsive">
         <table id="tablaPlantillas" class="display" style="width:100%">
             <thead>
@@ -110,6 +108,8 @@
             <tbody id="cuerpoTablaPlantillas">
             </tbody>
         </table>
+    </div>
+        </div>
     </div>
 </div>
 
@@ -668,7 +668,7 @@ function initDataTablePlantillas() {
     });
 
     dtPlantillas = $('#tablaPlantillas').DataTable({
-        'sDom': '<pf>t<pl>',
+        'sDom': '<"d-flex justify-content-between align-items-center mb-2"l>t<"d-flex justify-content-between align-items-center mt-2"ip>',
         'bPaginate': true,
         'bLengthChange': true,
         'bFilter': true,
