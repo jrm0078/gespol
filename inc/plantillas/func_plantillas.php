@@ -1,8 +1,8 @@
 <?php
 
-include '../config.inc.php';
-include '../genericasPHP.php';
-include '../func_datosPHP.php';
+include_once '../config.inc.php';
+include_once '../genericasPHP.php';
+include_once '../func_datosPHP.php';
 
 /**
  * MÓDULO PLANTILLAS - Funciones CRUD

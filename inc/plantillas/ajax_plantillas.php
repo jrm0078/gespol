@@ -1,11 +1,11 @@
 <?php
 ob_start(); // captura cualquier output accidental de los includes
 
-include '../config.inc.php';
-include '../genericasPHP.php';
-include '../func_datosPHP.php';
-include 'func_plantillas.php';
-include("../seguridad.php");
+include_once '../config.inc.php';
+include_once '../genericasPHP.php';
+include_once '../func_datosPHP.php';
+include_once 'func_plantillas.php';
+include_once "../seguridad.php";
 
 ob_end_clean(); // descarta el output acumulado
 header('Content-Type: application/json; charset=utf-8');
