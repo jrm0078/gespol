@@ -29,6 +29,14 @@
     #tablaPlantillas {
         margin-bottom: 0;
     }
+
+    /* Tabla de filtros SQL: botón eliminar centrado verticalmente */
+    #tablaFiltrosPlantillas td {
+        vertical-align: middle;
+    }
+    #tablaFiltrosPlantillas .btn-outline-danger {
+        padding: 3px 8px;
+    }
     
     /* Tabla hover color azul */
     #tablaPlantillas tbody tr:hover {
@@ -431,9 +439,9 @@ function cargarFiltrosPlantillas(filtros) {
         }
         
         const fila = `<tr id="${rowId}" class="filtro-row">
-            <td><input type="text" class="form-control form-control-sm filtro-nombre" value="${filtro.nombre_filtro}"></td>
-            <td><input type="text" class="form-control form-control-sm filtro-etiqueta" value="${filtro.etiqueta}"></td>
-            <td>
+            <td class="align-middle"><input type="text" class="form-control form-control-sm filtro-nombre" value="${filtro.nombre_filtro}"></td>
+            <td class="align-middle"><input type="text" class="form-control form-control-sm filtro-etiqueta" value="${filtro.etiqueta}"></td>
+            <td class="align-middle">
                 <select class="form-control form-control-sm filtro-tipo" onchange="actualizarConfigFiltroPlantillas('${rowId}')">
                     <option value="select_table" ${filtro.tipo_filtro === 'select_table' ? 'selected' : ''}>SELECT Tabla</option>
                     <option value="select_sql" ${filtro.tipo_filtro === 'select_sql' ? 'selected' : ''}>SELECT SQL</option>
@@ -442,10 +450,10 @@ function cargarFiltrosPlantillas(filtros) {
                     <option value="date" ${filtro.tipo_filtro === 'date' ? 'selected' : ''}>Fecha</option>
                 </select>
             </td>
-            <td id="config-${rowId}">${configHtml}</td>
-            <td><input type="number" class="form-control form-control-sm filtro-orden" value="${filtro.orden || 1}" min="1"></td>
-            <td class="text-center align-middle"><input type="checkbox" class="filtro-requerido" style="width:18px;height:18px;cursor:pointer;" ${filtro.requerido === 1 ? 'checked' : ''}></td>
-            <td><button type="button" class="btn btn-sm btn-danger" onclick="eliminarFilaFiltroPlantillas('${rowId}')"><i class="fas fa-trash"></i></button></td>
+            <td class="align-middle" id="config-${rowId}">${configHtml}</td>
+            <td class="align-middle" style="width:80px;"><input type="number" class="form-control form-control-sm filtro-orden" value="${filtro.orden || 1}" min="1"></td>
+            <td class="text-center align-middle" style="width:80px;"><input type="checkbox" class="filtro-requerido" style="width:18px;height:18px;cursor:pointer;" ${filtro.requerido === 1 ? 'checked' : ''}></td>
+            <td class="text-center align-middle" style="width:60px;"><button type="button" class="btn btn-sm btn-outline-danger" onclick="eliminarFilaFiltroPlantillas('${rowId}')" title="Eliminar filtro"><i class="fas fa-trash"></i></button></td>
         </tr>`;
         
         tbody.append(fila);
@@ -458,9 +466,9 @@ function agregarFilaFiltroPlantillas() {
     const rowId = 'filtro-' + Date.now();
     
     const fila = `<tr id="${rowId}" class="filtro-row">
-        <td><input type="text" class="form-control form-control-sm filtro-nombre" placeholder="año, cliente, etc." required></td>
-        <td><input type="text" class="form-control form-control-sm filtro-etiqueta" placeholder="Etiqueta visible" required></td>
-        <td>
+        <td class="align-middle"><input type="text" class="form-control form-control-sm filtro-nombre" placeholder="año, cliente, etc." required></td>
+        <td class="align-middle"><input type="text" class="form-control form-control-sm filtro-etiqueta" placeholder="Etiqueta visible" required></td>
+        <td class="align-middle">
             <select class="form-control form-control-sm filtro-tipo" onchange="actualizarConfigFiltroPlantillas('${rowId}')">
                 <option value="select_table">SELECT Tabla</option>
                 <option value="select_sql">SELECT SQL</option>
@@ -469,14 +477,14 @@ function agregarFilaFiltroPlantillas() {
                 <option value="date">Fecha</option>
             </select>
         </td>
-        <td id="config-${rowId}">
+        <td class="align-middle" id="config-${rowId}">
             <input type="text" class="form-control form-control-sm mb-1 filtro-tabla" placeholder="Tabla: años">
             <input type="text" class="form-control form-control-sm mb-1 filtro-campo-clave" placeholder="Clave: id" value="id">
             <input type="text" class="form-control form-control-sm filtro-campo-valor" placeholder="Valor: nombre">
         </td>
-        <td><input type="number" class="form-control form-control-sm filtro-orden" value="1" min="1" required></td>
-        <td class="text-center align-middle"><input type="checkbox" class="filtro-requerido" style="width:18px;height:18px;cursor:pointer;" checked></td>
-        <td><button type="button" class="btn btn-sm btn-danger" onclick="eliminarFilaFiltroPlantillas('${rowId}')"><i class="fas fa-trash"></i></button></td>
+        <td class="align-middle" style="width:80px;"><input type="number" class="form-control form-control-sm filtro-orden" value="1" min="1" required></td>
+        <td class="text-center align-middle" style="width:80px;"><input type="checkbox" class="filtro-requerido" style="width:18px;height:18px;cursor:pointer;" checked></td>
+        <td class="text-center align-middle" style="width:60px;"><button type="button" class="btn btn-sm btn-outline-danger" onclick="eliminarFilaFiltroPlantillas('${rowId}')" title="Eliminar filtro"><i class="fas fa-trash"></i></button></td>
     </tr>`;
     
     tbody.append(fila);

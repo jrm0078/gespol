@@ -45,13 +45,10 @@
 
 <div class="container-fluid">
     <div class="card shadow-sm">
-        <div class="card-header card-header-blue d-flex justify-content-between align-items-center py-2">
+        <div class="card-header card-header-blue py-2">
             <h5 class="m-0 text-white" id="tituloFichaUsuario">
                 <i class="fas fa-user mr-2"></i>Usuario
             </h5>
-            <button type="button" id="btnAtras" class="btn btn-sm btn-header-white">
-                <i class="fas fa-arrow-left"></i> Volver
-            </button>
         </div>
 
         <div class="card-body">
