@@ -93,8 +93,9 @@ function CargaTabla(){
 		"columnDefs": [ {
 			"targets": 0,
 			"data": null,
-			"width": "0px",
-			"defaultContent": "<i id='editar' title='Editar' style='cursor:pointer' class='fa fa-edit'></i>"
+			"width": "60px",
+			"orderable": false,
+			"defaultContent": "<button class='btn btn-sm btn-outline-primary btn-accion-editar' title='Editar'><i class='fas fa-edit'></i></button>"
 		} ],
 		"processing": true,
 		"serverSide": true,

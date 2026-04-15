@@ -227,7 +227,7 @@
                 <button type="button" class="btn btn-success" onclick="guardarPlantillaForm()">
                     <i class="fas fa-save mr-1"></i> Guardar
                 </button>
-                <button type="button" id="btnEliminarPlantilla" class="btn btn-outline-danger" onclick="eliminarPlantillaFormActual()" style="display:none;">
+                <button type="button" id="btnEliminarPlantilla" class="btn btn-danger" onclick="eliminarPlantillaFormActual()" style="display:none;">
                     <i class="fas fa-trash mr-1"></i> Eliminar
                 </button>
                 <button type="button" class="btn btn-secondary ml-auto" onclick="cancelarFormularioPlantillas()">
@@ -303,7 +303,7 @@ function cargarPlantillasListado() {
                 data.data.forEach(function(plantilla) {
                     var estado = plantilla.estado == 1 ? '<span class="badge badge-success">Activa</span>' : '<span class="badge badge-danger">Inactiva</span>';
                     html += '<tr>'
-                        + '<td><button class="btn btn-sm btn-primary" onclick="abrirFormularioPlantillasEditar(\'' + plantilla.cod_plantilla + '\')" title="Editar"><i class="fas fa-edit"></i></button></td>'
+                        + '<td><button class="btn btn-sm btn-outline-primary" onclick="abrirFormularioPlantillasEditar(\'' + plantilla.cod_plantilla + '\')" title="Editar"><i class="fas fa-edit"></i></button></td>'
                         + '<td><code>' + plantilla.cod_plantilla + '</code></td>'
                         + '<td>' + plantilla.nombre + '</td>'
                         + '<td><small>' + (plantilla.descripcion || '') + '</small></td>'
