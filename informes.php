@@ -494,7 +494,8 @@ function reemplazarVariables(contenido, datos) {
                 for (var key in record) {
                     if (record.hasOwnProperty(key)) {
                         var val = record[key] !== null ? String(record[key]) : '';
-                        row = row.split('[[' + key + ']]').join(val);
+                        var esc = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        row = row.replace(new RegExp('\\[\\[' + esc + '\\]\\]', 'gi'), val);
                     }
                 }
                 allRows += row;
@@ -504,14 +505,14 @@ function reemplazarVariables(contenido, datos) {
         return contenido;
     }
 
-    // Caso: objeto único
+    // Caso: objeto único (reemplazo case-insensitive)
     for (var key in datos) {
         if (datos.hasOwnProperty(key)) {
             var val = datos[key] !== null ? String(datos[key]) : '';
-            contenido = contenido.split('[[' + key + ']]').join(val);
-            contenido = contenido.split('{%%' + key + '%%}').join(val);
-            contenido = contenido.split('{{' + key + '}}').join(val);
-            contenido = contenido.split('-' + key + '-').join(val);
+            var esc = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            contenido = contenido.replace(new RegExp('\\[\\[' + esc + '\\]\\]', 'gi'), val);
+            contenido = contenido.replace(new RegExp('\\{%%' + esc + '%%\\}', 'gi'), val);
+            contenido = contenido.replace(new RegExp('\\{\\{' + esc + '\\}\\}', 'gi'), val);
         }
     }
     return contenido;
