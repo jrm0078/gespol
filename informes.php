@@ -126,7 +126,7 @@
             <h6 class="m-0 font-weight-bold" style="color:#0066B3;"><i class="fas fa-list mr-1"></i> 1. Seleccionar Plantilla</h6>
         </div>
         <div class="card-body py-3">
-            <select id="selectPlantilla" class="form-control" onchange="cargarPlantilla()" style="width:100%">
+            <select id="selectPlantilla" class="form-control" style="width:100%">
                 <option value="">-- Selecciona una plantilla --</option>
             </select>
         </div>
@@ -179,6 +179,7 @@
 var plantillaActual = null;
 var datosFormulario  = {};
 var API_PLANTILLAS   = 'inc/plantillas/ajax_plantillas.php';
+var _xhrPlantilla    = null; // petición en curso (evita doble llamada)
 
 // ============================================================
 // INICIALIZACIÓN
@@ -262,12 +263,16 @@ function cargarPlantilla() {
         return;
     }
 
-    $.ajax({
+    // Cancelar petición anterior si sigue en curso
+    if (_xhrPlantilla) { _xhrPlantilla.abort(); _xhrPlantilla = null; }
+
+    _xhrPlantilla = $.ajax({
         url: API_PLANTILLAS + '?action=obtener_completa&cod=' + encodeURIComponent(cod),
         type: 'GET',
         dataType: 'json',
         success: function(response) {
             if (response.success) {
+                _xhrPlantilla = null;
                 plantillaActual = response.data;
                 datosFormulario  = {};
 
