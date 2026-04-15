@@ -298,3 +298,105 @@ hr {
 .bg-info {
     background-color: rgba(0, 132, 217, 0.1) !important;
 }
+
+/* ============> TOOLBAR ERP <============ */
+.tabla-toolbar {
+    padding: 6px 0 8px 0;
+    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.btn-toolbar-action {
+    background: #fff !important;
+    border: 1px solid #d0d9e3 !important;
+    color: #3d4a59 !important;
+    padding: 5px 12px !important;
+    font-size: 0.82rem !important;
+    border-radius: 4px !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+    white-space: nowrap;
+}
+
+.btn-toolbar-action:hover:not(:disabled),
+.btn-toolbar-action:focus:not(:disabled) {
+    background: #f0f7ff !important;
+    color: #0066B3 !important;
+    border-color: #b3d0ea !important;
+    box-shadow: 0 2px 6px rgba(0,132,217,0.14) !important;
+    outline: none;
+}
+
+.btn-toolbar-action:disabled {
+    opacity: 0.42 !important;
+    cursor: not-allowed !important;
+    pointer-events: none;
+}
+
+/* Gap between Exportar and Add/Edit group */
+.tabla-toolbar .btn-group + .btn-group {
+    margin-left: 6px;
+}
+
+/* ============> ROW SELECTION <============ */
+.dataTable tbody tr {
+    cursor: default;
+}
+.dataTable tbody tr.row-selected,
+.dataTable tbody tr.row-selected td {
+    background-color: rgba(0, 132, 217, 0.10) !important;
+    box-shadow: inset 3px 0 0 #0084D9;
+}
+
+/* ============> CONTEXT MENU ERP <============ */
+.ctx-menu {
+    position: fixed;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.10);
+    border-radius: 6px;
+    box-shadow: 0 6px 22px rgba(0,0,0,0.14);
+    min-width: 168px;
+    z-index: 9998;
+    display: none;
+    padding: 5px 0;
+    user-select: none;
+}
+
+.ctx-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 14px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: #333;
+    transition: background 0.1s, color 0.1s;
+}
+
+.ctx-menu-item:hover {
+    background: #f0f7ff;
+    color: #0066B3;
+}
+
+.ctx-menu-item i {
+    width: 14px;
+    text-align: center;
+    font-size: 0.82rem;
+}
+
+.ctx-menu-separator {
+    border-top: 1px solid #ebebeb;
+    margin: 4px 0;
+}
+
+.ctx-menu-label {
+    padding: 4px 14px 2px;
+    font-size: 0.70rem;
+    color: #9aa3ad;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+}

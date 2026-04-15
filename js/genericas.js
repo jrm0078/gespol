@@ -77,7 +77,133 @@
 				   if(pair[0] == variable){return pair[1];}
 		   }
 		   return(false);
-	}	
+	}
+
+	// ============================================================
+	// TOOLBAR ERP GENÉRICO
+	// Inicializa: selección de fila, botones Añadir/Editar, menú
+	// contextual y exportación DataTables Buttons.
+	//
+	// config: {
+	//   tableId   : string   – selector tabla  ('#zero_config')
+	//   ctxMenuId : string   – selector menú contextual
+	//   btnAdd    : string   – selector botón Añadir toolbar
+	//   btnEdit   : string   – selector botón Editar toolbar
+	//   getDt     : fn()     – devuelve instancia DataTable
+	//   onAdd     : fn()     – acción añadir
+	//   onEdit    : fn(tr)   – acción editar; recibe el <tr> seleccionado
+	//   onDelete  : fn(tr)   – opcional; acción eliminar desde menú
+	// }
+	// Devuelve: { getSelectedTr, clearSelection }
+	// ============================================================
+	function initTablaToolbar(config) {
+		var ns       = (config.tableId + 'toolbar').replace(/[^a-z0-9]/gi, '');
+		var $table   = $(config.tableId);
+		var $btnEdit = $(config.btnEdit);
+		var $ctxMenu = $(config.ctxMenuId);
+		var selectedTr = null;
+
+		// --- limpiar listeners previos (re-init seguro) ---
+		$table.off('click.tb-'    + ns)
+		      .off('contextmenu.tb-' + ns);
+		$(document).off('click.ctxClose-' + ns);
+		$ctxMenu.off('click.ctxAct-' + ns);
+		$(config.btnAdd).off('click.tb-' + ns);
+		$btnEdit.off('click.tb-' + ns);
+		$table.closest('.card').find('[data-exp]').off('click.tb-' + ns);
+
+		function setSelected(tr) {
+			$table.find('tbody tr.row-selected').removeClass('row-selected');
+			selectedTr = tr || null;
+			if (tr) {
+				$(tr).addClass('row-selected');
+				$btnEdit.prop('disabled', false);
+			} else {
+				$btnEdit.prop('disabled', true);
+			}
+		}
+
+		// --- click en fila: seleccionar / deseleccionar ---
+		$table.on('click.tb-' + ns, 'tbody tr', function (e) {
+			if ($(e.target).closest('button, a').length) return;
+			setSelected($(this).hasClass('row-selected') ? null : this);
+		});
+
+		// --- doble click en fila: editar directamente ---
+		$table.on('dblclick.tb-' + ns, 'tbody tr', function (e) {
+			if ($(e.target).closest('button, a').length) return;
+			setSelected(this);
+			config.onEdit(this);
+		});
+
+		// --- botón Añadir ---
+		$(config.btnAdd).on('click.tb-' + ns, function () {
+			config.onAdd();
+		});
+
+		// --- botón Editar ---
+		$btnEdit.on('click.tb-' + ns, function () {
+			if (selectedTr) config.onEdit(selectedTr);
+		});
+
+		// --- dropdown Exportar ---
+		$table.closest('.card').find('[data-exp]').on('click.tb-' + ns, function (e) {
+			e.preventDefault();
+			triggerDtExport(config.getDt(), $(this).data('exp'));
+		});
+
+		// --- menú contextual (botón derecho) ---
+		$table.on('contextmenu.tb-' + ns, 'tbody tr', function (e) {
+			e.preventDefault();
+			setSelected(this);
+
+			// Medir tamaño del menú para ajustar posición
+			$ctxMenu.css({ display: 'block', left: -9999, top: -9999 });
+			var mW = $ctxMenu.outerWidth();
+			var mH = $ctxMenu.outerHeight();
+			$ctxMenu.css({ display: 'none' });
+
+			var x = e.clientX;
+			var y = e.clientY;
+			if (x + mW > window.innerWidth)  x = window.innerWidth  - mW - 6;
+			if (y + mH > window.innerHeight) y = window.innerHeight - mH - 6;
+			$ctxMenu.css({ left: x, top: y }).fadeIn(120);
+		});
+
+		// cerrar menú al hacer click fuera
+		$(document).on('click.ctxClose-' + ns, function (e) {
+			if (!$(e.target).closest(config.ctxMenuId).length) {
+				$ctxMenu.fadeOut(80);
+			}
+		});
+
+		// acciones del menú contextual
+		$ctxMenu.on('click.ctxAct-' + ns, '[data-ctx-action]', function () {
+			var action = $(this).data('ctx-action');
+			$ctxMenu.fadeOut(80);
+			if      (action === 'add')    config.onAdd();
+			else if (action === 'edit'   && selectedTr) config.onEdit(selectedTr);
+			else if (action === 'delete' && selectedTr && config.onDelete) config.onDelete(selectedTr);
+			else triggerDtExport(config.getDt(), action);
+		});
+
+		return {
+			getSelectedTr  : function () { return selectedTr; },
+			clearSelection : function () { setSelected(null); }
+		};
+	}
+
+	/**
+	 * Dispara un botón de exportación del DataTable Buttons.
+	 * type: 'excel' | 'csv' | 'pdf' | 'print' | 'copy'
+	 */
+	function triggerDtExport(dt, type) {
+		if (!dt) return;
+		var idx = { excel: 0, csv: 1, pdf: 2, 'print': 3, copy: 4 };
+		if (idx[type] !== undefined) {
+			try { dt.button(idx[type]).trigger(); } catch(e) {}
+		}
+	}
 
 
 	// Función que devuelve la cadena pasada como argumento, ajustada a la

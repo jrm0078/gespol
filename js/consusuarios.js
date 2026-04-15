@@ -4,12 +4,7 @@
 	$(".preloader2").fadeIn();
 
 	//EVENTOS
-	document.getElementById("btnCrear").addEventListener('click', function(){CargarPagina('fichausuario.php','Usuario','far fa-user');}, false);
-	$('#zero_config').on('click', '.btn-accion-editar', function () {
-		var oTable = $('#zero_config').DataTable();
-		var data = oTable.row($(this).parents('tr')).data();
-		CargarPagina('fichausuario.php','Usuario','far fa-user', data[0], '', '', '', '');
-	});
+	// (gestionados por initTablaToolbar após CargaTabla)
 	//FIN EVENTOS
 
 	//VARIABLES PÚBLICAS DE LA PÁGINA
@@ -92,14 +87,19 @@ function CargaTabla(){
 		},
 		"columnDefs": [ {
 			"targets": 0,
-			"data": null,
-			"width": "60px",
-			"orderable": false,
-			"defaultContent": "<button class='btn btn-sm btn-outline-primary btn-accion-editar' title='Editar'><i class='fas fa-edit'></i></button>"
+			"visible": false,
+			"searchable": false
 		} ],
 		"processing": true,
 		"serverSide": true,
-		"order": [[ 1, "asc" ]],	
+		"order": [[ 1, "asc" ]],
+		"buttons": [
+			{ extend: 'excel',  text: 'Excel'    },
+			{ extend: 'csv',    text: 'CSV'      },
+			{ extend: 'pdf',    text: 'PDF'      },
+			{ extend: 'print',  text: 'Imprimir' },
+			{ extend: 'copy',   text: 'Copiar'   }
+		],
 		"ajax": {
 			type: "POST",
 			data: {},
@@ -108,8 +108,24 @@ function CargaTabla(){
 		}
 	});	
 
-	// Ocultar el input de búsqueda de la columna de acciones
-	$('#zero_config thead tr')[1].cells[0].innerHTML = '';
+	// Inicializar toolbar ERP
+	initTablaToolbar({
+		tableId:   '#zero_config',
+		ctxMenuId: '#ctxMenuUsuarios',
+		btnAdd:    '#btnTbAddUsuario',
+		btnEdit:   '#btnTbEditUsuario',
+		getDt:     function () { return $('#zero_config').DataTable(); },
+		onAdd:     function () { CargarPagina('fichausuario.php', 'Usuario', 'far fa-user'); },
+		onEdit:    function (tr) {
+			var data = $('#zero_config').DataTable().row(tr).data();
+			if (data) CargarPagina('fichausuario.php', 'Usuario', 'far fa-user', data[0], '', '', '', '');
+		}
+	});
+
+	// Ocultar el input de búsqueda de la columna oculta (col 0)
+	if ($('#zero_config thead tr').length > 1) {
+		$('#zero_config thead tr')[1].cells[0].innerHTML = '';
+	}
 	
 }
 

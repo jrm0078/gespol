@@ -84,18 +84,39 @@
 <div id="tablaPantillas" style="display:block;">
     <div id="alertaPlantillasContainer"></div>
     <div class="card shadow-sm">
-        <div class="card-header card-header-blue d-flex justify-content-between align-items-center py-2">
+        <div class="card-header card-header-blue py-2">
             <h5 class="m-0 text-white"><i class="mdi mdi-file-document mr-2"></i>Gestionar Plantillas</h5>
-            <button class="btn btn-sm btn-header-white" onclick="abrirFormularioPlantillasNueva()">
-                <i class="fas fa-plus mr-1"></i> Nueva Plantilla
-            </button>
         </div>
         <div class="card-body p-2">
+    <!-- TOOLBAR ERP -->
+    <div class="tabla-toolbar">
+        <div class="btn-group btn-group-sm" role="group">
+            <button id="btnTbAddPlantilla" class="btn btn-toolbar-action" title="Nueva plantilla">
+                <i class="fas fa-plus"></i><span class="d-none d-sm-inline ml-1">A&ntilde;adir</span>
+            </button>
+            <button id="btnTbEditPlantilla" class="btn btn-toolbar-action" title="Editar plantilla seleccionada" disabled>
+                <i class="fas fa-edit"></i><span class="d-none d-sm-inline ml-1">Editar</span>
+            </button>
+        </div>
+        <div class="btn-group btn-group-sm" role="group">
+            <button class="btn btn-toolbar-action dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Exportar">
+                <i class="fas fa-file-export"></i><span class="d-none d-sm-inline ml-1">Exportar</span>
+            </button>
+            <div class="dropdown-menu shadow-sm">
+                <a class="dropdown-item" href="#" data-exp="excel"><i class="fas fa-file-excel mr-2 text-success"></i>Excel</a>
+                <a class="dropdown-item" href="#" data-exp="csv"><i class="fas fa-file-alt mr-2 text-info"></i>CSV</a>
+                <a class="dropdown-item" href="#" data-exp="pdf"><i class="fas fa-file-pdf mr-2 text-danger"></i>PDF</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-exp="print"><i class="fas fa-print mr-2 text-secondary"></i>Imprimir</a>
+                <a class="dropdown-item" href="#" data-exp="copy"><i class="fas fa-copy mr-2 text-muted"></i>Copiar</a>
+            </div>
+        </div>
+    </div>
+    <!-- FIN TOOLBAR -->
     <div class="table-responsive">
         <table id="tablaPlantillas" class="display" style="width:100%">
             <thead>
                 <tr>
-                    <th style="width:60px;">Acciones</th>
                     <th>Código</th>
                     <th>Nombre</th>
                     <th>Descripción</th>
@@ -238,6 +259,19 @@
     </div>
 </div>
 
+<!-- CONTEXT MENU PLANTILLAS -->
+<div id="ctxMenuPlantillas" class="ctx-menu">
+    <div class="ctx-menu-item" data-ctx-action="add"><i class="fas fa-plus"></i> A&ntilde;adir</div>
+    <div class="ctx-menu-item" data-ctx-action="edit"><i class="fas fa-edit"></i> Editar</div>
+    <div class="ctx-menu-separator"></div>
+    <div class="ctx-menu-label">Exportar</div>
+    <div class="ctx-menu-item" data-ctx-action="excel"><i class="fas fa-file-excel text-success"></i> Excel</div>
+    <div class="ctx-menu-item" data-ctx-action="csv"><i class="fas fa-file-alt text-info"></i> CSV</div>
+    <div class="ctx-menu-item" data-ctx-action="pdf"><i class="fas fa-file-pdf text-danger"></i> PDF</div>
+    <div class="ctx-menu-item" data-ctx-action="print"><i class="fas fa-print text-secondary"></i> Imprimir</div>
+    <div class="ctx-menu-item" data-ctx-action="copy"><i class="fas fa-copy text-muted"></i> Copiar</div>
+</div>
+
 <script>
 // Usar var para permitir redeclaración cuando se recarga el módulo
 var APIPantillas = 'inc/plantillas/ajax_plantillas.php';
@@ -302,8 +336,7 @@ function cargarPlantillasListado() {
                 var html = '';
                 data.data.forEach(function(plantilla) {
                     var estado = plantilla.estado == 1 ? '<span class="badge badge-success">Activa</span>' : '<span class="badge badge-danger">Inactiva</span>';
-                    html += '<tr>'
-                        + '<td><button class="btn btn-sm btn-outline-primary" onclick="abrirFormularioPlantillasEditar(\'' + plantilla.cod_plantilla + '\')" title="Editar"><i class="fas fa-edit"></i></button></td>'
+                    html += '<tr data-id="' + plantilla.cod_plantilla + '">'
                         + '<td><code>' + plantilla.cod_plantilla + '</code></td>'
                         + '<td>' + plantilla.nombre + '</td>'
                         + '<td><small>' + (plantilla.descripcion || '') + '</small></td>'
@@ -750,6 +783,7 @@ function mostrarAlertaPlantillas(mensaje, tipo) {
 }
 
 var dtPlantillas = null;
+var toolbarPlantillas = null;
 
 function initDataTablePlantillas() {
     if ($.fn.DataTable.fnIsDataTable('#tablaPlantillas')) {
@@ -765,19 +799,15 @@ function initDataTablePlantillas() {
         $('#tablaPlantillas thead tr').clone(true).appendTo('#tablaPlantillas thead');
     }
 
-    // Inputs de búsqueda en columnas (excepto Acciones col 0)
+    // Inputs de búsqueda en todas las columnas
     $('#tablaPlantillas thead tr:eq(1) th').each(function(i) {
-        if (i >= 1) {
-            var title = $('#tablaPlantillas thead tr:eq(0) th').eq(i).text();
-            $(this).html('<input type="text" class="form-control form-control-sm" placeholder="Buscar ' + title + '" />');
-            $('input', this).on('keyup change', function() {
-                if (dtPlantillas.column(i).search() !== this.value) {
-                    dtPlantillas.column(i).search(this.value).draw();
-                }
-            });
-        } else {
-            $(this).html('');
-        }
+        var title = $('#tablaPlantillas thead tr:eq(0) th').eq(i).text();
+        $(this).html('<input type="text" class="form-control form-control-sm" placeholder="Buscar ' + title + '" />');
+        $('input', this).on('keyup change', function() {
+            if (dtPlantillas.column(i).search() !== this.value) {
+                dtPlantillas.column(i).search(this.value).draw();
+            }
+        });
     });
 
     dtPlantillas = $('#tablaPlantillas').DataTable({
@@ -792,7 +822,14 @@ function initDataTablePlantillas() {
         'orderCellsTop': true,
         'fixedHeader': true,
         'lengthMenu': [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
-        'columnDefs': [{ 'orderable': false, 'targets': 0 }],
+        'columnDefs': [],
+        'buttons': [
+            { extend: 'excel',  text: 'Excel'    },
+            { extend: 'csv',    text: 'CSV'      },
+            { extend: 'pdf',    text: 'PDF'      },
+            { extend: 'print',  text: 'Imprimir' },
+            { extend: 'copy',   text: 'Copiar'   }
+        ],
         'language': {
             'emptyTable': 'No hay plantillas creadas',
             'info': 'Mostrando página _PAGE_ de _PAGES_',
@@ -805,6 +842,17 @@ function initDataTablePlantillas() {
             'zeroRecords': 'No se encontraron resultados',
             'paginate': { 'first': 'Primero', 'last': 'Último', 'next': 'Siguiente', 'previous': 'Anterior' }
         }
+    });
+
+    // Inicializar toolbar ERP
+    toolbarPlantillas = initTablaToolbar({
+        tableId:   '#tablaPlantillas',
+        ctxMenuId: '#ctxMenuPlantillas',
+        btnAdd:    '#btnTbAddPlantilla',
+        btnEdit:   '#btnTbEditPlantilla',
+        getDt:     function () { return dtPlantillas; },
+        onAdd:     function () { abrirFormularioPlantillasNueva(); },
+        onEdit:    function (tr) { abrirFormularioPlantillasEditar($(tr).data('id')); }
     });
 }
 
