@@ -20,7 +20,7 @@
                 <i class="fas fa-users mr-2"></i>Usuarios
             </h5>
             <button type="button" id="btnCrear" class="btn btn-sm btn-header-white">
-                <i class="fas fa-user-plus"></i> Nuevo Usuario
+                <i class="fas fa-plus mr-1"></i> Nuevo Usuario
             </button>
         </div>
         <div class="card-body p-2">
