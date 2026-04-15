@@ -467,12 +467,27 @@ function aplicarFiltro() {
 function reemplazarVariables(contenido, datos) {
     if (!datos || typeof datos !== 'object') return contenido;
 
-    // Caso: array de registros (tabla repetible)
+    // Caso: array de registros (<tr> tabla repetible  o  <li> lista repetible)
     if (Array.isArray(datos) && datos.length > 0) {
-        var rowRegex = /<tr[^>]*>[\s\S]*?\[\[[\s\S]*?\]\][\s\S]*?<\/tr>/gi;
-        var rowMatch = contenido.match(rowRegex);
-        if (rowMatch && rowMatch.length > 0) {
-            var rowTemplate = rowMatch[0];
+        var trRegex = /<tr[^>]*>[\s\S]*?\[\[\w+\]\][\s\S]*?<\/tr>/gi;
+        var liRegex = /<li[^>]*>[\s\S]*?\[\[\w+\]\][\s\S]*?<\/li>/gi;
+
+        var trMatch  = contenido.match(trRegex);
+        var rowTemplate = null;
+        var repeatRegex = null;
+
+        if (trMatch && trMatch.length > 0) {
+            rowTemplate = trMatch[0];
+            repeatRegex = /<tr[^>]*>[\s\S]*?\[\[\w+\]\][\s\S]*?<\/tr>/gi;
+        } else {
+            var liMatch = contenido.match(liRegex);
+            if (liMatch && liMatch.length > 0) {
+                rowTemplate = liMatch[0];
+                repeatRegex = /<li[^>]*>[\s\S]*?\[\[\w+\]\][\s\S]*?<\/li>/gi;
+            }
+        }
+
+        if (rowTemplate && repeatRegex) {
             var allRows = '';
             datos.forEach(function(record) {
                 var row = rowTemplate;
@@ -484,7 +499,7 @@ function reemplazarVariables(contenido, datos) {
                 }
                 allRows += row;
             });
-            contenido = contenido.replace(rowRegex, allRows);
+            contenido = contenido.replace(repeatRegex, allRows);
         }
         return contenido;
     }
