@@ -5,10 +5,10 @@
 
 	//EVENTOS
 	document.getElementById("btnCrear").addEventListener('click', function(){CargarPagina('fichausuario.php','Usuario','far fa-user');}, false);
-	$('#zero_config').on( 'click', '#editar', function () {
+	$('#zero_config').on('click', '.btn-accion-editar', function () {
 		var oTable = $('#zero_config').DataTable();
-		var data =  oTable.row( $(this).parents('tr') ).data();
-		CargarPagina('fichausuario.php','Usuario','far fa-user',data[0],'','','','');
+		var data = oTable.row($(this).parents('tr')).data();
+		CargarPagina('fichausuario.php','Usuario','far fa-user', data[0], '', '', '', '');
 	});
 	//FIN EVENTOS
 
@@ -107,7 +107,8 @@ function CargaTabla(){
 		}
 	});	
 
-	$('#zero_config thead tr')[1].cells[0].childNodes[0].style.display = 'none';			
+	// Ocultar el input de búsqueda de la columna de acciones
+	$('#zero_config thead tr')[1].cells[0].innerHTML = '';
 	
 }
 

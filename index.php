@@ -104,7 +104,7 @@
                         </b>
                         <!-- Logo text - se oculta en mini-sidebar via style.css -->
                         <span class="logo-text" style="color: white; font-weight: bold; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; white-space: nowrap; margin-left: 10px;">
-                            CDiCloud
+                            GesPol
                         </span>
                     </a>
                     <!-- ============================================================== -->

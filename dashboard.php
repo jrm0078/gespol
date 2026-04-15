@@ -187,7 +187,7 @@ $rol_usuario    = isset($_SESSION['user_rol'])          ? htmlspecialchars($_SES
             <div class="welcome-sub">
                 <i class="fas fa-shield-alt mr-1" style="opacity:.7;"></i>
                 <?= $rol_usuario ?>
-                &nbsp;·&nbsp; Panel de administración CDiCloud
+                &nbsp;·&nbsp; Panel de administración GesPol
             </div>
         </div>
         <div class="welcome-date mt-2 mt-sm-0">

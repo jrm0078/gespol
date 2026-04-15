@@ -133,7 +133,7 @@ session_start();
             <div class="brand-icon">
                 <i class="fas fa-cloud"></i>
             </div>
-            <h1>CDiCloud</h1>
+            <h1>GesPol</h1>
             <p>Panel de Administración</p>
         </div>
 

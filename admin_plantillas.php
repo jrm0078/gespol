@@ -95,12 +95,12 @@
         <table id="tablaPlantillas" class="display" style="width:100%">
             <thead>
                 <tr>
+                    <th style="width:60px;">Acciones</th>
                     <th>Código</th>
                     <th>Nombre</th>
                     <th>Descripción</th>
                     <th>Tipo</th>
                     <th>Estado</th>
-                    <th style="min-width:100px;">Acciones</th>
                 </tr>
             </thead>
             <tbody id="cuerpoTablaPlantillas">
@@ -758,9 +758,9 @@ function initDataTablePlantillas() {
         $('#tablaPlantillas thead tr').clone(true).appendTo('#tablaPlantillas thead');
     }
 
-    // Inputs de búsqueda en columnas (excepto Acciones)
+    // Inputs de búsqueda en columnas (excepto Acciones col 0)
     $('#tablaPlantillas thead tr:eq(1) th').each(function(i) {
-        if (i < 5) {
+        if (i >= 1) {
             var title = $('#tablaPlantillas thead tr:eq(0) th').eq(i).text();
             $(this).html('<input type="text" class="form-control form-control-sm" placeholder="Buscar ' + title + '" />');
             $('input', this).on('keyup change', function() {
@@ -785,7 +785,7 @@ function initDataTablePlantillas() {
         'orderCellsTop': true,
         'fixedHeader': true,
         'lengthMenu': [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
-        'columnDefs': [{ 'orderable': false, 'targets': 5 }],
+        'columnDefs': [{ 'orderable': false, 'targets': 0 }],
         'language': {
             'emptyTable': 'No hay plantillas creadas',
             'info': 'Mostrando página _PAGE_ de _PAGES_',

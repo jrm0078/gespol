@@ -96,7 +96,7 @@
 /* ============> NAVBAR AZUL <============ */
 .topbar {
     background: linear-gradient(135deg, #0084D9 0%, #0066B3 100%);
-    min-height: 75px;
+    min-height: 62px;
     position: fixed !important;
     top: 0 !important;
     width: 100% !important;
@@ -106,7 +106,7 @@
 
 .top-navbar {
     background: linear-gradient(135deg, #0084D9 0%, #0066B3 100%) !important;
-    min-height: 75px;
+    min-height: 62px;
 }
 
 /* Sidebar visible */
@@ -162,25 +162,25 @@
 
 /* Fixed topbar */
 #main-wrapper {
-    padding-top: 75px;
+    padding-top: 62px;
     margin-top: 0;
 }
 
 /* ============> MEJORA DE ENCUADRE <============ */
 .page-wrapper {
     background: #f7f7f7;
-    min-height: calc(100vh - 75px);
-    padding: 0 15px 15px 15px;
+    min-height: calc(100vh - 62px);
+    padding: 0 6px 8px 6px;
 }
 
 .page-breadcrumb {
-    padding: 10px 5px 6px !important;
+    padding: 5px 4px 4px !important;
 }
 
 /* Sidebar: solo ajustar top para que quede debajo del navbar fijo */
 /* style.css ya maneja el resto (full, mini-sidebar, hover, márgenes) */
 .left-sidebar {
-    top: 75px !important;
+    top: 62px !important;
 }
 
 /* Cuando sidebar hover expande el logo (expand-logo 250px), también desplazar el navbar-collapse

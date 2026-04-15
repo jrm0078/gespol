@@ -1,5 +1,72 @@
 	const cdiNewLine="\n";
 
+	// ============================================================
+	// FUNCIONES COMUNES REUTILIZABLES EN TODAS LAS PANTALLAS
+	// ============================================================
+
+	/**
+	 * Diálogo de confirmación de eliminación estándar.
+	 * Uso: confirmarEliminar('Nombre del registro', function() { ...tu lógica AJAX... });
+	 */
+	function confirmarEliminar(nombreRegistro, fnConfirmar) {
+		Swal.fire({
+			title: '¿Eliminar registro?',
+			html: '<b>' + nombreRegistro + '</b>',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#d33',
+			cancelButtonColor: '#6c757d',
+			confirmButtonText: 'Sí, eliminar',
+			cancelButtonText: 'Cancelar',
+			returnFocus: false
+		}).then(function(result) {
+			if (result.isConfirmed) fnConfirmar();
+		});
+	}
+
+	/**
+	 * Toast de éxito/error/warning estándar.
+	 * Uso: toastMsg('Guardado correctamente', 'success')
+	 *      toastMsg('Error al guardar', 'error')
+	 */
+	function toastMsg(mensaje, tipo) {
+		Swal.fire({
+			toast: true,
+			position: 'top-end',
+			icon: tipo || 'info',
+			title: mensaje,
+			showConfirmButton: false,
+			timer: 2500,
+			timerProgressBar: true
+		});
+	}
+
+	/**
+	 * Cargador AJAX genérico con manejo de respuesta estándar {validacion, mensaje, error}.
+	 * Uso: ajaxPost(url, datos, function(result) { ... });
+	 */
+	function ajaxPost(url, datos, fnExito, fnError) {
+		$.ajax({
+			type: 'POST',
+			url: url,
+			data: datos,
+			dataType: 'json',
+			success: function(result) {
+				if (result.validacion === 'ok') {
+					if (fnExito) fnExito(result);
+				} else if (result.validacion === 'warning') {
+					Swal.fire({ icon: 'warning', title: 'Atención', html: result.mensaje });
+				} else {
+					Swal.fire({ icon: 'error', title: 'Error', html: result.error || 'Error inesperado' });
+				}
+			},
+			error: function(xhr) {
+				if (fnError) fnError(xhr);
+				else Swal.fire({ icon: 'error', title: 'Error de conexión', text: xhr.statusText });
+			}
+		});
+	}
+
 	//OBTIENE VARIABLE GET DE LA URL
 	function getQueryVariable(variable)
 	{
