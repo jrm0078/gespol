@@ -100,8 +100,11 @@
             <button type="button" id="btnActualizar" class="btn btn-success">
                 <i class="fa fa-check mr-1"></i> Actualizar
             </button>
-            <button type="button" id="btnEliminar" class="btn btn-outline-danger">
+            <button type="button" id="btnEliminar" class="btn btn-outline-danger" style="display:none;">
                 <i class="fa fa-trash mr-1"></i> Eliminar
+            </button>
+            <button type="button" id="btnAtras" class="btn btn-secondary ml-auto">
+                <i class="fas fa-times mr-1"></i> Cancelar
             </button>
         </div>
     </div>

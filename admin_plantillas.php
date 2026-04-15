@@ -223,17 +223,16 @@
             </button>
 
             <!-- BOTONES -->
-            <div class="mt-4 row g-2">
-                <div class="col-12 col-sm-6 col-md-auto">
-                    <button type="button" class="btn btn-primary w-100" onclick="guardarPlantillaForm()">
-                        <i class="fas fa-save"></i> Guardar
-                    </button>
-                </div>
-                <div class="col-12 col-sm-6 col-md-auto">
-                    <button type="button" class="btn btn-secondary w-100" onclick="cancelarFormularioPlantillas()">
-                        <i class="fas fa-times"></i> Cancelar
-                    </button>
-                </div>
+            <div class="card-footer bg-white d-flex align-items-center" style="gap:8px;">
+                <button type="button" class="btn btn-success" onclick="guardarPlantillaForm()">
+                    <i class="fas fa-save mr-1"></i> Guardar
+                </button>
+                <button type="button" id="btnEliminarPlantilla" class="btn btn-outline-danger" onclick="eliminarPlantillaFormActual()" style="display:none;">
+                    <i class="fas fa-trash mr-1"></i> Eliminar
+                </button>
+                <button type="button" class="btn btn-secondary ml-auto" onclick="cancelarFormularioPlantillas()">
+                    <i class="fas fa-times mr-1"></i> Cancelar
+                </button>
             </div>
         </div>
     </div>
@@ -338,6 +337,7 @@ function abrirFormularioPlantillasNueva() {
     formDirty = false;
     $('#tituloFormularioPlantillas').text('Nueva Plantilla');
     $('#cod_plantilla_form').prop('disabled', false);
+    $('#btnEliminarPlantilla').hide();
     limpiarFormularioPlantillas();
     ocultarTablaPlantillas();
     setTimeout(() => inicializarTinyMCEForm(), 100);
@@ -353,6 +353,7 @@ function abrirFormularioPlantillasEditar(cod) {
             plantillaEnEdicionForm = cod;
             $('#tituloFormularioPlantillas').text('Editar Plantilla');
             $('#cod_plantilla_form').prop('disabled', true);
+            $('#btnEliminarPlantilla').show();
             
             $('#cod_plantilla_form').val(data.data.cod_plantilla);
             $('#nombre_form').val(data.data.nombre);
@@ -619,6 +620,14 @@ function guardarPlantillaForm() {
     });
 }
 
+// Eliminar plantilla desde el formulario de edición
+function eliminarPlantillaFormActual() {
+    if (!plantillaEnEdicionForm) return;
+    var nombre = $('#nombre_form').val() || plantillaEnEdicionForm;
+    var cod = plantillaEnEdicionForm;
+    eliminarPlantillaForm(cod, nombre);
+}
+
 // Eliminar plantilla
 function eliminarPlantillaForm(cod, nombre) {
     Swal.fire({
@@ -634,8 +643,9 @@ function eliminarPlantillaForm(cod, nombre) {
         if (result.isConfirmed) {
             $.post(APIPantillas + '?action=eliminar&cod_plantilla=' + cod, function(data) {
                 if (data.success) {
-                    mostrarAlertaPlantillas('Plantilla eliminada correctamente', 'success');
+                    mostrarTablaPlantillas();
                     cargarPlantillasListado();
+                    toastMsg('Plantilla eliminada correctamente', 'success');
                 } else {
                     mostrarAlertaPlantillas(data.error || 'Error al eliminar', 'danger');
                 }
