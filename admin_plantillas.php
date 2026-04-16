@@ -397,121 +397,109 @@ function abrirFormularioPlantillasEditar(cod) {
     });
 }
 
-// Cargar filtros en formulario
-function cargarFiltrosPlantillas(filtros) {
+// ============================================================
+// GESTIÓN DE FILTROS EN MEMORIA
+// ============================================================
+let _filtrosMemoria = [];
+
+function _renderFiltrosTabla() {
     const tbody = $('#bodyFiltrosPlantillas');
     tbody.html('');
-    
-    filtros.forEach(filtro => {
-        const rowId = 'filt_' + Date.now() + Math.random();
+
+    if (_filtrosMemoria.length === 0) {
+        tbody.html('<tr><td colspan="7" class="text-center text-muted py-2"><small>Sin filtros. Pulsa "Agregar Filtro" para añadir uno.</small></td></tr>');
+        return;
+    }
+
+    _filtrosMemoria.forEach((filtro, idx) => {
         let configHtml = '';
-        
         if (filtro.tipo_filtro === 'select_sql') {
-            configHtml = `<textarea class="form-control form-control-sm filtro-sql-query" rows="2">${filtro.sql_query || ''}</textarea>`;
+            const sqlEsc = (filtro.sql_query || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+            configHtml = `<textarea class="form-control form-control-sm filtro-sql-query" rows="2" placeholder="SELECT id, nombre FROM tabla"
+                onchange="_filtrosMemoria[${idx}].sql_query = this.value">${sqlEsc}</textarea>`;
         }
-        
-        const fila = `<tr id="${rowId}" class="filtro-row">
-            <td class="align-middle"><input type="text" class="form-control form-control-sm filtro-nombre" value="${filtro.nombre_filtro}"></td>
-            <td class="align-middle"><input type="text" class="form-control form-control-sm filtro-etiqueta" value="${filtro.etiqueta}"></td>
+
+        const nombre = (filtro.nombre_filtro || '').replace(/"/g,'&quot;');
+        const etiqueta = (filtro.etiqueta || '').replace(/"/g,'&quot;');
+
+        const fila = `<tr>
             <td class="align-middle">
-                <select class="form-control form-control-sm filtro-tipo" onchange="actualizarConfigFiltroPlantillas('${rowId}')">
+                <input type="text" class="form-control form-control-sm" value="${nombre}"
+                    onchange="_filtrosMemoria[${idx}].nombre_filtro = this.value" placeholder="ej: id_cliente">
+            </td>
+            <td class="align-middle">
+                <input type="text" class="form-control form-control-sm" value="${etiqueta}"
+                    onchange="_filtrosMemoria[${idx}].etiqueta = this.value" placeholder="Etiqueta visible">
+            </td>
+            <td class="align-middle">
+                <select class="form-control form-control-sm" onchange="_cambiarTipoFiltro(${idx}, this.value)">
                     <option value="select_sql" ${filtro.tipo_filtro === 'select_sql' ? 'selected' : ''}>SELECT SQL</option>
                     <option value="text" ${filtro.tipo_filtro === 'text' ? 'selected' : ''}>Texto</option>
                     <option value="number" ${filtro.tipo_filtro === 'number' ? 'selected' : ''}>Número</option>
                     <option value="date" ${filtro.tipo_filtro === 'date' ? 'selected' : ''}>Fecha</option>
                 </select>
             </td>
-            <td class="align-middle" id="config-${rowId}">${configHtml}</td>
-            <td class="align-middle" style="width:80px;"><input type="number" class="form-control form-control-sm filtro-orden" value="${filtro.orden || 1}" min="1"></td>
-            <td class="text-center align-middle" style="width:80px;"><input type="checkbox" class="filtro-requerido" style="width:18px;height:18px;cursor:pointer;" ${filtro.requerido === 1 ? 'checked' : ''}></td>
-            <td class="text-center align-middle" style="width:60px;"><button type="button" class="btn btn-sm btn-danger" onclick="eliminarFilaFiltroPlantillas('${rowId}')" title="Eliminar filtro"><i class="fas fa-trash"></i></button></td>
+            <td class="align-middle">${configHtml}</td>
+            <td class="align-middle" style="width:80px;">
+                <input type="number" class="form-control form-control-sm" value="${filtro.orden || 1}" min="1"
+                    onchange="_filtrosMemoria[${idx}].orden = parseInt(this.value) || 1">
+            </td>
+            <td class="text-center align-middle" style="width:80px;">
+                <input type="checkbox" style="width:18px;height:18px;cursor:pointer;"
+                    ${filtro.requerido ? 'checked' : ''}
+                    onchange="_filtrosMemoria[${idx}].requerido = this.checked ? 1 : 0">
+            </td>
+            <td class="text-center align-middle" style="width:60px;">
+                <button type="button" class="btn btn-sm btn-danger" onclick="_eliminarFiltroMemoria(${idx})" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
         </tr>`;
-        
+
         tbody.append(fila);
     });
 }
 
+function _cambiarTipoFiltro(idx, nuevoTipo) {
+    _filtrosMemoria[idx].tipo_filtro = nuevoTipo;
+    _filtrosMemoria[idx].sql_query = '';
+    _renderFiltrosTabla();
+}
+
+function _eliminarFiltroMemoria(idx) {
+    _filtrosMemoria.splice(idx, 1);
+    _renderFiltrosTabla();
+}
+
+// Cargar filtros en formulario
+function cargarFiltrosPlantillas(filtros) {
+    _filtrosMemoria = (filtros || []).map(f => ({
+        nombre_filtro: f.nombre_filtro || '',
+        etiqueta: f.etiqueta || '',
+        tipo_filtro: f.tipo_filtro || 'text',
+        sql_query: f.sql_query || '',
+        orden: f.orden || 1,
+        requerido: f.requerido || 0
+    }));
+    _renderFiltrosTabla();
+}
+
 // Agregar fila de filtro
 function agregarFilaFiltroPlantillas() {
-    const tbody = $('#bodyFiltrosPlantillas');
-    const rowId = 'filtro-' + Date.now();
-    
-    const fila = `<tr id="${rowId}" class="filtro-row">
-        <td class="align-middle"><input type="text" class="form-control form-control-sm filtro-nombre" placeholder="año, cliente, etc." required></td>
-        <td class="align-middle"><input type="text" class="form-control form-control-sm filtro-etiqueta" placeholder="Etiqueta visible" required></td>
-        <td class="align-middle">
-            <select class="form-control form-control-sm filtro-tipo" onchange="actualizarConfigFiltroPlantillas('${rowId}')">
-                <option value="select_sql">SELECT SQL</option>
-                <option value="text">Texto</option>
-                <option value="number">Número</option>
-                <option value="date">Fecha</option>
-            </select>
-        </td>
-        <td class="align-middle" id="config-${rowId}"></td>
-        <td class="align-middle" style="width:80px;"><input type="number" class="form-control form-control-sm filtro-orden" value="1" min="1" required></td>
-        <td class="text-center align-middle" style="width:80px;"><input type="checkbox" class="filtro-requerido" style="width:18px;height:18px;cursor:pointer;" checked></td>
-        <td class="text-center align-middle" style="width:60px;"><button type="button" class="btn btn-sm btn-danger" onclick="eliminarFilaFiltroPlantillas('${rowId}')" title="Eliminar filtro"><i class="fas fa-trash"></i></button></td>
-    </tr>`;
-    
-    tbody.append(fila);
-}
-
-// Actualizar configuración del filtro según tipo
-function actualizarConfigFiltroPlantillas(rowId) {
-    const fila = $('#' + rowId);
-    const tipo = fila.find('.filtro-tipo').val();
-    const configDiv = $('#config-' + rowId);
-    
-    let html = '';
-    
-    switch(tipo) {
-        case 'select_sql':
-            html = `<textarea class="form-control form-control-sm filtro-sql-query" placeholder="SELECT id, nombre FROM tabla" rows="2"></textarea>`;
-            break;
-        default:
-            html = '';
-    }
-    
-    configDiv.html(html);
-}
-
-// Eliminar fila de filtro
-function eliminarFilaFiltroPlantillas(rowId) {
-    $('#' + rowId).remove();
-}
-
-// Obtener filtros del formulario
-function obtenerFiltrosPlantillas() {
-    const filtros = [];
-    
-    $('#bodyFiltrosPlantillas tr').each(function() {
-        const fila = $(this);
-        const celdas = fila.find('td');
-        
-        const nombre = celdas.eq(0).find('input').val().trim();
-        const etiqueta = celdas.eq(1).find('input').val().trim();
-        const tipo = celdas.eq(2).find('select').val();
-        const orden = parseInt(celdas.eq(4).find('input').val()) || 1;
-        const requerido = celdas.eq(5).find('input[type="checkbox"]').is(':checked') ? 1 : 0;
-        
-        if (!nombre || !etiqueta) return;
-        
-        const filtro = {
-            nombre_filtro: nombre,
-            etiqueta: etiqueta,
-            tipo_filtro: tipo,
-            orden: orden,
-            requerido: requerido
-        };
-        
-        if (tipo === 'select_sql') {
-            filtro.sql_query = celdas.eq(3).find('.filtro-sql-query').val();
-        }
-        
-        filtros.push(filtro);
+    _filtrosMemoria.push({
+        nombre_filtro: '',
+        etiqueta: '',
+        tipo_filtro: 'text',
+        sql_query: '',
+        orden: _filtrosMemoria.length + 1,
+        requerido: 1
     });
-    
-    return filtros;
+    _renderFiltrosTabla();
+}
+
+// Obtener filtros del array en memoria
+function obtenerFiltrosPlantillas() {
+    return _filtrosMemoria.filter(f => f.nombre_filtro.trim() && f.etiqueta.trim());
 }
 
 
@@ -635,6 +623,8 @@ function limpiarFormularioPlantillas() {
         tinymce.get('contenido_form').setContent('');
     }
     $('#bodyFiltrosPlantillas').html('');
+    _filtrosMemoria = [];
+    _renderFiltrosTabla();
     plantillaEnEdicionForm = null;
 }
 
