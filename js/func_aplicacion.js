@@ -57,29 +57,17 @@ return;
 // ---- MODAL ----
 if (modo === 'modal') {
 
-// Guardar pagina actual del panel central para restaurarla al cerrar
-window.localStorage.setItem('pag_pagina_prev', window.localStorage.getItem('pag_pagina_actual') || '');
-window.localStorage.setItem('pag_titulo_prev', window.localStorage.getItem('pag_titulo_actual') || '');
-window.localStorage.setItem('pag_icono_prev',  window.localStorage.getItem('pag_icono_actual')  || '');
+// Ocultar panel central (sin destruirlo: conserva formularios con datos sin guardar)
+$('#panelcentral').hide();
 
-// Vaciar panel central para evitar IDs duplicados en el DOM
-$('#panelcentral').find('table').each(function() {
-if ($.fn.DataTable.isDataTable(this)) $(this).DataTable().destroy();
-});
-$('#panelcentral').html('');
-
-// Al cerrar el modal: limpiar y restaurar panel central
+// Al cerrar el modal: limpiar modal y restaurar panel central tal como estaba
 $('#modalPagina').one('hidden.bs.modal', function() {
 $('#modalPaginaBody').find('table').each(function() {
 if ($.fn.DataTable.isDataTable(this)) $(this).DataTable().destroy();
 });
 $('#modalPaginaBody').html('');
 $('body > [data-ctx-floating]').remove();
-
-var prev    = window.localStorage.getItem('pag_pagina_prev');
-var prevTit = window.localStorage.getItem('pag_titulo_prev');
-var prevIco = window.localStorage.getItem('pag_icono_prev');
-if (prev) CargarPagina(prev, prevTit, prevIco);
+$('#panelcentral').show();
 });
 
 // Titulo e indicador de carga
