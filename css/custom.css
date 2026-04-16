@@ -194,7 +194,7 @@
 .page-wrapper {
     background: #f7f7f7;
     min-height: calc(100vh - 50px);
-    padding: 0 4px 4px 4px;
+    padding: 0 4px 4px 4px !important;
 }
 
 .page-breadcrumb {
