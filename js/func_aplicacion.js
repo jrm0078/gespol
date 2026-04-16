@@ -6,6 +6,43 @@
 // PAGINAS
 ////////////////////////////
 
+// Carga página en ventana emergente (modal)
+function CargarPaginaModal(pagina, titulo, icono, id1, id2, id3, id4, id5, id6, id7, id8, id9, id10) {
+
+	// Guardar parámetros en localStorage igual que CargarPagina
+	window.localStorage.setItem('pag_id1',(id1===undefined? "" : id1));
+	window.localStorage.setItem('pag_id2',(id2===undefined? "" : id2));
+	window.localStorage.setItem('pag_id3',(id3===undefined? "" : id3));
+	window.localStorage.setItem('pag_id4',(id4===undefined? "" : id4));
+	window.localStorage.setItem('pag_id5',(id5===undefined? "" : id5));
+	window.localStorage.setItem('pag_id6',(id6===undefined? "" : id6));
+	window.localStorage.setItem('pag_id7',(id7===undefined? "" : id7));
+	window.localStorage.setItem('pag_id8',(id8===undefined? "" : id8));
+	window.localStorage.setItem('pag_id9',(id9===undefined? "" : id9));
+	window.localStorage.setItem('pag_id10',(id10===undefined? "" : id10));
+
+	// Título del modal
+	$('#modalPaginaTitulo').html("<i class='" + icono + "'></i> " + titulo);
+	$('#modalPaginaBody').html('<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x text-primary"></i></div>');
+
+	// Mostrar modal
+	$('#modalPagina').modal('show');
+
+	// Cargar contenido
+	$.ajax({
+		url: pagina,
+		type: 'GET',
+		dataType: 'html',
+		cache: false,
+		success: function(html) {
+			$('#modalPaginaBody').html(html);
+		},
+		error: function() {
+			$('#modalPaginaBody').html('<div class="alert alert-danger">Error al cargar la página</div>');
+		}
+	});
+}
+
 //Carga página en panel central
 function CargarPagina(pagina,titulo,icono,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10){
 	

@@ -221,7 +221,7 @@
 						}
 
 						// MENÚ INFORMES (Todos los usuarios autenticados)
-						$menu= $menu . '<li class="sidebar-item" id="mnuinformes" data-pagina="informes.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="mdi mdi-file-chart"></i><span class="hide-menu">Informes</span></a></li>';
+					$menu= $menu . '<li class="sidebar-item" id="mnuinformes" data-pagina="informes.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="mdi mdi-file-chart"></i><span class="hide-menu">Informes</span><i class="fas fa-external-link-alt sidebar-modal-icon" title="Abrir en ventana emergente" onclick="event.stopPropagation();CargarPaginaModal(\u0027informes.php\u0027,\u0027Informes\u0027,\u0027mdi mdi-file-chart\u0027)" style="margin-left:auto;font-size:0.7rem;opacity:0.6;"></i></a></li>';
 						$menu= $menu . '<script>';
 							$menu= $menu . 'document.getElementById("mnuinformes").addEventListener("click", function(){CargarPagina("informes.php","Informes","mdi mdi-file-chart");}, false);';
 						$menu= $menu . '</script>';
@@ -285,6 +285,25 @@
     <!-- End Wrapper -->
     <!-- ============================================================== -->
 
+    <!-- ============================================================== -->
+    <!-- Modal Ventana Emergente (reutilizable) -->
+    <!-- ============================================================== -->
+    <div class="modal fade" id="modalPagina" tabindex="-1" role="dialog" aria-labelledby="modalPaginaTitulo" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document" style="max-width:95vw;">
+            <div class="modal-content">
+                <div class="modal-header card-header-blue py-2">
+                    <h5 class="modal-title text-white" id="modalPaginaTitulo"></h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body p-2" id="modalPaginaBody"></div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Modal -->
+    <!-- ============================================================== -->
 
     <!-- ============================================================== -->
     <!-- All Required js -->
