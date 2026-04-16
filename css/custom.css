@@ -96,7 +96,7 @@
 /* ============> NAVBAR AZUL <============ */
 .topbar {
     background: linear-gradient(135deg, #0084D9 0%, #0066B3 100%);
-    min-height: 62px;
+    min-height: 50px;
     position: fixed !important;
     top: 0 !important;
     width: 100% !important;
@@ -106,7 +106,7 @@
 
 .top-navbar {
     background: linear-gradient(135deg, #0084D9 0%, #0066B3 100%) !important;
-    min-height: 62px;
+    min-height: 50px;
 }
 
 /* Sidebar visible */
@@ -162,25 +162,31 @@
 
 /* Fixed topbar */
 #main-wrapper {
-    padding-top: 62px;
+    padding-top: 50px;
     margin-top: 0;
 }
 
 /* ============> MEJORA DE ENCUADRE <============ */
 .page-wrapper {
     background: #f7f7f7;
-    min-height: calc(100vh - 62px);
-    padding: 0 6px 8px 6px;
+    min-height: calc(100vh - 50px);
+    padding: 0 4px 4px 4px;
 }
 
 .page-breadcrumb {
-    padding: 5px 4px 4px !important;
+    padding: 3px 4px 3px !important;
+    margin-bottom: 0 !important;
+}
+
+.page-breadcrumb .page-title {
+    font-size: 1rem !important;
+    margin-bottom: 0 !important;
 }
 
 /* Sidebar: solo ajustar top para que quede debajo del navbar fijo */
 /* style.css ya maneja el resto (full, mini-sidebar, hover, márgenes) */
 .left-sidebar {
-    top: 62px !important;
+    top: 50px !important;
 }
 
 /* Cuando sidebar hover expande el logo (expand-logo 250px), también desplazar el navbar-collapse
@@ -196,9 +202,9 @@
 }
 
 .navbar {
-    padding: 0.75rem 1.5rem !important;
+    padding: 0.3rem 1rem !important;
     box-shadow: 0 2px 10px rgba(0, 132, 217, 0.15);
-    min-height: 75px !important;
+    min-height: 50px !important;
     display: flex;
     align-items: center;
 }
@@ -215,7 +221,9 @@
 
 /* Container mejora */
 .container-fluid {
-    max-width: 1400px;
+    max-width: 100%;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
     margin-left: auto;
     margin-right: auto;
 }
@@ -225,7 +233,15 @@
     border: none;
     box-shadow: 0 1px 3px rgba(0, 132, 217, 0.1);
     border-radius: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+}
+
+.card-body {
+    padding: 0.75rem !important;
+}
+
+.card-header {
+    padding: 0.5rem 0.75rem !important;
 }
 
 .card-header:not(.card-header-blue) {
