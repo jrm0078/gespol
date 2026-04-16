@@ -103,6 +103,12 @@
 		var $ctxMenu = $(config.ctxMenuId);
 		var selectedTr = null;
 
+		// Mover el menú contextual al <body> para que position:fixed funcione
+		// correctamente aunque la tabla esté dentro de un modal con transforms
+		if (!$ctxMenu.parent().is('body')) {
+			$ctxMenu.attr('data-ctx-floating', '1').appendTo('body');
+		}
+
 		// --- limpiar listeners previos (re-init seguro) ---
 		$table.off('click.tb-'    + ns)
 		      .off('contextmenu.tb-' + ns);

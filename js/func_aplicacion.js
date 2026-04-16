@@ -43,6 +43,9 @@ function CargarPaginaModal(pagina, titulo, icono, id1, id2, id3, id4, id5, id6, 
 		});
 		$('#modalPaginaBody').html('');
 
+		// Limpiar menús contextuales flotantes que pertenecían al modal
+		$('body > [data-ctx-floating]').remove();
+
 		// Recargar la página que estaba en el panel central
 		var prevPagina = window.localStorage.getItem('pag_pagina_prev');
 		var prevTitulo = window.localStorage.getItem('pag_titulo_prev');
