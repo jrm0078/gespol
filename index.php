@@ -210,20 +210,20 @@
 						{
 							$menu= $menu . '<li class="sidebar-item" id="mnuusuarios" data-pagina="consusuarios.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="far fa-user"></i><span class="hide-menu">Usuarios</span><i class="fas fa-external-link-alt sidebar-modal-icon" data-pagina="consusuarios.php" data-titulo="Usuarios" data-icono="far fa-user" title="Abrir en ventana emergente" style="margin-left:auto;font-size:0.7rem;opacity:0.6;"></i></a></li>';
 							$menu= $menu . '<script>';
-								$menu= $menu . 'document.getElementById("mnuusuarios").addEventListener("click", function(){CargarPagina("consusuarios.php","Usuarios","far fa-user");}, false);';
+								$menu= $menu . 'document.getElementById("mnuusuarios").addEventListener("click", function(e){if(e.target.closest(".sidebar-modal-icon"))return;CargarPagina("consusuarios.php","Usuarios","far fa-user");}, false);';
 							$menu= $menu . '</script>';
 							
 							// MENÚ PLANTILLAS (Admin)
 							$menu= $menu . '<li class="sidebar-item" id="mnuplantillas" data-pagina="admin_plantillas.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="mdi mdi-file-document"></i><span class="hide-menu">Plantillas</span><i class="fas fa-external-link-alt sidebar-modal-icon" data-pagina="admin_plantillas.php" data-titulo="Plantillas" data-icono="mdi mdi-file-document" title="Abrir en ventana emergente" style="margin-left:auto;font-size:0.7rem;opacity:0.6;"></i></a></li>';
 							$menu= $menu . '<script>';
-								$menu= $menu . 'document.getElementById("mnuplantillas").addEventListener("click", function(){CargarPagina("admin_plantillas.php","Plantillas","mdi mdi-file-document");}, false);';
+								$menu= $menu . 'document.getElementById("mnuplantillas").addEventListener("click", function(e){if(e.target.closest(".sidebar-modal-icon"))return;CargarPagina("admin_plantillas.php","Plantillas","mdi mdi-file-document");}, false);';
 							$menu= $menu . '</script>';
 						}
 
 						// MENÚ INFORMES (Todos los usuarios autenticados)
 				$menu= $menu . '<li class="sidebar-item" id="mnuinformes" data-pagina="informes.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="mdi mdi-file-chart"></i><span class="hide-menu">Informes</span><i class="fas fa-external-link-alt sidebar-modal-icon" data-pagina="informes.php" data-titulo="Informes" data-icono="mdi mdi-file-chart" title="Abrir en ventana emergente" style="margin-left:auto;font-size:0.7rem;opacity:0.6;"></i></a></li>';
 						$menu= $menu . '<script>';
-							$menu= $menu . 'document.getElementById("mnuinformes").addEventListener("click", function(){CargarPagina("informes.php","Informes","mdi mdi-file-chart");}, false);';
+							$menu= $menu . 'document.getElementById("mnuinformes").addEventListener("click", function(e){if(e.target.closest(".sidebar-modal-icon"))return;CargarPagina("informes.php","Informes","mdi mdi-file-chart");}, false);';
 						$menu= $menu . '</script>';
 
 						echo $menu;										
@@ -297,7 +297,9 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body p-2" id="modalPaginaBody"></div>
+                <div class="modal-body p-0" id="modalPaginaBody">
+                    <iframe id="modalPaginaFrame" src="about:blank" style="width:100%;height:80vh;border:none;display:block;"></iframe>
+                </div>
             </div>
         </div>
     </div>
