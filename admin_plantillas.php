@@ -400,7 +400,7 @@ function abrirFormularioPlantillasEditar(cod) {
 // ============================================================
 // GESTIÓN DE FILTROS EN MEMORIA
 // ============================================================
-let _filtrosMemoria = [];
+var _filtrosMemoria = [];
 
 function _renderFiltrosTabla() {
     const tbody = $('#bodyFiltrosPlantillas');

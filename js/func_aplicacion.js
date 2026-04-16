@@ -1,5 +1,10 @@
 "use strict";
 
+// Delegated handler: abrir página en modal al pinchar icono de sidebar
+$(document).on('click', '.sidebar-modal-icon', function(e) {
+	e.stopPropagation();
+	CargarPaginaModal($(this).data('pagina'), $(this).data('titulo'), $(this).data('icono'));
+});
 
 
 ////////////////////////////
