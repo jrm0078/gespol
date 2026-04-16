@@ -192,23 +192,6 @@
                           placeholder="SELECT * FROM tabla WHERE id = [[id]]" required></textarea>
             </div>
 
-            <!-- BOTÓN REFERENCIA COLUMNAS -->
-            <div class="form-group">
-                <button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#referenciaColumnasPlantillas">
-                    <i class="fas fa-info-circle"></i> Ver Columnas Disponibles
-                </button>
-            </div>
-
-            <!-- REFERENCIA COLUMNAS -->
-            <div class="collapse mb-4" id="referenciaColumnasPlantillas">
-                <div class="card card-body">
-                    <h6>Columnas Disponibles (según SQL):</h6>
-                    <div id="columnasDisponiblesPlantillas" style="max-height: 200px; overflow-y: auto;">
-                        <small class="text-muted">Escribe SQL arriba para ver columnas disponibles</small>
-                    </div>
-                </div>
-            </div>
-
             <!-- CONTENIDO HTML -->
             <div class="form-group">
                 <label class="font-weight-bold">Contenido HTML *</label>
@@ -379,7 +362,6 @@ function abrirFormularioPlantillasNueva() {
     limpiarFormularioPlantillas();
     ocultarTablaPlantillas();
     setTimeout(() => inicializarTinyMCEForm(), 100);
-    actualizarColumnasPlantillas();
 }
 
 // Abrir formulario EDITAR plantilla
@@ -411,7 +393,6 @@ function abrirFormularioPlantillasEditar(cod) {
             cargarFiltrosPlantillas(data.data.filtros || []);
             
             ocultarTablaPlantillas();
-            actualizarColumnasPlantillas();
         }
     });
 }
@@ -556,36 +537,7 @@ function obtenerFiltrosPlantillas() {
     return filtros;
 }
 
-// Actualizar columnas disponibles según SQL
-function actualizarColumnasPlantillas() {
-    const sql = $('#sql_consulta_form').val().trim();
-    const container = $('#columnasDisponiblesPlantillas');
-    
-    if (!sql) {
-        container.html('<small class="text-muted">Escribe SQL para ver columnas</small>');
-        return;
-    }
-    
-    const regex = /SELECT\s+(.*?)\s+FROM/i;
-    const match = sql.match(regex);
-    
-    if (match) {
-        let columns = match[1];
-        if (columns === '*') {
-            container.html('<small class="text-warning">Selecciona todas las columnas (*). Especifica las columnas para ver referencias.</small>');
-        } else {
-            const cols = columns.split(',').map(c => c.trim());
-            let html = '';
-            cols.forEach(col => {
-                const columna = col.split(' ').pop();
-                html += `<div class="columna-reference"><code>[[${columna}]]</code></div>`;
-            });
-            container.html(html);
-        }
-    } else {
-        container.html('<small class="text-danger">SQL no válido. Debe ser: SELECT columnas FROM tabla</small>');
-    }
-}
+
 
 // Guardar plantilla
 function guardarPlantillaForm() {
@@ -865,9 +817,6 @@ function initDataTablePlantillas() {
 $(document).ready(function() {
     cargarPlantillasListado();
     inicializarTinyMCEForm();
-    $(document).on('input', '#sql_consulta_form', function() {
-        actualizarColumnasPlantillas();
-    });
 
     // Validación en tiempo real: código único y sin espacios
     $(document).on('input', '#cod_plantilla_form', function() {
