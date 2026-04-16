@@ -288,7 +288,7 @@
     <!-- ============================================================== -->
     <!-- Modal Ventana Emergente (reutilizable) -->
     <!-- ============================================================== -->
-    <div class="modal fade" id="modalPagina" tabindex="-1" role="dialog" aria-labelledby="modalPaginaTitulo" aria-hidden="true">
+    <div class="modal fade" id="modalPagina" tabindex="-1" role="dialog" aria-labelledby="modalPaginaTitulo">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document" style="max-width:95vw;">
             <div class="modal-content">
                 <div class="modal-header card-header-blue py-2">

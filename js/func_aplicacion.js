@@ -107,6 +107,32 @@ return;
 }
 
 // ---- CENTRO (por defecto) ----
+// Si el modal esta abierto, redirigir ahi en vez del panel central
+// (p.ej. cuando fichausuario.js llama CargarPagina sin modo al guardar)
+if ($('#modalPagina').hasClass('show')) {
+$('#modalPaginaTitulo').html("<i class='" + icono + "'></i> " + titulo);
+$('#modalPaginaBody').find('table').each(function() {
+if ($.fn.DataTable.isDataTable(this)) $(this).DataTable().destroy();
+});
+$('#modalPaginaBody').html('<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x text-primary"></i></div>');
+$.ajax({
+url: pagina,
+type: 'GET',
+dataType: 'html',
+cache: false,
+success: function(html) {
+$('#modalPaginaBody').html(html);
+$('#modalPaginaBody .ctx-menu').each(function() {
+$(this).attr('data-ctx-floating', '1').appendTo('body');
+});
+},
+error: function() {
+$('#modalPaginaBody').html('<div class="alert alert-danger">Error al cargar la pagina</div>');
+}
+});
+return;
+}
+
 document.getElementById("titulopagina").innerHTML = "<i class='" + icono + "'></i> " + titulo;
 
 // Guardar pagina actual (usada para restaurar al cerrar un modal posterior)
@@ -147,6 +173,7 @@ $('#panelcentral').html('<div class="alert alert-danger">Error al cargar la pagi
 function CargarPaginaModal(pagina, titulo, icono) {
 CargarPagina(pagina, titulo, icono, 'modal');
 }
+
 
 ////////////////////////////
 // COMBOS (SELECT2)

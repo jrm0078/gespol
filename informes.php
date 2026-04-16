@@ -132,6 +132,20 @@
         </div>
     </div>
 
+    <!-- SECCIÓN AYUDA / NOTAS -->
+    <div id="ayudaSection" style="display:none;" class="card shadow-sm mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center py-2" style="background: linear-gradient(to right, rgba(0,132,217,0.08), transparent); border-left: 4px solid #17a2b8;">
+            <h6 class="m-0 font-weight-bold" style="color:#117a8b;"><i class="fas fa-info-circle mr-1"></i> Ayuda / Notas de esta plantilla</h6>
+            <button class="btn btn-sm" style="background:#17a2b8;color:#fff;border:none;" onclick="guardarAyuda()" title="Guardar notas">
+                <i class="fas fa-save"></i> <span class="d-none d-md-inline">Guardar nota</span>
+            </button>
+        </div>
+        <div class="card-body py-2">
+            <textarea id="ayudaPlantilla" class="form-control" rows="3"
+                placeholder="Escribe aqu&iacute; notas sobre esta plantilla: para qu&eacute; sirve, qu&eacute; par&aacute;metros necesita, ejemplos..."></textarea>
+        </div>
+    </div>
+
     <!-- SECCIÓN 2: FILTROS DINÁMICOS -->
     <div id="filtroSection" style="display:none;" class="card shadow-sm mb-3">
         <div class="card-header py-2" style="background: linear-gradient(to right, rgba(0,132,217,0.08), transparent); border-left: 4px solid #0084D9;">
@@ -275,6 +289,15 @@ function cargarPlantilla() {
                 _xhrPlantilla = null;
                 plantillaActual = response.data;
                 datosFormulario  = {};
+
+                // Mostrar/cargar campo Ayuda
+                var ayuda = plantillaActual.ayuda || '';
+                $('#ayudaPlantilla').val(ayuda);
+                if (ayuda) {
+                    $('#ayudaSection').show();
+                } else {
+                    $('#ayudaSection').show(); // mostrar siempre para que se pueda escribir
+                }
 
                 // Cargar filtros dinámicos desde el endpoint enriched
                 cargarFiltrosDinamicos(cod);
@@ -610,10 +633,35 @@ function limpiar() {
     document.getElementById('filtrosContainer').innerHTML = '';
     document.getElementById('filtroSection').style.display  = 'none';
     document.getElementById('editorSection').style.display  = 'none';
+    document.getElementById('ayudaSection').style.display   = 'none';
+    $('#ayudaPlantilla').val('');
     var ed = tinymce.get('documento-editor');
     if (ed) ed.setContent('');
     datosFormulario  = {};
     plantillaActual  = null;
+}
+
+// Guardar campo Ayuda/Notas de la plantilla actual
+function guardarAyuda() {
+    if (!plantillaActual) return;
+    var ayuda = $('#ayudaPlantilla').val();
+    $.ajax({
+        url: API_PLANTILLAS + '?action=guardar_ayuda&cod=' + encodeURIComponent(plantillaActual.cod_plantilla),
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ ayuda: ayuda }),
+        success: function(resp) {
+            if (resp.success) {
+                plantillaActual.ayuda = ayuda;
+                mostrarAlerta('Notas guardadas correctamente', 'success');
+            } else {
+                mostrarAlerta('Error al guardar: ' + (resp.error || ''), 'danger');
+            }
+        },
+        error: function() {
+            mostrarAlerta('Error al guardar las notas', 'danger');
+        }
+    });
 }
 
 // ============================================================

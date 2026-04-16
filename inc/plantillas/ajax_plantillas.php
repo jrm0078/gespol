@@ -44,6 +44,9 @@ switch($action) {
     case 'eliminar':
         eliminarPlantillaAction();
         break;
+    case 'guardar_ayuda':
+        guardarAyudaAction();
+        break;
     case 'guardar_documento':
         guardarDocumentoAction();
         break;
@@ -450,6 +453,32 @@ function eliminarPlantillaAction() {
         echo json_encode(['success' => true]);
     } else {
         echo json_encode(['success' => false, 'error' => $result['error'] ?? 'Error al eliminar']);
+    }
+}
+
+/**
+ * Guardar solo el campo ayuda de una plantilla
+ */
+function guardarAyudaAction() {
+    $cod   = isset($_GET['cod']) ? $_GET['cod'] : '';
+    $input = file_get_contents('php://input');
+    $data  = json_decode($input, true);
+
+    if (empty($cod) || !$data) {
+        echo json_encode(['success' => false, 'error' => 'Parámetros requeridos']);
+        return;
+    }
+
+    $cod_sql   = CadSql($cod);
+    $ayuda_sql = CadSql($data['ayuda'] ?? '');
+
+    $query = "UPDATE plantillas_maestro SET ayuda = '$ayuda_sql' WHERE cod_plantilla = '$cod_sql'";
+    $result = ejecutaqueryPHP($query);
+
+    if ($result === 'OK') {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Error al guardar']);
     }
 }
 

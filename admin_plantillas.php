@@ -807,7 +807,7 @@ $(document).ready(function() {
         var cod      = $(this).val().trim();
         var esEditar = $('#cod_plantilla_form').prop('disabled') || window._editandoCod;
         if (!cod || esEditar) return;
-        $.getJSON(API_PLANTILLAS + '?action=obtener_completa&cod=' + encodeURIComponent(cod), function(resp) {
+        $.getJSON(APIPantillas + '?action=obtener_completa&cod=' + encodeURIComponent(cod), function(resp) {
             if (resp.success && resp.data) {
                 $('#cod_plantilla_form').removeClass('is-valid').addClass('is-invalid');
                 $('#cod_error').text('Este código ya existe: "' + cod + '"');
