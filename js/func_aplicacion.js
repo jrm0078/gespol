@@ -14,7 +14,7 @@ $(document).on('click', '.sidebar-modal-icon', function(e) {
 // Carga página en ventana emergente (modal)
 function CargarPaginaModal(pagina, titulo, icono, id1, id2, id3, id4, id5, id6, id7, id8, id9, id10) {
 
-	// Guardar parámetros en localStorage igual que CargarPagina
+	// Guardar parámetros en localStorage
 	window.localStorage.setItem('pag_id1',(id1===undefined? "" : id1));
 	window.localStorage.setItem('pag_id2',(id2===undefined? "" : id2));
 	window.localStorage.setItem('pag_id3',(id3===undefined? "" : id3));
@@ -25,6 +25,32 @@ function CargarPaginaModal(pagina, titulo, icono, id1, id2, id3, id4, id5, id6, 
 	window.localStorage.setItem('pag_id8',(id8===undefined? "" : id8));
 	window.localStorage.setItem('pag_id9',(id9===undefined? "" : id9));
 	window.localStorage.setItem('pag_id10',(id10===undefined? "" : id10));
+
+	// Destruir DataTables del panel central para evitar conflicto de IDs duplicados
+	$('#panelcentral').find('table').each(function() {
+		if ($.fn.DataTable.isDataTable(this)) {
+			$(this).DataTable().destroy();
+		}
+	});
+	$('#panelcentral').html('');
+
+	// Al cerrar el modal: limpiar modal y recargar la página anterior en panel central
+	$('#modalPagina').one('hidden.bs.modal', function() {
+		$('#modalPaginaBody').find('table').each(function() {
+			if ($.fn.DataTable.isDataTable(this)) {
+				$(this).DataTable().destroy();
+			}
+		});
+		$('#modalPaginaBody').html('');
+
+		// Recargar la página que estaba en el panel central
+		var prevPagina = window.localStorage.getItem('pag_pagina_prev');
+		var prevTitulo = window.localStorage.getItem('pag_titulo_prev');
+		var prevIcono  = window.localStorage.getItem('pag_icono_prev');
+		if (prevPagina) {
+			CargarPagina(prevPagina, prevTitulo, prevIcono);
+		}
+	});
 
 	// Título del modal
 	$('#modalPaginaTitulo').html("<i class='" + icono + "'></i> " + titulo);
@@ -52,6 +78,11 @@ function CargarPaginaModal(pagina, titulo, icono, id1, id2, id3, id4, id5, id6, 
 function CargarPagina(pagina,titulo,icono,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10){
 	
 	document.getElementById("titulopagina").innerHTML = "<i class='" + icono + "'></i> " + titulo;
+
+	// Guardar página actual para poder restaurarla al cerrar un modal
+	window.localStorage.setItem('pag_pagina_prev', pagina);
+	window.localStorage.setItem('pag_titulo_prev', titulo);
+	window.localStorage.setItem('pag_icono_prev',  icono);
 
 	// Marcar ítem activo en sidebar
 	document.querySelectorAll('#sidebarnav .sidebar-item').forEach(function(item) {
