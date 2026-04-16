@@ -406,13 +406,7 @@ function cargarFiltrosPlantillas(filtros) {
         const rowId = 'filt_' + Date.now() + Math.random();
         let configHtml = '';
         
-        if (filtro.tipo_filtro === 'select_table') {
-            configHtml = `
-                <input type="text" class="form-control form-control-sm mb-1 filtro-tabla" value="${filtro.tabla_datos || ''}">
-                <input type="text" class="form-control form-control-sm mb-1 filtro-campo-clave" value="${filtro.campo_clave || 'id'}">
-                <input type="text" class="form-control form-control-sm filtro-campo-valor" value="${filtro.campo_valor || 'nombre'}">
-            `;
-        } else if (filtro.tipo_filtro === 'select_sql') {
+        if (filtro.tipo_filtro === 'select_sql') {
             configHtml = `<textarea class="form-control form-control-sm filtro-sql-query" rows="2">${filtro.sql_query || ''}</textarea>`;
         }
         
@@ -421,7 +415,6 @@ function cargarFiltrosPlantillas(filtros) {
             <td class="align-middle"><input type="text" class="form-control form-control-sm filtro-etiqueta" value="${filtro.etiqueta}"></td>
             <td class="align-middle">
                 <select class="form-control form-control-sm filtro-tipo" onchange="actualizarConfigFiltroPlantillas('${rowId}')">
-                    <option value="select_table" ${filtro.tipo_filtro === 'select_table' ? 'selected' : ''}>SELECT Tabla</option>
                     <option value="select_sql" ${filtro.tipo_filtro === 'select_sql' ? 'selected' : ''}>SELECT SQL</option>
                     <option value="text" ${filtro.tipo_filtro === 'text' ? 'selected' : ''}>Texto</option>
                     <option value="number" ${filtro.tipo_filtro === 'number' ? 'selected' : ''}>Número</option>
@@ -448,18 +441,13 @@ function agregarFilaFiltroPlantillas() {
         <td class="align-middle"><input type="text" class="form-control form-control-sm filtro-etiqueta" placeholder="Etiqueta visible" required></td>
         <td class="align-middle">
             <select class="form-control form-control-sm filtro-tipo" onchange="actualizarConfigFiltroPlantillas('${rowId}')">
-                <option value="select_table">SELECT Tabla</option>
                 <option value="select_sql">SELECT SQL</option>
                 <option value="text">Texto</option>
                 <option value="number">Número</option>
                 <option value="date">Fecha</option>
             </select>
         </td>
-        <td class="align-middle" id="config-${rowId}">
-            <input type="text" class="form-control form-control-sm mb-1 filtro-tabla" placeholder="Tabla: años">
-            <input type="text" class="form-control form-control-sm mb-1 filtro-campo-clave" placeholder="Clave: id" value="id">
-            <input type="text" class="form-control form-control-sm filtro-campo-valor" placeholder="Valor: nombre">
-        </td>
+        <td class="align-middle" id="config-${rowId}"></td>
         <td class="align-middle" style="width:80px;"><input type="number" class="form-control form-control-sm filtro-orden" value="1" min="1" required></td>
         <td class="text-center align-middle" style="width:80px;"><input type="checkbox" class="filtro-requerido" style="width:18px;height:18px;cursor:pointer;" checked></td>
         <td class="text-center align-middle" style="width:60px;"><button type="button" class="btn btn-sm btn-danger" onclick="eliminarFilaFiltroPlantillas('${rowId}')" title="Eliminar filtro"><i class="fas fa-trash"></i></button></td>
@@ -477,13 +465,6 @@ function actualizarConfigFiltroPlantillas(rowId) {
     let html = '';
     
     switch(tipo) {
-        case 'select_table':
-            html = `
-                <input type="text" class="form-control form-control-sm mb-1 filtro-tabla" placeholder="Tabla: años">
-                <input type="text" class="form-control form-control-sm mb-1 filtro-campo-clave" placeholder="Clave: id" value="id">
-                <input type="text" class="form-control form-control-sm filtro-campo-valor" placeholder="Valor: nombre">
-            `;
-            break;
         case 'select_sql':
             html = `<textarea class="form-control form-control-sm filtro-sql-query" placeholder="SELECT id, nombre FROM tabla" rows="2"></textarea>`;
             break;
@@ -523,11 +504,7 @@ function obtenerFiltrosPlantillas() {
             requerido: requerido
         };
         
-        if (tipo === 'select_table') {
-            filtro.tabla_datos = celdas.eq(3).find('.filtro-tabla').val();
-            filtro.campo_clave = celdas.eq(3).find('.filtro-campo-clave').val() || 'id';
-            filtro.campo_valor = celdas.eq(3).find('.filtro-campo-valor').val() || 'nombre';
-        } else if (tipo === 'select_sql') {
+        if (tipo === 'select_sql') {
             filtro.sql_query = celdas.eq(3).find('.filtro-sql-query').val();
         }
         
