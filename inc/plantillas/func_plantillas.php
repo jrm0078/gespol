@@ -31,7 +31,7 @@ function ObtenerPlantillasAdmin() {
 function ObtenerPlantilla($cod_plantilla) {
     $cod = CadSql($cod_plantilla);
     $query = "SELECT cod_plantilla, nombre, descripcion, tipo_documento, contenido, 
-                     tabla_origen, campo_clave, sql_consulta, estado
+                     tabla_origen, campo_clave, sql_consulta, ayuda, estado
               FROM plantillas_maestro 
               WHERE cod_plantilla = '$cod'";
     $result = select($query);
@@ -43,7 +43,7 @@ function ObtenerPlantilla($cod_plantilla) {
 }
 
 function CrearPlantilla($cod_plantilla, $nombre, $descripcion, $tipo_documento, 
-                        $contenido, $sql_consulta, $estado = 1) {
+                        $contenido, $sql_consulta, $estado = 1, $ayuda = '') {
     
     // Validaciones
     $mensajeError = "";
@@ -75,10 +75,11 @@ function CrearPlantilla($cod_plantilla, $nombre, $descripcion, $tipo_documento,
     $tipo_sql = CadSql($tipo_documento);
     $cont_sql = CadSql($contenido);
     $sql_sql = CadSql($sql_consulta);
+    $ayuda_sql = CadSql($ayuda);
     
     $query = "INSERT INTO plantillas_maestro 
-              (cod_plantilla, nombre, descripcion, tipo_documento, contenido, sql_consulta, estado)
-              VALUES ('$cod_sql', '$nom_sql', '$desc_sql', '$tipo_sql', '$cont_sql', '$sql_sql', $estado)";
+              (cod_plantilla, nombre, descripcion, tipo_documento, contenido, sql_consulta, ayuda, estado)
+              VALUES ('$cod_sql', '$nom_sql', '$desc_sql', '$tipo_sql', '$cont_sql', '$sql_sql', '$ayuda_sql', $estado)";
     
     $result = ejecutaqueryPHP($query);
     if ($result === 'OK') {
@@ -89,7 +90,7 @@ function CrearPlantilla($cod_plantilla, $nombre, $descripcion, $tipo_documento,
 }
 
 function ActualizarPlantilla($cod_plantilla, $nombre, $descripcion, $tipo_documento, 
-                             $contenido, $sql_consulta, $estado = 1) {
+                             $contenido, $sql_consulta, $estado = 1, $ayuda = '') {
     
     // Validaciones
     $mensajeError = "";
@@ -117,6 +118,7 @@ function ActualizarPlantilla($cod_plantilla, $nombre, $descripcion, $tipo_docume
     $tipo_sql = CadSql($tipo_documento);
     $cont_sql = CadSql($contenido);
     $sql_sql = CadSql($sql_consulta);
+    $ayuda_sql = CadSql($ayuda);
     
     $query = "UPDATE plantillas_maestro 
               SET nombre = '$nom_sql', 
@@ -124,6 +126,7 @@ function ActualizarPlantilla($cod_plantilla, $nombre, $descripcion, $tipo_docume
                   tipo_documento = '$tipo_sql',
                   contenido = '$cont_sql',
                   sql_consulta = '$sql_sql',
+                  ayuda = '$ayuda_sql',
                   estado = $estado
               WHERE cod_plantilla = '$cod_sql'";
     

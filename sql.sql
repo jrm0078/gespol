@@ -23,6 +23,7 @@ CREATE TABLE plantillas_maestro (
   tabla_origen VARCHAR(100),
   campo_clave VARCHAR(100),
   sql_consulta LONGTEXT,
+  ayuda TEXT,
   estado TINYINT(1) DEFAULT 1,
   fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
   fecha_actualizacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

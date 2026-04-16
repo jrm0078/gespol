@@ -191,7 +191,13 @@
                 <textarea class="form-control" id="sql_consulta_form" rows="4" 
                           placeholder="SELECT * FROM tabla WHERE id = [[id]]" required></textarea>
             </div>
-
+            <!-- AYUDA / NOTAS -->
+            <div class="form-group">
+                <label class="font-weight-bold"><i class="fas fa-info-circle text-info mr-1"></i>Ayuda / Notas</label>
+                <small class="d-block text-muted mb-2">Documenta aqu&iacute; el prop&oacute;sito de la SQL, las variables disponibles y cualquier aclaraci&oacute;n para otros usuarios.</small>
+                <textarea class="form-control" id="ayuda_form" rows="3" 
+                          placeholder="Ej: Esta consulta devuelve los datos del expediente. El par&aacute;metro [[id]] es el ID del registro seleccionado..."></textarea>
+            </div>
             <!-- CONTENIDO HTML -->
             <div class="form-group">
                 <label class="font-weight-bold">Contenido HTML *</label>
@@ -380,6 +386,7 @@ function abrirFormularioPlantillasEditar(cod) {
             $('#descripcion_form').val(data.data.descripcion || '');
             $('#tipo_documento_form').val(data.data.tipo_documento || '');
             $('#sql_consulta_form').val(data.data.sql_consulta || '');
+            $('#ayuda_form').val(data.data.ayuda || '');
             $('#estado_form').prop('checked', data.data.estado == 1);
             
             setTimeout(function() {
@@ -509,6 +516,7 @@ function guardarPlantillaForm() {
     const cod     = $('#cod_plantilla_form').val().trim();
     const nombre  = $('#nombre_form').val().trim();
     const sql     = $('#sql_consulta_form').val().trim();
+    const ayuda   = $('#ayuda_form').val().trim();
     const contenido = tinymce.get('contenido_form') ? tinymce.get('contenido_form').getContent() : '';
 
     // Validaciones con feedback visual
@@ -546,6 +554,7 @@ function guardarPlantillaForm() {
         descripcion: $('#descripcion_form').val(),
         tipo_documento: $('#tipo_documento_form').val(),
         sql_consulta: sql,
+        ayuda: ayuda,
         contenido: contenido,
         estado: $('#estado_form').is(':checked') ? 1 : 0,
         filtros: obtenerFiltrosPlantillas()
@@ -618,6 +627,7 @@ function limpiarFormularioPlantillas() {
     $('#descripcion_form').val('');
     $('#tipo_documento_form').val('');
     $('#sql_consulta_form').val('SELECT * FROM tabla WHERE id = [[id]]');
+    $('#ayuda_form').val('');
     $('#estado_form').prop('checked', true);
     if (tinymce.get('contenido_form')) {
         tinymce.get('contenido_form').setContent('');

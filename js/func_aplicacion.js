@@ -1,9 +1,9 @@
-"use strict";
+﻿"use strict";
 
-// Delegated handler: abrir página en modal al pinchar icono de sidebar
+// Handler para iconos de sidebar que abren en modal
 $(document).on('click', '.sidebar-modal-icon', function(e) {
-	e.stopPropagation();
-	CargarPaginaModal($(this).data('pagina'), $(this).data('titulo'), $(this).data('icono'));
+e.stopPropagation();
+CargarPagina($(this).data('pagina'), $(this).data('titulo'), $(this).data('icono'), 'modal');
 });
 
 
@@ -11,166 +11,142 @@ $(document).on('click', '.sidebar-modal-icon', function(e) {
 // PAGINAS
 ////////////////////////////
 
-// Carga página en ventana emergente (modal)
-function CargarPaginaModal(pagina, titulo, icono, id1, id2, id3, id4, id5, id6, id7, id8, id9, id10) {
+/**
+ * Funcion unificada de carga de paginas.
+ *
+ * Uso:
+ *   CargarPagina(pagina, titulo, icono)               -> panel central (por defecto)
+ *   CargarPagina(pagina, titulo, icono, 'centro')     -> panel central (explicito)
+ *   CargarPagina(pagina, titulo, icono, 'modal')      -> ventana modal
+ *   CargarPagina(pagina, titulo, icono, 'tab')        -> nueva pestania del navegador
+ *   CargarPagina(pagina, titulo, icono, id1, id2...)  -> panel central + parametros
+ *
+ * El 4o argumento se interpreta como modo ('centro'|'modal'|'tab') si coincide
+ * con uno de esos valores; en otro caso se trata como id1 (panel central).
+ */
+var _MODOS_PAGINA = ['centro', 'modal', 'tab'];
 
-	// Guardar parámetros en localStorage
-	window.localStorage.setItem('pag_id1',(id1===undefined? "" : id1));
-	window.localStorage.setItem('pag_id2',(id2===undefined? "" : id2));
-	window.localStorage.setItem('pag_id3',(id3===undefined? "" : id3));
-	window.localStorage.setItem('pag_id4',(id4===undefined? "" : id4));
-	window.localStorage.setItem('pag_id5',(id5===undefined? "" : id5));
-	window.localStorage.setItem('pag_id6',(id6===undefined? "" : id6));
-	window.localStorage.setItem('pag_id7',(id7===undefined? "" : id7));
-	window.localStorage.setItem('pag_id8',(id8===undefined? "" : id8));
-	window.localStorage.setItem('pag_id9',(id9===undefined? "" : id9));
-	window.localStorage.setItem('pag_id10',(id10===undefined? "" : id10));
+function CargarPagina(pagina, titulo, icono, id1OrModo, id2, id3, id4, id5, id6, id7, id8, id9, id10) {
 
-	// Destruir DataTables del panel central para evitar conflicto de IDs duplicados
-	$('#panelcentral').find('table').each(function() {
-		if ($.fn.DataTable.isDataTable(this)) {
-			$(this).DataTable().destroy();
-		}
-	});
-	$('#panelcentral').html('');
-
-	// Al cerrar el modal: limpiar modal y recargar la página anterior en panel central
-	$('#modalPagina').one('hidden.bs.modal', function() {
-		$('#modalPaginaBody').find('table').each(function() {
-			if ($.fn.DataTable.isDataTable(this)) {
-				$(this).DataTable().destroy();
-			}
-		});
-		$('#modalPaginaBody').html('');
-
-		// Limpiar menús contextuales flotantes que pertenecían al modal
-		$('body > [data-ctx-floating]').remove();
-
-		// Recargar la página que estaba en el panel central
-		var prevPagina = window.localStorage.getItem('pag_pagina_prev');
-		var prevTitulo = window.localStorage.getItem('pag_titulo_prev');
-		var prevIcono  = window.localStorage.getItem('pag_icono_prev');
-		if (prevPagina) {
-			CargarPagina(prevPagina, prevTitulo, prevIcono);
-		}
-	});
-
-	// Título del modal
-	$('#modalPaginaTitulo').html("<i class='" + icono + "'></i> " + titulo);
-	$('#modalPaginaBody').html('<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x text-primary"></i></div>');
-
-	// Mostrar modal
-	$('#modalPagina').modal('show');
-
-	// Cargar contenido
-	$.ajax({
-		url: pagina,
-		type: 'GET',
-		dataType: 'html',
-		cache: false,
-		success: function(html) {
-			$('#modalPaginaBody').html(html);
-			// Mover menús contextuales al body para que no queden cortados por overflow del modal
-			$('#modalPaginaBody .ctx-menu').each(function() {
-				$(this).attr('data-ctx-floating', '1').appendTo('body');
-			});
-		},
-		error: function() {
-			$('#modalPaginaBody').html('<div class="alert alert-danger">Error al cargar la página</div>');
-		}
-	});
+// Detectar si el 4o argumento es un modo o un dato
+var modo = 'centro';
+var id1  = id1OrModo;
+if (_MODOS_PAGINA.indexOf(id1OrModo) !== -1) {
+modo = id1OrModo;
+id1  = '';
 }
 
-//Carga página en panel central (o dentro del modal si está abierto)
-function CargarPagina(pagina,titulo,icono,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10){
+// Guardar IDs en localStorage
+window.localStorage.setItem('pag_id1',  (id1  === undefined ? '' : id1));
+window.localStorage.setItem('pag_id2',  (id2  === undefined ? '' : id2));
+window.localStorage.setItem('pag_id3',  (id3  === undefined ? '' : id3));
+window.localStorage.setItem('pag_id4',  (id4  === undefined ? '' : id4));
+window.localStorage.setItem('pag_id5',  (id5  === undefined ? '' : id5));
+window.localStorage.setItem('pag_id6',  (id6  === undefined ? '' : id6));
+window.localStorage.setItem('pag_id7',  (id7  === undefined ? '' : id7));
+window.localStorage.setItem('pag_id8',  (id8  === undefined ? '' : id8));
+window.localStorage.setItem('pag_id9',  (id9  === undefined ? '' : id9));
+window.localStorage.setItem('pag_id10', (id10 === undefined ? '' : id10));
 
-	// Si el modal está abierto, cargar dentro del modal en vez del panel central
-	if ($('#modalPagina').hasClass('show')) {
-		$('#modalPaginaTitulo').html("<i class='" + icono + "'></i> " + titulo);
-		$('#modalPaginaBody').html('<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x text-primary"></i></div>');
-		$.ajax({
-			url: pagina,
-			type: 'GET',
-			dataType: 'html',
-			cache: false,
-			success: function(html) {
-				$('#modalPaginaBody').find('table').each(function() {
-					if ($.fn.DataTable.isDataTable(this)) $(this).DataTable().destroy();
-				});
-				$('#modalPaginaBody').html(html);
-				// Mover menús contextuales al body para que no queden cortados por overflow del modal
-				$('#modalPaginaBody .ctx-menu').each(function() {
-					$(this).attr('data-ctx-floating', '1').appendTo('body');
-				});
-			},
-			error: function() {
-				$('#modalPaginaBody').html('<div class="alert alert-danger">Error al cargar la página</div>');
-			}
-		});
-		return;
-	}
+// ---- TAB: abrir en nueva pestania ----
+if (modo === 'tab') {
+window.open(pagina, '_blank');
+return;
+}
 
-	document.getElementById("titulopagina").innerHTML = "<i class='" + icono + "'></i> " + titulo;
+// ---- MODAL ----
+if (modo === 'modal') {
 
-	// Guardar página actual para poder restaurarla al cerrar un modal
-	window.localStorage.setItem('pag_pagina_prev', pagina);
-	window.localStorage.setItem('pag_titulo_prev', titulo);
-	window.localStorage.setItem('pag_icono_prev',  icono);
+// Guardar pagina actual del panel central para restaurarla al cerrar
+window.localStorage.setItem('pag_pagina_prev', window.localStorage.getItem('pag_pagina_actual') || '');
+window.localStorage.setItem('pag_titulo_prev', window.localStorage.getItem('pag_titulo_actual') || '');
+window.localStorage.setItem('pag_icono_prev',  window.localStorage.getItem('pag_icono_actual')  || '');
 
-	// Marcar ítem activo en sidebar
-	document.querySelectorAll('#sidebarnav .sidebar-item').forEach(function(item) {
-		item.classList.remove('active');
-		var link = item.querySelector('.sidebar-link');
-		if (link) link.classList.remove('active');
-	});
-	// Buscar el ítem cuyo listener cargará esta página
-	var items = document.querySelectorAll('#sidebarnav .sidebar-item');
-	items.forEach(function(item) {
-		var txt = item.getAttribute('data-pagina');
-		if (txt === pagina) {
-			item.classList.add('active');
-			var link = item.querySelector('.sidebar-link');
-			if (link) link.classList.add('active');
-		}
-	});
+// Vaciar panel central para evitar IDs duplicados en el DOM
+$('#panelcentral').find('table').each(function() {
+if ($.fn.DataTable.isDataTable(this)) $(this).DataTable().destroy();
+});
+$('#panelcentral').html('');
 
+// Al cerrar el modal: limpiar y restaurar panel central
+$('#modalPagina').one('hidden.bs.modal', function() {
+$('#modalPaginaBody').find('table').each(function() {
+if ($.fn.DataTable.isDataTable(this)) $(this).DataTable().destroy();
+});
+$('#modalPaginaBody').html('');
+$('body > [data-ctx-floating]').remove();
 
-	//GUARDAMOS LOS PARÁMETROS DE LLAMADA A LA PANTALLA EN COOKIES	
-	window.localStorage.setItem('pag_id1',(id1===undefined? "" : id1));
-	window.localStorage.setItem('pag_id2',(id2===undefined? "" : id2));
-	window.localStorage.setItem('pag_id3',(id3===undefined? "" : id3));
-	window.localStorage.setItem('pag_id4',(id4===undefined? "" : id4));
-	window.localStorage.setItem('pag_id5',(id5===undefined? "" : id5));
-	window.localStorage.setItem('pag_id6',(id6===undefined? "" : id6));
-	window.localStorage.setItem('pag_id7',(id7===undefined? "" : id7));
-	window.localStorage.setItem('pag_id8',(id8===undefined? "" : id8));
-	window.localStorage.setItem('pag_id9',(id9===undefined? "" : id9));
-	window.localStorage.setItem('pag_id10',(id10===undefined? "" : id10));			
+var prev      = window.localStorage.getItem('pag_pagina_prev');
+var prevTit   = window.localStorage.getItem('pag_titulo_prev');
+var prevIco   = window.localStorage.getItem('pag_icono_prev');
+if (prev) CargarPagina(prev, prevTit, prevIco);
+});
 
-	//se carga en el panel central la página que se ha enviado en la url
-	$.ajax({
-		url: pagina,
-		type: 'GET',
-		dataType: 'html',  // IMPORTANTE: especificar que es HTML, no script
-		cache: false,
-		success: function(html) {
-			$("#panelcentral").html(html);
-			// Re-inicializar componentes después de cargar el HTML
-			if (typeof $.fn.dataTable !== 'undefined') {
-				$('table').not('.dataTable').each(function() {
-					if (!$.fn.DataTable.fnIsDataTable(this)) {
-						// Detectamos si es una tabla de datos
-					}
-				});
-			}
-		},
-		error: function() {
-			$("#panelcentral").html('<div class="alert alert-danger">Error al cargar la página</div>');
-		}
-	});	
-}	
+// Titulo e indicador de carga
+$('#modalPaginaTitulo').html("<i class='" + icono + "'></i> " + titulo);
+$('#modalPaginaBody').html('<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x text-primary"></i></div>');
+$('#modalPagina').modal('show');
 
+$.ajax({
+url: pagina,
+type: 'GET',
+dataType: 'html',
+cache: false,
+success: function(html) {
+$('#modalPaginaBody').html(html);
+// Mover ctx-menus al body: evita que position:fixed quede cortado
+$('#modalPaginaBody .ctx-menu').each(function() {
+$(this).attr('data-ctx-floating', '1').appendTo('body');
+});
+},
+error: function() {
+$('#modalPaginaBody').html('<div class="alert alert-danger">Error al cargar la pagina</div>');
+}
+});
+return;
+}
 
+// ---- CENTRO (por defecto) ----
+document.getElementById("titulopagina").innerHTML = "<i class='" + icono + "'></i> " + titulo;
+
+// Guardar pagina actual (usada para restaurar al cerrar un modal posterior)
+window.localStorage.setItem('pag_pagina_actual', pagina);
+window.localStorage.setItem('pag_titulo_actual', titulo);
+window.localStorage.setItem('pag_icono_actual',  icono);
+window.localStorage.setItem('pag_pagina_prev',   pagina);
+window.localStorage.setItem('pag_titulo_prev',   titulo);
+window.localStorage.setItem('pag_icono_prev',    icono);
+
+// Marcar item activo en sidebar
+document.querySelectorAll('#sidebarnav .sidebar-item').forEach(function(item) {
+item.classList.remove('active');
+var lnk = item.querySelector('.sidebar-link');
+if (lnk) lnk.classList.remove('active');
+if (item.getAttribute('data-pagina') === pagina) {
+item.classList.add('active');
+if (lnk) lnk.classList.add('active');
+}
+});
+
+// Cargar en panel central
+$.ajax({
+url: pagina,
+type: 'GET',
+dataType: 'html',
+cache: false,
+success: function(html) {
+$('#panelcentral').html(html);
+},
+error: function() {
+$('#panelcentral').html('<div class="alert alert-danger">Error al cargar la pagina</div>');
+}
+});
+}
+
+// Alias para compatibilidad con codigo antiguo
+function CargarPaginaModal(pagina, titulo, icono) {
+CargarPagina(pagina, titulo, icono, 'modal');
+}
 
 ////////////////////////////
 // COMBOS (SELECT2)

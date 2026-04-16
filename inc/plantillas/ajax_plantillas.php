@@ -126,6 +126,7 @@ function obtenerCompleta() {
             'tipo_documento' => $plantilla['tipo_documento'] ?? '',
             'contenido' => $plantilla['contenido'] ?? '',
             'sql_consulta' => $plantilla['sql_consulta'] ?? '',
+            'ayuda' => $plantilla['ayuda'] ?? '',
             'estado' => $plantilla['estado'] ?? 1,
             'filtros' => $filtered
         ]
@@ -350,10 +351,11 @@ function actionCrear() {
     $tipo        = $data['tipo_documento'] ?? '';
     $contenido   = $data['contenido']      ?? '';
     $sql         = $data['sql_consulta']   ?? '';
+    $ayuda       = $data['ayuda']          ?? '';
     $estado      = isset($data['estado'])  ? (int)$data['estado'] : 1;
     $filtros     = $data['filtros']        ?? [];
 
-    $result = json_decode(CrearPlantilla($cod, $nombre, $descripcion, $tipo, $contenido, $sql, $estado), true);
+    $result = json_decode(CrearPlantilla($cod, $nombre, $descripcion, $tipo, $contenido, $sql, $estado, $ayuda), true);
 
     if (($result['validacion'] ?? '') !== 'ok') {
         echo json_encode(['success' => false, 'error' => $result['error'] ?? 'Error al crear']);
@@ -400,10 +402,11 @@ function actionEditar() {
     $tipo        = $data['tipo_documento'] ?? '';
     $contenido   = $data['contenido']      ?? '';
     $sql         = $data['sql_consulta']   ?? '';
+    $ayuda       = $data['ayuda']          ?? '';
     $estado      = isset($data['estado'])  ? (int)$data['estado'] : 1;
     $filtros     = $data['filtros']        ?? [];
 
-    $result = json_decode(ActualizarPlantilla($cod, $nombre, $descripcion, $tipo, $contenido, $sql, $estado), true);
+    $result = json_decode(ActualizarPlantilla($cod, $nombre, $descripcion, $tipo, $contenido, $sql, $estado, $ayuda), true);
 
     if (($result['validacion'] ?? '') !== 'ok') {
         echo json_encode(['success' => false, 'error' => $result['error'] ?? 'Error al actualizar']);
