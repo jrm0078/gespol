@@ -70,6 +70,10 @@ function CargarPaginaModal(pagina, titulo, icono, id1, id2, id3, id4, id5, id6, 
 		cache: false,
 		success: function(html) {
 			$('#modalPaginaBody').html(html);
+			// Mover menús contextuales al body para que no queden cortados por overflow del modal
+			$('#modalPaginaBody .ctx-menu').each(function() {
+				$(this).attr('data-ctx-floating', '1').appendTo('body');
+			});
 		},
 		error: function() {
 			$('#modalPaginaBody').html('<div class="alert alert-danger">Error al cargar la página</div>');
@@ -77,9 +81,35 @@ function CargarPaginaModal(pagina, titulo, icono, id1, id2, id3, id4, id5, id6, 
 	});
 }
 
-//Carga página en panel central
+//Carga página en panel central (o dentro del modal si está abierto)
 function CargarPagina(pagina,titulo,icono,id1,id2,id3,id4,id5,id6,id7,id8,id9,id10){
-	
+
+	// Si el modal está abierto, cargar dentro del modal en vez del panel central
+	if ($('#modalPagina').hasClass('show')) {
+		$('#modalPaginaTitulo').html("<i class='" + icono + "'></i> " + titulo);
+		$('#modalPaginaBody').html('<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x text-primary"></i></div>');
+		$.ajax({
+			url: pagina,
+			type: 'GET',
+			dataType: 'html',
+			cache: false,
+			success: function(html) {
+				$('#modalPaginaBody').find('table').each(function() {
+					if ($.fn.DataTable.isDataTable(this)) $(this).DataTable().destroy();
+				});
+				$('#modalPaginaBody').html(html);
+				// Mover menús contextuales al body para que no queden cortados por overflow del modal
+				$('#modalPaginaBody .ctx-menu').each(function() {
+					$(this).attr('data-ctx-floating', '1').appendTo('body');
+				});
+			},
+			error: function() {
+				$('#modalPaginaBody').html('<div class="alert alert-danger">Error al cargar la página</div>');
+			}
+		});
+		return;
+	}
+
 	document.getElementById("titulopagina").innerHTML = "<i class='" + icono + "'></i> " + titulo;
 
 	// Guardar página actual para poder restaurarla al cerrar un modal
