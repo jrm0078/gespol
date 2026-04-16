@@ -57,29 +57,78 @@ return;
 // ---- MODAL ----
 if (modo === 'modal') {
 
-// Titulo del modal
-$('#modalPaginaTitulo').html("<i class='" + icono + "'></i> " + titulo);
+// Guardar pagina actual del panel central para restaurarla al cerrar
+window.localStorage.setItem('pag_pagina_prev', window.localStorage.getItem('pag_pagina_actual') || '');
+window.localStorage.setItem('pag_titulo_prev', window.localStorage.getItem('pag_titulo_actual') || '');
+window.localStorage.setItem('pag_icono_prev',  window.localStorage.getItem('pag_icono_actual')  || '');
 
-// Al cerrar el modal: limpiar iframe
+// Vaciar panel central para evitar IDs duplicados en el DOM
+$('#panelcentral').find('table').each(function() {
+if ($.fn.DataTable.isDataTable(this)) $(this).DataTable().destroy();
+});
+$('#panelcentral').html('');
+
+// Al cerrar el modal: limpiar y restaurar panel central
 $('#modalPagina').one('hidden.bs.modal', function() {
-$('#modalPaginaFrame').off('load.mf');
-$('#modalPaginaFrame').attr('src', 'about:blank');
+$('#modalPaginaBody').find('table').each(function() {
+if ($.fn.DataTable.isDataTable(this)) $(this).DataTable().destroy();
+});
+$('#modalPaginaBody').html('');
+$('body > [data-ctx-floating]').remove();
+
+var prev    = window.localStorage.getItem('pag_pagina_prev');
+var prevTit = window.localStorage.getItem('pag_titulo_prev');
+var prevIco = window.localStorage.getItem('pag_icono_prev');
+if (prev) CargarPagina(prev, prevTit, prevIco);
 });
 
-// Al cargarse el iframe: inyectar CargarPagina para que la navegacion
-// interna (Añadir, Editar, Cancelar) quede dentro del propio iframe
-$('#modalPaginaFrame').off('load.mf').on('load.mf', function() {
-try {
-var iw = this.contentWindow;
-if (!iw || !iw.document || iw.location.href === 'about:blank') return;
-// Sobrescribir CargarPagina en el iframe para navegar dentro de el
-iw.CargarPagina = function(pg) { iw.location.href = pg; };
-} catch(eIframe) {}
-});
-
-// Cargar en iframe (sin conflicto de IDs ni scripts con el panel central)
-$('#modalPaginaFrame').attr('src', pagina);
+// Titulo e indicador de carga
+$('#modalPaginaTitulo').html("<i class='" + icono + "'></i> " + titulo);
+$('#modalPaginaBody').html('<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x text-primary"></i></div>');
 $('#modalPagina').modal('show');
+
+$.ajax({
+url: pagina,
+type: 'GET',
+dataType: 'html',
+cache: false,
+success: function(html) {
+$('#modalPaginaBody').html(html);
+// Mover ctx-menus al body: evita que position:fixed quede cortado por el modal
+$('#modalPaginaBody .ctx-menu').each(function() {
+$(this).attr('data-ctx-floating', '1').appendTo('body');
+});
+},
+error: function() {
+$('#modalPaginaBody').html('<div class="alert alert-danger">Error al cargar la pagina</div>');
+}
+});
+return;
+}
+
+// Si el modal esta abierto, redirigir ahi en vez del panel central
+// (p.ej. cuando una pagina interna llama CargarPagina sin modo al guardar o cancelar)
+if ($('#modalPagina').hasClass('show')) {
+$('#modalPaginaTitulo').html("<i class='" + icono + "'></i> " + titulo);
+$('#modalPaginaBody').find('table').each(function() {
+if ($.fn.DataTable.isDataTable(this)) $(this).DataTable().destroy();
+});
+$('#modalPaginaBody').html('<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x text-primary"></i></div>');
+$.ajax({
+url: pagina,
+type: 'GET',
+dataType: 'html',
+cache: false,
+success: function(html) {
+$('#modalPaginaBody').html(html);
+$('#modalPaginaBody .ctx-menu').each(function() {
+$(this).attr('data-ctx-floating', '1').appendTo('body');
+});
+},
+error: function() {
+$('#modalPaginaBody').html('<div class="alert alert-danger">Error al cargar la pagina</div>');
+}
+});
 return;
 }
 

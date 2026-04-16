@@ -297,9 +297,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body p-0" id="modalPaginaBody">
-                    <iframe id="modalPaginaFrame" src="about:blank" style="width:100%;height:80vh;border:none;display:block;"></iframe>
-                </div>
+                <div class="modal-body p-2" id="modalPaginaBody"></div>
             </div>
         </div>
     </div>
