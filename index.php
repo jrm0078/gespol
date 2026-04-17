@@ -226,6 +226,12 @@
 							$menu= $menu . 'document.getElementById("mnuinformes").addEventListener("click", function(e){if(e.target.closest(".sidebar-modal-icon"))return;CargarPagina("informes.php","Informes","mdi mdi-file-chart");}, false);';
 						$menu= $menu . '</script>';
 
+						// MENÚ REPOSITORIO (Todos los usuarios autenticados)
+				$menu= $menu . '<li class="sidebar-item" id="mnurepositorio" data-pagina="repositorio.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="fas fa-archive"></i><span class="hide-menu">Repositorio</span><i class="fas fa-external-link-alt sidebar-modal-icon" data-pagina="repositorio.php" data-titulo="Repositorio" data-icono="fas fa-archive" title="Abrir en ventana emergente" style="margin-left:auto;font-size:0.7rem;opacity:0.6;"></i></a></li>';
+						$menu= $menu . '<script>';
+							$menu= $menu . 'document.getElementById("mnurepositorio").addEventListener("click", function(e){if(e.target.closest(".sidebar-modal-icon"))return;CargarPagina("repositorio.php","Repositorio","fas fa-archive");}, false);';
+						$menu= $menu . '</script>';
+
 						echo $menu;										
 					?>
 

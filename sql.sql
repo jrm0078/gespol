@@ -150,3 +150,17 @@ INSERT INTO plantillas_filtros (cod_plantilla, nombre_filtro, etiqueta, tipo_fil
 INSERT INTO plantillas_filtros (cod_plantilla, nombre_filtro, etiqueta, tipo_filtro, tabla_datos, campo_clave, campo_valor, sql_query, orden, requerido, activo) VALUES
 ('incidencias_senalizacion', 'fecha_inicio', 'Fecha desde', 'date', NULL, NULL, NULL, NULL, 1, 1, 1),
 ('incidencias_senalizacion', 'fecha_fin',    'Fecha hasta', 'date', NULL, NULL, NULL, NULL, 2, 1, 1);
+
+-- ============================================
+-- TABLA MÓDULO REPOSITORIO
+-- ============================================
+CREATE TABLE IF NOT EXISTS repositorio (
+  id              INT AUTO_INCREMENT PRIMARY KEY,
+  descripcion     VARCHAR(255) NOT NULL,
+  directorio      VARCHAR(255) DEFAULT '',
+  nombre_original VARCHAR(255) NOT NULL,
+  nombre_fichero  VARCHAR(255) NOT NULL,
+  tipo            VARCHAR(100) DEFAULT '',
+  tamano          BIGINT DEFAULT 0,
+  fecha_subida    DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
