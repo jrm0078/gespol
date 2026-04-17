@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 include("inc/seguridad.php");
 include_once("inc/config.inc.php");
 include_once("inc/genericasPHP.php");
@@ -16,9 +16,6 @@ $total_docs         = is_array($docs_generados) ? $docs_generados[0]['total'] : 
 
 $plantillas_inact   = selectPHP("SELECT COUNT(*) as total FROM plantillas_maestro WHERE estado=0");
 $total_inactivas    = is_array($plantillas_inact) ? $plantillas_inact[0]['total'] : 0;
-
-$repo_ficheros      = selectPHP("SELECT COUNT(*) as total FROM repositorio");
-$total_repo         = is_array($repo_ficheros) ? $repo_ficheros[0]['total'] : 0;
 
 $repo_ficheros      = selectPHP("SELECT COUNT(*) as total FROM repositorio");
 $total_repo         = is_array($repo_ficheros) ? $repo_ficheros[0]['total'] : 0;
@@ -259,20 +256,7 @@ $rol_usuario    = isset($_SESSION['user_rol'])          ? htmlspecialchars($_SES
                         <div class="dash-stat-value"><?= $total_inactivas ?></div>
                         <div class="dash-stat-label">Plantillas inactivas</div>
                     </div>
-        <!-- Repositorio -->
-        <div class="col-6 col-md-3 mb-3">
-            <div class="card dash-stat-card h-100">
-                <div class="card-body d-flex align-items-center p-3">
-                    <div class="dash-stat-icon mr-3" style="background:rgba(111,66,193,.12);">
-                        <i class="fas fa-archive" style="color:#6f42c1;"></i>
-                    </div>
-                    <div>
-                        <div class="dash-stat-value"><?= $total_repo ?></div>
-                        <div class="dash-stat-label">Ficheros repositorio</div>
-                    </div>
                 </div>
-            </div>
-                    </div>
             </div>
         </div>
         <!-- Repositorio -->
