@@ -60,14 +60,36 @@ if (modo === 'modal') {
 // Ocultar panel central (sin destruirlo: conserva formularios con datos sin guardar)
 $('#panelcentral').hide();
 
-// Al cerrar el modal: limpiar modal y restaurar panel central tal como estaba
+// Si la misma pagina ya esta abierta como pestania, desacoplarla del DOM temporalmente
+// para evitar IDs duplicados que impiden que funcionen botones y DataTables del modal
+var _detachedTabEl = null;
+if (window._gTabs && typeof _tabPanelId === 'function') {
+    var _sameTab = window._gTabs.find(function(t) { return t.pagina === pagina; });
+    if (_sameTab) {
+        _detachedTabEl = $('#' + _tabPanelId(pagina)).detach();
+    }
+}
+
+// Al cerrar el modal: destruir DataTables del modal, limpiar, reanotar pestania y mostrar panel
 $('#modalPagina').one('hidden.bs.modal', function() {
 $('#modalPaginaBody').find('table').each(function() {
 if ($.fn.DataTable.isDataTable(this)) $(this).DataTable().destroy();
 });
 $('#modalPaginaBody').html('');
 $('body > [data-ctx-floating]').remove();
+// Reinsertar el panel de la pestania si fue desacoplado
+if (_detachedTabEl && _detachedTabEl.length) {
+    $('#panelcentral').append(_detachedTabEl);
+    _detachedTabEl = null;
+}
 $('#panelcentral').show();
+});
+
+// Ajustar columnas de DataTables tras la animacion del modal (evita columnas con ancho 0)
+$('#modalPagina').one('shown.bs.modal', function() {
+if ($.fn.DataTable) {
+    $.fn.DataTable.tables({ visible: true, api: true }).columns.adjust();
+}
 });
 
 // Titulo e indicador de carga
@@ -86,6 +108,12 @@ $('#modalPaginaBody').html(html);
 $('#modalPaginaBody .ctx-menu').each(function() {
 $(this).attr('data-ctx-floating', '1').appendTo('body');
 });
+// Si el modal ya esta visible (AJAX llego tarde), ajustar columnas ahora
+if ($('#modalPagina').hasClass('show') && $.fn.DataTable) {
+    setTimeout(function() {
+        $.fn.DataTable.tables({ visible: true, api: true }).columns.adjust();
+    }, 50);
+}
 },
 error: function() {
 $('#modalPaginaBody').html('<div class="alert alert-danger">Error al cargar la pagina</div>');
