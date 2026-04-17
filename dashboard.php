@@ -17,6 +17,12 @@ $total_docs         = is_array($docs_generados) ? $docs_generados[0]['total'] : 
 $plantillas_inact   = selectPHP("SELECT COUNT(*) as total FROM plantillas_maestro WHERE estado=0");
 $total_inactivas    = is_array($plantillas_inact) ? $plantillas_inact[0]['total'] : 0;
 
+$repo_ficheros      = selectPHP("SELECT COUNT(*) as total FROM repositorio");
+$total_repo         = is_array($repo_ficheros) ? $repo_ficheros[0]['total'] : 0;
+
+$repo_ficheros      = selectPHP("SELECT COUNT(*) as total FROM repositorio");
+$total_repo         = is_array($repo_ficheros) ? $repo_ficheros[0]['total'] : 0;
+
 // ── Actividad reciente (últimos 5 documentos) ─────────────────
 $actividad = selectPHP("
     SELECT pd.id, pm.nombre AS plantilla, u.nombre AS usuario,
@@ -253,6 +259,33 @@ $rol_usuario    = isset($_SESSION['user_rol'])          ? htmlspecialchars($_SES
                         <div class="dash-stat-value"><?= $total_inactivas ?></div>
                         <div class="dash-stat-label">Plantillas inactivas</div>
                     </div>
+        <!-- Repositorio -->
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card dash-stat-card h-100">
+                <div class="card-body d-flex align-items-center p-3">
+                    <div class="dash-stat-icon mr-3" style="background:rgba(111,66,193,.12);">
+                        <i class="fas fa-archive" style="color:#6f42c1;"></i>
+                    </div>
+                    <div>
+                        <div class="dash-stat-value"><?= $total_repo ?></div>
+                        <div class="dash-stat-label">Ficheros repositorio</div>
+                    </div>
+                </div>
+            </div>
+                    </div>
+            </div>
+        </div>
+        <!-- Repositorio -->
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card dash-stat-card h-100">
+                <div class="card-body d-flex align-items-center p-3">
+                    <div class="dash-stat-icon mr-3" style="background:rgba(111,66,193,.12);">
+                        <i class="fas fa-archive" style="color:#6f42c1;"></i>
+                    </div>
+                    <div>
+                        <div class="dash-stat-value"><?= $total_repo ?></div>
+                        <div class="dash-stat-label">Ficheros repositorio</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -283,6 +316,12 @@ $rol_usuario    = isset($_SESSION['user_rol'])          ? htmlspecialchars($_SES
                 <span class="qbtn-label">Informes</span>
             </a>
         </div>
+        <div class="col-4 col-md-2 mb-2">
+            <a href="javascript:void(0)" onclick="CargarPagina('repositorio.php','Repositorio','fas fa-archive')" class="dash-quick-btn">
+                <span class="qbtn-icon"><i class="fas fa-archive" style="color:#6f42c1;"></i></span>
+                <span class="qbtn-label">Repositorio</span>
+            </a>
+        </div>
     </div>
 
     <!-- ══ Tablas de actividad ════════════════════════════════════ -->
@@ -293,7 +332,7 @@ $rol_usuario    = isset($_SESSION['user_rol'])          ? htmlspecialchars($_SES
             <div class="card dash-section">
                 <div class="card-header card-header-blue d-flex align-items-center">
                     <i class="fas fa-history mr-2"></i>
-                    <span>Actividad reciente</span>
+                    <span class="card-header-title">Actividad reciente</span>
                     <span class="ml-auto badge badge-light" style="font-size:.75rem;"><?= count($actividad) ?> docs</span>
                 </div>
                 <div class="card-body">
@@ -341,7 +380,7 @@ $rol_usuario    = isset($_SESSION['user_rol'])          ? htmlspecialchars($_SES
             <div class="card dash-section">
                 <div class="card-header card-header-blue d-flex align-items-center">
                     <i class="fas fa-file-alt mr-2"></i>
-                    <span>Plantillas activas recientes</span>
+                    <span class="card-header-title">Plantillas activas recientes</span>
                     <span class="ml-auto badge badge-light" style="font-size:.75rem;"><?= count($plantillas_rec) ?></span>
                 </div>
                 <div class="card-body">

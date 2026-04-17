@@ -15,6 +15,13 @@
     background:rgba(238, 245, 249, 0.8);
 }
 
+/* ============> SIDEBAR TOGGLE: transición suave del contenido <============ */
+/* El hover del sidebar es overlay (no desplaza el contenido, es el comportamiento del tema) */
+/* El toggle sí desplaza — añadimos transición para que no sea brusco */
+.page-wrapper {
+    transition: margin-left 0.3s ease !important;
+}
+
 /* SweetAlert2 siempre por encima de TinyMCE (z-index ~1300) */
 .swal2-container {
     z-index: 999999 !important;
@@ -49,9 +56,14 @@
 .card-header-blue h4,
 .card-header-blue h5,
 .card-header-blue h6,
-.card-header-blue span,
+.card-header-blue > span,
+.card-header-blue .card-header-title,
 .card-header-blue i {
     color: #fff !important;
+}
+/* Badges dentro de cabeceras azules: mantener colores propios */
+.card-header-blue .badge {
+    color: initial !important;
 }
 /* Los iconos dentro del botón blanco NO deben ser blancos */
 .card-header-blue .btn-header-white,

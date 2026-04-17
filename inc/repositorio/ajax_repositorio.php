@@ -4,11 +4,15 @@
  * Punto de entrada AJAX para el módulo Repositorio
  */
 
+ob_start(); // captura cualquier output accidental de los includes
+
 include_once '../config.inc.php';
 include_once '../genericasPHP.php';
+include_once '../func_datosPHP.php';
 include_once '../seguridad.php';
 include_once 'func_repositorio.php';
 
+ob_clean(); // descarta cualquier output previo (HTML de seguridad, warnings, etc.)
 header('Content-Type: application/json; charset=utf-8');
 
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
