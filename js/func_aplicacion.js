@@ -122,9 +122,7 @@ return;
 
 // ---- CENTRO (por defecto) ----
 
-document.getElementById("titulopagina").innerHTML = "<i class='" + icono + "'></i> " + titulo;
-
-// Guardar pagina actual (usada para restaurar al cerrar un modal posterior)
+// Guardar pagina actual en localStorage
 window.localStorage.setItem('pag_pagina_actual', pagina);
 window.localStorage.setItem('pag_titulo_actual', titulo);
 window.localStorage.setItem('pag_icono_actual',  icono);
@@ -132,28 +130,36 @@ window.localStorage.setItem('pag_pagina_prev',   pagina);
 window.localStorage.setItem('pag_titulo_prev',   titulo);
 window.localStorage.setItem('pag_icono_prev',    icono);
 
-// Marcar item activo en sidebar
-document.querySelectorAll('#sidebarnav .sidebar-item').forEach(function(item) {
-item.classList.remove('active');
-var lnk = item.querySelector('.sidebar-link');
-if (lnk) lnk.classList.remove('active');
-if (item.getAttribute('data-pagina') === pagina) {
-item.classList.add('active');
-if (lnk) lnk.classList.add('active');
+// Si la pestania ya esta abierta, solo activarla
+if (window._gTabs) {
+var existingTab = window._gTabs.find(function(t) { return t.pagina === pagina; });
+if (existingTab) {
+existingTab.titulo = titulo;
+existingTab.icono  = icono;
+_switchToTab(pagina);
+return;
 }
-});
+}
 
-// Cargar en panel central
+// Nueva pestania: registrar + crear panel
+if (!window._gTabs) window._gTabs = [];
+window._gTabs.push({pagina: pagina, titulo: titulo, icono: icono});
+var $newPanel = $('<div class="gtab-panel" id="' + _tabPanelId(pagina) + '"></div>');
+$('#panelcentral').append($newPanel);
+_switchToTab(pagina);
+
+// Cargar contenido en el panel de la pestania
+$newPanel.html('<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x text-primary"></i></div>');
 $.ajax({
 url: pagina,
 type: 'GET',
 dataType: 'html',
 cache: false,
 success: function(html) {
-$('#panelcentral').html(html);
+$newPanel.html(html);
 },
 error: function() {
-$('#panelcentral').html('<div class="alert alert-danger">Error al cargar la pagina</div>');
+$newPanel.html('<div class="alert alert-danger">Error al cargar la pagina</div>');
 }
 });
 }
@@ -162,6 +168,85 @@ $('#panelcentral').html('<div class="alert alert-danger">Error al cargar la pagi
 function CargarPaginaModal(pagina, titulo, icono) {
 CargarPagina(pagina, titulo, icono, 'modal');
 }
+
+////////////////////////////
+// SISTEMA DE PESTAÑAS
+////////////////////////////
+
+window._gTabs      = [];   // [{pagina, titulo, icono}]
+window._gActiveTab = null;
+
+function _tabPanelId(pagina) {
+    return 'gtabp-' + pagina.replace(/[^a-zA-Z0-9]/g, '_');
+}
+
+function _renderTabBar() {
+    var $bar = $('#gespol-tabbar');
+    $bar.empty();
+    window._gTabs.forEach(function(tab) {
+        var isHome   = (tab.pagina === 'dashboard.php');
+        var isActive = (tab.pagina === window._gActiveTab);
+        var closeBtn = isHome ? '' : '<span class="gtab-close" data-pagina="' + tab.pagina + '" title="Cerrar">×</span>';
+        var $t = $('<div class="gtab' + (isActive ? ' active' : '') + '" data-pagina="' + tab.pagina + '">' +
+            '<i class="' + tab.icono + ' gtab-icon"></i>' +
+            '<span class="gtab-title">' + $('<span>').text(tab.titulo).html() + '</span>' +
+            closeBtn + '</div>');
+        $bar.append($t);
+    });
+}
+
+function _sidebarMarkActive(pagina) {
+    document.querySelectorAll('#sidebarnav .sidebar-item').forEach(function(item) {
+        item.classList.remove('active');
+        var lnk = item.querySelector('.sidebar-link');
+        if (lnk) lnk.classList.remove('active');
+        if (item.getAttribute('data-pagina') === pagina) {
+            item.classList.add('active');
+            if (lnk) lnk.classList.add('active');
+        }
+    });
+}
+
+function _switchToTab(pagina) {
+    $('#panelcentral > .gtab-panel').hide();
+    $('#' + _tabPanelId(pagina)).show();
+    window._gActiveTab = pagina;
+    var tab = window._gTabs.find(function(t) { return t.pagina === pagina; });
+    if (tab) {
+        document.getElementById('titulopagina').innerHTML = "<i class='" + tab.icono + "'></i> " + tab.titulo;
+    }
+    _sidebarMarkActive(pagina);
+    _renderTabBar();
+}
+
+function _closeTab(pagina) {
+    var idx = window._gTabs.findIndex(function(t) { return t.pagina === pagina; });
+    if (idx === -1) return;
+    var $panel = $('#' + _tabPanelId(pagina));
+    $panel.find('table').each(function() {
+        if ($.fn.DataTable && $.fn.DataTable.isDataTable(this)) $(this).DataTable().destroy();
+    });
+    $panel.remove();
+    window._gTabs.splice(idx, 1);
+    if (window._gActiveTab === pagina) {
+        var newIdx = Math.max(0, Math.min(idx, window._gTabs.length - 1));
+        if (window._gTabs[newIdx]) {
+            _switchToTab(window._gTabs[newIdx].pagina);
+        }
+    } else {
+        _renderTabBar();
+    }
+}
+
+// Eventos de la barra de pestañas
+$(document).on('click', '.gtab', function(e) {
+    if ($(e.target).hasClass('gtab-close') || $(e.target).closest('.gtab-close').length) return;
+    _switchToTab($(this).data('pagina'));
+});
+$(document).on('click', '.gtab-close', function(e) {
+    e.stopPropagation();
+    _closeTab($(this).data('pagina'));
+});
 
 
 ////////////////////////////
