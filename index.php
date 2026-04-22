@@ -220,6 +220,18 @@
 							$menu= $menu . '</script>';
 						}
 
+						// MENÚ INFORMES (Todos los usuarios autenticados)
+						$menu= $menu . '<li class="sidebar-item" id="mnuinformes" data-pagina="informes.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="mdi mdi-file-chart"></i><span class="hide-menu">Informes</span><i class="fas fa-external-link-alt sidebar-modal-icon" data-pagina="informes.php" data-titulo="Informes" data-icono="mdi mdi-file-chart" title="Abrir en ventana emergente" style="margin-left:auto;font-size:0.7rem;opacity:0.6;"></i></a></li>';
+						$menu= $menu . '<script>';
+							$menu= $menu . 'document.getElementById("mnuinformes").addEventListener("click", function(e){if(e.target.closest(".sidebar-modal-icon"))return;CargarPagina("informes.php","Informes","mdi mdi-file-chart");}, false);';
+						$menu= $menu . '</script>';
+
+						// MENÚ REPOSITORIO (Todos los usuarios autenticados)
+						$menu= $menu . '<li class="sidebar-item" id="mnurepositorio" data-pagina="repositorio.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="fas fa-archive"></i><span class="hide-menu">Repositorio</span><i class="fas fa-external-link-alt sidebar-modal-icon" data-pagina="repositorio.php" data-titulo="Repositorio" data-icono="fas fa-archive" title="Abrir en ventana emergente" style="margin-left:auto;font-size:0.7rem;opacity:0.6;"></i></a></li>';
+						$menu= $menu . '<script>';
+							$menu= $menu . 'document.getElementById("mnurepositorio").addEventListener("click", function(e){if(e.target.closest(".sidebar-modal-icon"))return;CargarPagina("repositorio.php","Repositorio","fas fa-archive");}, false);';
+						$menu= $menu . '</script>';
+
 						// MENÚ GESTIÓN POLICIAL
 						$menu= $menu . '<li class="nav-small-cap"><i class="mdi mdi-dots-horizontal"></i><span class="hide-menu">Gestión Policial</span></li>';
 						$menu= $menu . '<li class="sidebar-item" id="mnuagentes" data-pagina="consagentes.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="fas fa-id-badge"></i><span class="hide-menu">Agentes</span><i class="fas fa-external-link-alt sidebar-modal-icon" data-pagina="consagentes.php" data-titulo="Agentes" data-icono="fas fa-id-badge" title="Abrir en ventana emergente" style="margin-left:auto;font-size:0.7rem;opacity:0.6;"></i></a></li>';
@@ -230,18 +242,6 @@
 						$menu= $menu . '<script>document.getElementById("mnuservicios").addEventListener("click", function(e){if(e.target.closest(".sidebar-modal-icon"))return;CargarPagina("consservicios.php","Servicios","fas fa-calendar-alt");}, false);</script>';
 						$menu= $menu . '<li class="sidebar-item" id="mnuincidencias" data-pagina="consincidencias.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="fas fa-exclamation-triangle"></i><span class="hide-menu">Incidencias</span><i class="fas fa-external-link-alt sidebar-modal-icon" data-pagina="consincidencias.php" data-titulo="Incidencias" data-icono="fas fa-exclamation-triangle" title="Abrir en ventana emergente" style="margin-left:auto;font-size:0.7rem;opacity:0.6;"></i></a></li>';
 						$menu= $menu . '<script>document.getElementById("mnuincidencias").addEventListener("click", function(e){if(e.target.closest(".sidebar-modal-icon"))return;CargarPagina("consincidencias.php","Incidencias","fas fa-exclamation-triangle");}, false);</script>';
-
-						// MENÚ INFORMES (Todos los usuarios autenticados)
-				$menu= $menu . '<li class="sidebar-item" id="mnuinformes" data-pagina="informes.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="mdi mdi-file-chart"></i><span class="hide-menu">Informes</span><i class="fas fa-external-link-alt sidebar-modal-icon" data-pagina="informes.php" data-titulo="Informes" data-icono="mdi mdi-file-chart" title="Abrir en ventana emergente" style="margin-left:auto;font-size:0.7rem;opacity:0.6;"></i></a></li>';
-						$menu= $menu . '<script>';
-							$menu= $menu . 'document.getElementById("mnuinformes").addEventListener("click", function(e){if(e.target.closest(".sidebar-modal-icon"))return;CargarPagina("informes.php","Informes","mdi mdi-file-chart");}, false);';
-						$menu= $menu . '</script>';
-
-						// MENÚ REPOSITORIO (Todos los usuarios autenticados)
-				$menu= $menu . '<li class="sidebar-item" id="mnurepositorio" data-pagina="repositorio.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="fas fa-archive"></i><span class="hide-menu">Repositorio</span><i class="fas fa-external-link-alt sidebar-modal-icon" data-pagina="repositorio.php" data-titulo="Repositorio" data-icono="fas fa-archive" title="Abrir en ventana emergente" style="margin-left:auto;font-size:0.7rem;opacity:0.6;"></i></a></li>';
-						$menu= $menu . '<script>';
-							$menu= $menu . 'document.getElementById("mnurepositorio").addEventListener("click", function(e){if(e.target.closest(".sidebar-modal-icon"))return;CargarPagina("repositorio.php","Repositorio","fas fa-archive");}, false);';
-						$menu= $menu . '</script>';
 
 						echo $menu;										
 					?>
