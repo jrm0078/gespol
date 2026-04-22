@@ -63,8 +63,8 @@ function Actualizar() {
         dataType: "json", crossDomain: true, cache: false, async: false,
         success: function(result) {
             if (result.validacion == "ok") {
-                Swal.fire({ icon: 'success', title: lmodo == "alta" ? "Agente creado" : "Agente actualizado", timer: 1500, showConfirmButton: false })
-                    .then(function() { CargarPagina('consagentes.php', 'Agentes', 'fas fa-user-shield'); });
+                mostrarToast('success', lmodo == "alta" ? "Agente creado" : "Agente actualizado");
+                _recargarTab('consagentes.php', 'Agentes', 'fas fa-user-shield');
             } else if (result.validacion == "warning") {
                 Swal.fire({ icon: 'warning', title: 'Datos incorrectos', html: result.mensaje });
             } else {
@@ -88,8 +88,8 @@ function Eliminar() {
                 dataType: "json", crossDomain: true, cache: false, async: false,
                 success: function(result) {
                     if (result.validacion == "ok") {
-                        Swal.fire({ icon: 'success', title: 'Agente eliminado', timer: 1200, showConfirmButton: false })
-                            .then(function() { CargarPagina('consagentes.php', 'Agentes', 'fas fa-user-shield'); });
+                        mostrarToast('success', 'Agente eliminado');
+                        _recargarTab('consagentes.php', 'Agentes', 'fas fa-user-shield');
                     } else {
                         Swal.fire({ icon: 'warning', title: 'Aviso', html: result.mensaje || result.error });
                     }

@@ -74,8 +74,8 @@ function Actualizar() {
         dataType: "json", crossDomain: true, cache: false, async: false,
         success: function(result) {
             if (result.validacion == "ok") {
-                Swal.fire({ icon: 'success', title: lmodo == "alta" ? "Encargado creado" : "Encargado actualizado", timer: 1500, showConfirmButton: false })
-                    .then(function() { CargarPagina('consencargados.php', 'Encargados', 'fas fa-user-tie'); });
+                mostrarToast('success', lmodo == "alta" ? "Encargado creado" : "Encargado actualizado");
+                _recargarTab('consencargados.php', 'Encargados', 'fas fa-user-tie');
             } else if (result.validacion == "warning") {
                 Swal.fire({ icon: 'warning', title: 'Datos incorrectos', html: result.mensaje });
             } else {
@@ -99,8 +99,8 @@ function Eliminar() {
                 dataType: "json", crossDomain: true, cache: false, async: false,
                 success: function(result) {
                     if (result.validacion == "ok") {
-                        Swal.fire({ icon: 'success', title: 'Encargado eliminado', timer: 1200, showConfirmButton: false })
-                            .then(function() { CargarPagina('consencargados.php', 'Encargados', 'fas fa-user-tie'); });
+                        mostrarToast('success', 'Encargado eliminado');
+                        _recargarTab('consencargados.php', 'Encargados', 'fas fa-user-tie');
                     } else {
                         Swal.fire({ icon: 'warning', title: 'Aviso', html: result.mensaje || result.error });
                     }

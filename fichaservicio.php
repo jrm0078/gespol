@@ -12,7 +12,6 @@
     .select2-container--default .select2-results__option--highlighted[aria-selected] { background-color:#0084D9; }
     .agente-row { display:flex; align-items:center; gap:6px; margin-bottom:6px; }
     .agente-row label { min-width:90px; font-size:0.8rem; font-weight:600; color:#495057; margin:0; }
-    .extra-row { background:#f8f9fa; border:1px solid #e9ecef; border-radius:4px; padding:8px; margin-bottom:6px; }
     #tbl_incidencias_srv tbody tr:hover { background-color:rgba(0,132,217,0.04)!important; }
 </style>
 
@@ -131,19 +130,31 @@
                 </button>
             </div>
             <div id="seccionExtras" style="display:none;">
+                <div class="table-responsive">
+                <table class="table table-sm table-bordered mb-2" style="min-width:600px;">
+                    <thead class="thead-light">
+                        <tr>
+                            <th style="width:35px;" class="text-center">#</th>
+                            <th>Agente extraordinario</th>
+                            <th style="width:200px;">Hora inicio</th>
+                            <th style="width:200px;">Hora final</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                 <?php
                 for ($i = 0; $i <= 9; $i++) {
                     $sufijo = $i === 0 ? '' : $i;
-                    echo '<div class="extra-row row align-items-center">';
-                    echo '<div class="col-12 col-md-3"><label class="field-label mb-1">Agente extra ' . ($i+1) . '</label>';
-                    echo '<select id="cmb_agenteextra' . $sufijo . '" class="select2-agente form-control form-control-sm"><option value="">-</option></select></div>';
-                    echo '<div class="col-6 col-md-2"><label class="field-label mb-1">Hora inicio</label>';
-                    echo '<input type="datetime-local" class="form-control form-control-sm" id="txtHoraInicio' . $sufijo . '"></div>';
-                    echo '<div class="col-6 col-md-2"><label class="field-label mb-1">Hora final</label>';
-                    echo '<input type="datetime-local" class="form-control form-control-sm" id="txtHoraFinal' . $sufijo . '"></div>';
-                    echo '</div>';
+                    echo '<tr>';
+                    echo '<td class="text-center align-middle text-muted" style="font-size:0.8rem;">' . ($i+1) . '</td>';
+                    echo '<td class="align-middle"><select id="cmb_agenteextra' . $sufijo . '" class="select2-agente form-control form-control-sm" style="width:100%;"><option value="">— Sin agente —</option></select></td>';
+                    echo '<td><input type="datetime-local" class="form-control form-control-sm" id="txtHoraInicio' . $sufijo . '"></td>';
+                    echo '<td><input type="datetime-local" class="form-control form-control-sm" id="txtHoraFinal'  . $sufijo . '"></td>';
+                    echo '</tr>';
                 }
                 ?>
+                    </tbody>
+                </table>
+                </div>
                 <div class="form-group mt-2">
                     <label class="field-label" for="txtTextoExtra">Notas servicios extraordinarios</label>
                     <textarea id="txtTextoExtra" class="form-control" rows="3" placeholder="Otras anotaciones sobre los servicios extraordinarios..."></textarea>

@@ -92,7 +92,7 @@ function Actualizar() {
         dataType:"json", crossDomain:true, cache:false, async:false,
         success:function(result) {
             if (result.validacion == "ok") {
-                Swal.fire({icon:'success', title: lmodo=="alta" ? "Incidencia creada" : "Incidencia actualizada", timer:1500, showConfirmButton:false});
+                mostrarToast('success', lmodo=="alta" ? "Incidencia creada" : "Incidencia actualizada");
                 if (lmodo === "alta" && result.id) {
                     window.localStorage.setItem('pag_id1', result.id);
                     pag_id1 = result.id;
@@ -122,8 +122,8 @@ function Eliminar() {
                 dataType:"json", crossDomain:true, cache:false, async:false,
                 success:function(result) {
                     if (result.validacion == "ok") {
-                        Swal.fire({icon:'success',title:'Incidencia eliminada',timer:1200,showConfirmButton:false})
-                            .then(function() { CargarPagina('consincidencias.php','Incidencias','fas fa-exclamation-triangle'); });
+                        mostrarToast('success', 'Incidencia eliminada');
+                        _recargarTab('consincidencias.php', 'Incidencias', 'fas fa-exclamation-triangle');
                     } else {
                         Swal.fire({icon:'warning',title:'Aviso', html:result.mensaje || result.error});
                     }

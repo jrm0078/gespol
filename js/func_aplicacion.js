@@ -198,6 +198,56 @@ CargarPagina(pagina, titulo, icono, 'modal');
 }
 
 ////////////////////////////
+// TOAST DE NOTIFICACIONES
+////////////////////////////
+
+// Mixin SweetAlert2 no bloqueante (toast esquina superior derecha)
+var _SwalToast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 2800,
+    timerProgressBar: true,
+    didOpen: function(toast) {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+    }
+});
+
+function mostrarToast(tipo, mensaje) {
+    _SwalToast.fire({ icon: tipo, title: mensaje });
+}
+
+////////////////////////////
+// RECARGA DE PESTAÑA
+////////////////////////////
+
+// Recarga el contenido de una pestaña ya abierta y la activa.
+// Si la pestaña no existe, la crea mediante CargarPagina normal.
+function _recargarTab(pagina, titulo, icono) {
+    if (window._gTabs) {
+        var existingTab = window._gTabs.find(function(t) { return t.pagina === pagina; });
+        if (existingTab) {
+            existingTab.titulo = titulo;
+            existingTab.icono  = icono;
+            var $panel = $('#' + _tabPanelId(pagina));
+            $panel.find('table').each(function() {
+                if ($.fn.DataTable && $.fn.DataTable.isDataTable(this)) $(this).DataTable().destroy();
+            });
+            $panel.html('<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x text-primary"></i></div>');
+            $.ajax({
+                url: pagina, type: 'GET', dataType: 'html', cache: false,
+                success: function(html) { $panel.html(html); },
+                error:   function()     { $panel.html('<div class="alert alert-danger m-3">Error al cargar la pagina</div>'); }
+            });
+            _switchToTab(pagina);
+            return;
+        }
+    }
+    CargarPagina(pagina, titulo, icono);
+}
+
+////////////////////////////
 // SISTEMA DE PESTAÑAS
 ////////////////////////////
 

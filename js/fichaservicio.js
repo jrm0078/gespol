@@ -70,7 +70,7 @@ function Cargar() {
             EXTRAS.forEach(function(i) {
                 var suf = i === 0 ? '' : i;
                 var $s = $('#cmb_agenteextra' + suf);
-                $s.select2();
+                $s.select2({ width: '100%' });
                 $.each(data, function(j,v) { CmbCargaValor($s, v.numagente, v.nombre); });
             });
             // Modal incidencias
@@ -174,11 +174,21 @@ function Actualizar() {
                 if (lmodo === "alta" && result.id) {
                     window.localStorage.setItem('pag_id1', result.id);
                     pag_id1 = result.id;
+                    mostrarToast('success', 'Servicio creado');
+                    lmodo = "edicion";
+                    CargaDatos();
+                } else {
+                    mostrarToast('success', 'Servicio actualizado');
                 }
-                Swal.fire({icon:'success', title: lmodo=="alta" ? "Servicio creado" : "Servicio actualizado", timer:1500, showConfirmButton:false})
-                    .then(function() {
-                        if (lmodo === "alta") { lmodo = "edicion"; CargaDatos(); }
-                    });
+                // Refrescar la lista en segundo plano si está abierta
+                if (window._gTabs) {
+                    var _consTab = window._gTabs.find(function(t) { return t.pagina === 'consservicios.php'; });
+                    if (_consTab) {
+                        var $p = $('#' + _tabPanelId('consservicios.php'));
+                        $p.find('table').each(function() { if ($.fn.DataTable.isDataTable(this)) $(this).DataTable().destroy(); });
+                        $p.load('consservicios.php');
+                    }
+                }
             } else if (result.validacion == "warning") {
                 Swal.fire({icon:'warning', title:'Datos incorrectos', html:result.mensaje});
             } else {
@@ -202,8 +212,8 @@ function Eliminar() {
                 dataType:"json", crossDomain:true, cache:false, async:false,
                 success:function(result) {
                     if (result.validacion == "ok") {
-                        Swal.fire({icon:'success',title:'Servicio eliminado',timer:1200,showConfirmButton:false})
-                            .then(function() { CargarPagina('consservicios.php','Servicios','fas fa-calendar-alt'); });
+                        mostrarToast('success', 'Servicio eliminado');
+                        _recargarTab('consservicios.php', 'Servicios', 'fas fa-calendar-alt');
                     } else {
                         Swal.fire({icon:'warning',title:'Aviso', html:result.mensaje || result.error});
                     }
