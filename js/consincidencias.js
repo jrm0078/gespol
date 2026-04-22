@@ -1,0 +1,57 @@
+"use strict";
+
+$(".preloader2").fadeIn();
+Cargar();
+$(".preloader2").fadeOut();
+
+function Cargar() { CargaTabla(); }
+
+function CargaTabla() {
+    $('#tbl_incidencias').DataTable().destroy();
+
+    if ($('#tbl_incidencias thead tr').length < 2) {
+        $('#tbl_incidencias thead tr').clone(true).appendTo('#tbl_incidencias thead');
+    }
+    $('#tbl_incidencias thead tr:eq(1) th').each(function(i) {
+        var title = $(this).text();
+        $(this).html('<input type="text" class="form-control" placeholder="Buscar ' + title + '" />');
+        $('input', this).on('keyup change', function() {
+            if (table.column(i).search() !== this.value) table.column(i).search(this.value).draw();
+        });
+    });
+
+    var table = $('#tbl_incidencias').DataTable({
+        "sDom": '<f>t<pl>', "bPaginate": true, "bLengthChange": true, "bFilter": true,
+        "bInfo": false, "bAutoWidth": false, "pageLength": 50, "orderCellsTop": true, "fixedHeader": true,
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
+        "language": {
+            "emptytable": "No hay incidencias", "infoEmpty": "Sin resultados",
+            "lengthMenu": "Mostrar _MENU_ registros", "search": "Buscar:",
+            "zeroRecords": "Sin resultados", "paginate": { "previous": "Anterior", "sNext": "Siguiente" }
+        },
+        "columnDefs": [{ "targets": 0, "visible": false, "searchable": false }],
+        "processing": true, "serverSide": true, "order": [[1, "desc"]],
+        "buttons": [
+            { extend: 'excel', text: 'Excel' }, { extend: 'csv', text: 'CSV' },
+            { extend: 'pdf', text: 'PDF' }, { extend: 'print', text: 'Imprimir' }, { extend: 'copy', text: 'Copiar' }
+        ],
+        "ajax": { type: "POST", data: {}, url: "inc/func_ajax.php/CargatablaIncidencias", dataType: 'JSON' }
+    });
+
+    initTablaToolbar({
+        tableId:   '#tbl_incidencias',
+        ctxMenuId: '#ctxMenuIncidencias',
+        btnAdd:    '#btnTbAddIncidencia',
+        btnEdit:   '#btnTbEditIncidencia',
+        getDt:     function() { return $('#tbl_incidencias').DataTable(); },
+        onAdd:     function() { CargarPagina('fichaincidencia.php', 'Incidencia', 'fas fa-exclamation-triangle'); },
+        onEdit:    function(tr) {
+            var data = $('#tbl_incidencias').DataTable().row(tr).data();
+            if (data) CargarPagina('fichaincidencia.php', 'Incidencia', 'fas fa-exclamation-triangle', data[0]);
+        }
+    });
+
+    if ($('#tbl_incidencias thead tr').length > 1) {
+        $('#tbl_incidencias thead tr')[1].cells[0].innerHTML = '';
+    }
+}
