@@ -164,3 +164,96 @@ CREATE TABLE IF NOT EXISTS repositorio (
   tamano          BIGINT DEFAULT 0,
   fecha_subida    DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================
+-- TABLAS MÓDULO GESTIÓN POLICIAL
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS agentes (
+  numagente   INT PRIMARY KEY,
+  nombre      VARCHAR(150) NOT NULL,
+  indicativo  INT DEFAULT NULL,
+  activo      TINYINT(1) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS encargados (
+  numencargado INT PRIMARY KEY,
+  encargado    VARCHAR(150) NOT NULL,
+  cargo        VARCHAR(100) DEFAULT NULL,
+  estado       VARCHAR(50)  DEFAULT NULL,
+  numagente    INT          DEFAULT NULL,
+  FOREIGN KEY (numagente) REFERENCES agentes(numagente) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS servicios (
+  numservicio          INT AUTO_INCREMENT PRIMARY KEY,
+  fecha                DATETIME DEFAULT NULL,
+  fecha2               DATETIME DEFAULT NULL,
+  turno                VARCHAR(20)  DEFAULT NULL,
+  tipodia              VARCHAR(50)  DEFAULT NULL,
+  diasemana            VARCHAR(20)  DEFAULT NULL,
+  numagenteencargado   INT          DEFAULT NULL,
+  numagente            INT          DEFAULT NULL,
+  numagente1           INT          DEFAULT NULL,
+  numagente2           INT          DEFAULT NULL,
+  numagente3           INT          DEFAULT NULL,
+  numagente4           INT          DEFAULT NULL,
+  numagente5           INT          DEFAULT NULL,
+  numagente6           INT          DEFAULT NULL,
+  numagente7           INT          DEFAULT NULL,
+  numagente8           INT          DEFAULT NULL,
+  numagente9           INT          DEFAULT NULL,
+  numagente10          INT          DEFAULT NULL,
+  numagente11          INT          DEFAULT NULL,
+  numagente12          INT          DEFAULT NULL,
+  numagente13          INT          DEFAULT NULL,
+  numagente14          INT          DEFAULT NULL,
+  numagente15          INT          DEFAULT NULL,
+  agenteextra          INT          DEFAULT NULL,
+  agenteextra1         INT          DEFAULT NULL,
+  agenteextra2         INT          DEFAULT NULL,
+  agenteextra3         INT          DEFAULT NULL,
+  agenteextra4         INT          DEFAULT NULL,
+  agenteextra5         INT          DEFAULT NULL,
+  agenteextra6         INT          DEFAULT NULL,
+  agenteextra7         INT          DEFAULT NULL,
+  agenteextra8         INT          DEFAULT NULL,
+  agenteextra9         INT          DEFAULT NULL,
+  horainicio           DATETIME     DEFAULT NULL,
+  horainicio1          DATETIME     DEFAULT NULL,
+  horainicio2          DATETIME     DEFAULT NULL,
+  horainicio3          DATETIME     DEFAULT NULL,
+  horainicio4          DATETIME     DEFAULT NULL,
+  horainicio5          DATETIME     DEFAULT NULL,
+  horainicio6          DATETIME     DEFAULT NULL,
+  horainicio7          DATETIME     DEFAULT NULL,
+  horainicio8          DATETIME     DEFAULT NULL,
+  horainicio9          DATETIME     DEFAULT NULL,
+  horafinal            DATETIME     DEFAULT NULL,
+  horafinal1           DATETIME     DEFAULT NULL,
+  horafinal2           DATETIME     DEFAULT NULL,
+  horafinal3           DATETIME     DEFAULT NULL,
+  horafinal4           DATETIME     DEFAULT NULL,
+  horafinal5           DATETIME     DEFAULT NULL,
+  horafinal6           DATETIME     DEFAULT NULL,
+  horafinal7           DATETIME     DEFAULT NULL,
+  horafinal8           DATETIME     DEFAULT NULL,
+  horafinal9           DATETIME     DEFAULT NULL,
+  textoservicioextra   TEXT         DEFAULT NULL,
+  valor                INT          DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS incidencias_pol (
+  numincidencia        INT AUTO_INCREMENT PRIMARY KEY,
+  numservicio          INT          DEFAULT NULL,
+  incidencias          TEXT         DEFAULT NULL,
+  destinatario         VARCHAR(255) DEFAULT NULL,
+  etiquetas_filtro     VARCHAR(255) DEFAULT NULL,
+  numagente            INT          DEFAULT NULL,
+  numagente1           INT          DEFAULT NULL,
+  numagente2           INT          DEFAULT NULL,
+  numagente3           INT          DEFAULT NULL,
+  historialincidencias TEXT         DEFAULT NULL,
+  valor                INT          DEFAULT NULL,
+  FOREIGN KEY (numservicio) REFERENCES servicios(numservicio) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

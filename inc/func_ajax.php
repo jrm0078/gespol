@@ -362,8 +362,16 @@ function ActualizaServicio() {
         $sets = [];
         for ($i = 0; $i < count($cols); $i++) $sets[] = $cols[$i] . "=" . $vals[$i];
         $sql = "UPDATE servicios SET " . implode(",", $sets) . " WHERE numservicio=" . $id;
-        $resultado = ejecutarSQL($sql);
-        echo $resultado;
+        $sql = CadCompatible($sql);
+        try {
+            $db = getConnection();
+            $stmt = $db->prepare($sql);
+            $stmt->execute();
+            $db = null;
+            echo '{"validacion":"ok","error":""}';
+        } catch(PDOException $e) {
+            echo '{"validacion":"error","error":"' . $e->getMessage() . '"}';
+        }
     } else {
         $camposStr = implode(",", $cols);
         $valsStr   = implode(",", $vals);

@@ -136,7 +136,7 @@ function CargaDatos() {
                 document.getElementById("cardIncidenciasServicio").style.display = "none";
             }
         },
-        error: function(r) { Swal.fire({icon:'error',title:'Error',html:r.statusText}); }
+        error: function(r) { mostrarToast('error', 'Error al cargar: ' + r.statusText); }
     });
 }
 
@@ -190,12 +190,12 @@ function Actualizar() {
                     }
                 }
             } else if (result.validacion == "warning") {
-                Swal.fire({icon:'warning', title:'Datos incorrectos', html:result.mensaje});
+                mostrarToast('warning', result.mensaje);
             } else {
-                Swal.fire({icon:'error', title:'Error', html:'Error al guardar. ' + result.error});
+                mostrarToast('error', 'Error al guardar: ' + result.error);
             }
         },
-        error: function(r) { Swal.fire({icon:'error', title:'Error inesperado', text:r.statusText}); }
+        error: function(r) { mostrarToast('error', 'Error inesperado: ' + r.statusText); }
     });
 }
 
@@ -215,10 +215,10 @@ function Eliminar() {
                         mostrarToast('success', 'Servicio eliminado');
                         _recargarTab('consservicios.php', 'Servicios', 'fas fa-calendar-alt');
                     } else {
-                        Swal.fire({icon:'warning',title:'Aviso', html:result.mensaje || result.error});
+                        mostrarToast('warning', result.mensaje || result.error);
                     }
                 },
-                error: function(r) { Swal.fire({icon:'error',title:'Error inesperado',text:r.statusText}); }
+                error: function(r) { mostrarToast('error', 'Error inesperado: ' + r.statusText); }
             });
         }
     });
@@ -315,12 +315,12 @@ function GuardarIncidencia() {
                 $('#modalIncidencia').modal('hide');
                 CargaTablaIncidencias();
             } else if (result.validacion == "warning") {
-                Swal.fire({icon:'warning',title:'Aviso',html:result.mensaje});
+                mostrarToast('warning', result.mensaje);
             } else {
-                Swal.fire({icon:'error',title:'Error',html:result.error});
+                mostrarToast('error', 'Error al guardar: ' + result.error);
             }
         },
-        error: function(r) { Swal.fire({icon:'error',title:'Error inesperado',text:r.statusText}); }
+        error: function(r) { mostrarToast('error', 'Error inesperado: ' + r.statusText); }
     });
 }
 
@@ -340,10 +340,10 @@ function EliminarIncidencia() {
                         $('#modalIncidencia').modal('hide');
                         CargaTablaIncidencias();
                     } else {
-                        Swal.fire({icon:'warning',title:'Aviso',html:result.mensaje || result.error});
+                        mostrarToast('warning', result.mensaje || result.error);
                     }
                 },
-                error: function(r) { Swal.fire({icon:'error',title:'Error inesperado',text:r.statusText}); }
+                error: function(r) { mostrarToast('error', 'Error inesperado: ' + r.statusText); }
             });
         }
     });

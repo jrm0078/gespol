@@ -68,7 +68,7 @@ function CargaDatos() {
                 document.getElementById("btnEliminarIncidencia").style.display = "none";
             }
         },
-        error: function(r) { Swal.fire({icon:'error',title:'Error',html:r.statusText}); }
+        error: function(r) { mostrarToast('error', 'Error al cargar: ' + r.statusText); }
     });
 }
 
@@ -100,12 +100,12 @@ function Actualizar() {
                     CargaDatos();
                 }
             } else if (result.validacion == "warning") {
-                Swal.fire({icon:'warning', title:'Datos incorrectos', html:result.mensaje});
+                mostrarToast('warning', result.mensaje);
             } else {
-                Swal.fire({icon:'error', title:'Error', html:'Error al guardar. ' + result.error});
+                mostrarToast('error', 'Error al guardar: ' + result.error);
             }
         },
-        error: function(r) { Swal.fire({icon:'error', title:'Error inesperado', text:r.statusText}); }
+        error: function(r) { mostrarToast('error', 'Error inesperado: ' + r.statusText); }
     });
 }
 
@@ -125,10 +125,10 @@ function Eliminar() {
                         mostrarToast('success', 'Incidencia eliminada');
                         _recargarTab('consincidencias.php', 'Incidencias', 'fas fa-exclamation-triangle');
                     } else {
-                        Swal.fire({icon:'warning',title:'Aviso', html:result.mensaje || result.error});
+                        mostrarToast('warning', result.mensaje || result.error);
                     }
                 },
-                error: function(r) { Swal.fire({icon:'error',title:'Error inesperado',text:r.statusText}); }
+                error: function(r) { mostrarToast('error', 'Error inesperado: ' + r.statusText); }
             });
         }
     });

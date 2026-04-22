@@ -43,9 +43,7 @@ function CargaDatos() {
                 document.getElementById("btnEliminarAgente").style.display = "none";
             }
         },
-        error: function(r, d, e) {
-            Swal.fire({ icon: 'error', title: 'Error', html: r.statusText + ' ' + d + ' ' + e });
-        }
+        error: function(r) { mostrarToast('error', 'Error al cargar: ' + r.statusText); }
     });
 }
 
@@ -66,12 +64,12 @@ function Actualizar() {
                 mostrarToast('success', lmodo == "alta" ? "Agente creado" : "Agente actualizado");
                 _recargarTab('consagentes.php', 'Agentes', 'fas fa-user-shield');
             } else if (result.validacion == "warning") {
-                Swal.fire({ icon: 'warning', title: 'Datos incorrectos', html: result.mensaje });
+                mostrarToast('warning', result.mensaje);
             } else {
-                Swal.fire({ icon: 'error', title: 'Error', html: 'Error al guardar. ' + result.error });
+                mostrarToast('error', 'Error al guardar: ' + result.error);
             }
         },
-        error: function(r) { Swal.fire({ icon: 'error', title: 'Error inesperado', text: r.statusText }); }
+        error: function(r) { mostrarToast('error', 'Error inesperado: ' + r.statusText); }
     });
 }
 
@@ -91,10 +89,10 @@ function Eliminar() {
                         mostrarToast('success', 'Agente eliminado');
                         _recargarTab('consagentes.php', 'Agentes', 'fas fa-user-shield');
                     } else {
-                        Swal.fire({ icon: 'warning', title: 'Aviso', html: result.mensaje || result.error });
+                        mostrarToast('warning', result.mensaje || result.error);
                     }
                 },
-                error: function(r) { Swal.fire({ icon: 'error', title: 'Error inesperado', text: r.statusText }); }
+                error: function(r) { mostrarToast('error', 'Error inesperado: ' + r.statusText); }
             });
         }
     });
