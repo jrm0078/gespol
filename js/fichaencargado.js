@@ -59,6 +59,13 @@ function CargaDatos() {
 }
 
 function Actualizar() {
+    var id        = document.getElementById("txtNumEncargado").value.trim();
+    var encargado = document.getElementById("txtNombreEncargado").value.trim();
+    var w = "";
+    if (id === "" || isNaN(parseInt(id, 10)) || parseInt(id, 10) <= 0) w += "Indica un número de encargado válido.<br>";
+    if (encargado === "") w += "El nombre es obligatorio.<br>";
+    if (w !== "") { mostrarToast('warning', w.replace(/<br>/g, '\n')); return; }
+
     $.ajax({
         type: "POST", url: "inc/func_ajax.php/ActualizaEncargado",
         data: {

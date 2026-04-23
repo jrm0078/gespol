@@ -254,8 +254,17 @@ function ActualizaAgente() {
     $vals   = "$id#,#$nombre#,#$indicativo#,#$activo";
     $where  = "numagente=$id";
 
-    if ($lmodo == "edicion") echo update($tabla, "nombre,indicativo,activo", "$nombre#,#$indicativo#,#$activo", $where);
-    else                     echo insert($tabla, $campos, $vals);
+    if ($lmodo == "edicion") {
+        echo update($tabla, "nombre,indicativo,activo", "$nombre#,#$indicativo#,#$activo", $where);
+    } else {
+        try {
+            $db = getConnection();
+            $exists = $db->query("SELECT COUNT(*) FROM agentes WHERE numagente=$id")->fetchColumn();
+            if ($exists > 0) { echo '{"validacion":"warning","mensaje":"Ya existe un agente con ese número."}'; $db = null; return; }
+            $db = null;
+        } catch(PDOException $e) {}
+        echo insert($tabla, $campos, $vals);
+    }
 }
 
 function EliminarAgente() {
@@ -297,8 +306,17 @@ function ActualizaEncargado() {
     $vals   = "$id#,#$encargado#,#$cargo#,#$estado#,#$numagente";
     $where  = "numencargado=$id";
 
-    if ($lmodo == "edicion") echo update($tabla, "encargado,cargo,estado,numagente", "$encargado#,#$cargo#,#$estado#,#$numagente", $where);
-    else                     echo insert($tabla, $campos, $vals);
+    if ($lmodo == "edicion") {
+        echo update($tabla, "encargado,cargo,estado,numagente", "$encargado#,#$cargo#,#$estado#,#$numagente", $where);
+    } else {
+        try {
+            $db = getConnection();
+            $exists = $db->query("SELECT COUNT(*) FROM encargados WHERE numencargado=$id")->fetchColumn();
+            if ($exists > 0) { echo '{"validacion":"warning","mensaje":"Ya existe un encargado con ese número."}'; $db = null; return; }
+            $db = null;
+        } catch(PDOException $e) {}
+        echo insert($tabla, $campos, $vals);
+    }
 }
 
 function EliminarEncargado() {
@@ -434,6 +452,10 @@ function ActualizaIncidencia() {
     $numagente3        = $_POST["numagente3"] != "" ? intval($_POST["numagente3"]) : "NULL";
     $historial         = "'" . CadSql($_POST["historialincidencias"]) . "'";
     $valor             = $_POST["valor"] != "" ? intval($_POST["valor"]) : "NULL";
+
+    $w2 = "";
+    if (trim($_POST["incidencias"]) == "") $w2 .= "El texto de la incidencia es obligatorio.<br>";
+    if ($w2 != "") { echo '{"validacion":"warning","mensaje":"' . $w2 . '"}'; exit(); }
 
     $tabla  = "incidencias_pol";
     $campos = "numservicio,incidencias,destinatario,etiquetas_filtro,numagente,numagente1,numagente2,numagente3,historialincidencias,valor";

@@ -48,6 +48,13 @@ function CargaDatos() {
 }
 
 function Actualizar() {
+    var id     = document.getElementById("txtNumAgente").value.trim();
+    var nombre = document.getElementById("txtNombreAgente").value.trim();
+    var w = "";
+    if (id === "" || isNaN(parseInt(id, 10)) || parseInt(id, 10) <= 0) w += "Indica un número de agente válido.<br>";
+    if (nombre === "") w += "El nombre es obligatorio.<br>";
+    if (w !== "") { mostrarToast('warning', w.replace(/<br>/g, '\n')); return; }
+
     $.ajax({
         type: "POST",
         url: "inc/func_ajax.php/ActualizaAgente",

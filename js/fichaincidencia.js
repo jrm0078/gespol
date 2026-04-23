@@ -73,6 +73,9 @@ function CargaDatos() {
 }
 
 function Actualizar() {
+    var incidencias = document.getElementById("txtIncidencia").value.trim();
+    if (incidencias === "") { mostrarToast('warning', 'El texto de la incidencia es obligatorio.'); return; }
+
     $.ajax({
         type:"POST", url:"inc/func_ajax.php/ActualizaIncidencia",
         data:{

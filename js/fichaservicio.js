@@ -164,6 +164,15 @@ function recogerDatos() {
 }
 
 function Actualizar() {
+    var fecha = document.getElementById("txtFecha").value.trim();
+    var turno = document.getElementById("cmbTurno").value.trim();
+    var fecha2 = document.getElementById("txtFecha2").value.trim();
+    var w = "";
+    if (fecha === "") w += "La fecha de inicio es obligatoria.<br>";
+    if (turno === "") w += "El turno es obligatorio.<br>";
+    if (turno === "noche" && fecha2 === "") w += "El turno noche requiere Fecha 2.<br>";
+    if (w !== "") { mostrarToast('warning', w.replace(/<br>/g, '\n')); return; }
+
     $.ajax({
         type:"POST", url:"inc/func_ajax.php/ActualizaServicio",
         data: recogerDatos(),
