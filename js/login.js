@@ -55,7 +55,7 @@ function Conectar(){
 	if (!usuario || !password) {
 		if (typeof Swal !== 'undefined') {
 			Swal.fire({
-				type: 'warning',
+				icon: 'warning',
 				title: 'Advertencia',
 				html: "Ingrese usuario y contraseña"
 			});
@@ -85,9 +85,9 @@ function Conectar(){
 				console.warn('[Login] Validación no ok:', result);
 				if (typeof Swal !== 'undefined') {
 					Swal.fire({
-						type: 'error',
+						icon: 'error',
 						title: 'Error',
-						html: result.mensaje || "Usuario o contraseña incorrectos"
+						html: result.error || result.mensaje || "Usuario o contraseña incorrectos"
 					});
 				}
 			}
@@ -96,7 +96,7 @@ function Conectar(){
 			console.error('[Login] Error AJAX:', desc, err);
 			if (typeof Swal !== 'undefined') {
 				Swal.fire({
-					type: 'error',
+					icon: 'error',
 					title: 'Error',
 					html: "Error al conectar con el servidor: " + desc
 				});
