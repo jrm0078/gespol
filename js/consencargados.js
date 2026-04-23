@@ -44,10 +44,18 @@ function CargaTabla() {
         btnAdd:    '#btnTbAddEncargado',
         btnEdit:   '#btnTbEditEncargado',
         getDt:     function() { return $('#tbl_encargados').DataTable(); },
-        onAdd:     function() { window.localStorage.setItem('pag_id1', ''); _recargarTab('fichaencargado.php', 'Encargado', 'fas fa-user-tie'); },
+        onAdd:     function() {
+            window.localStorage.setItem('pag_id1', '');
+            if (window._gTabs && window._gTabs.find(function(t){ return t.pagina==='fichaencargado.php'; })) { _recargarTab('fichaencargado.php', 'Encargado', 'fas fa-user-tie'); }
+            else { CargarPagina('fichaencargado.php', 'Encargado', 'fas fa-user-tie'); }
+        },
         onEdit:    function(tr) {
             var data = $('#tbl_encargados').DataTable().row(tr).data();
-            if (data) { window.localStorage.setItem('pag_id1', data[0]); _recargarTab('fichaencargado.php', 'Encargado', 'fas fa-user-tie'); }
+            if (data) {
+                window.localStorage.setItem('pag_id1', data[0]);
+                if (window._gTabs && window._gTabs.find(function(t){ return t.pagina==='fichaencargado.php'; })) { _recargarTab('fichaencargado.php', 'Encargado', 'fas fa-user-tie'); }
+                else { CargarPagina('fichaencargado.php', 'Encargado', 'fas fa-user-tie', data[0]); }
+            }
         }
     });
 

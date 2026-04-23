@@ -115,10 +115,18 @@ function CargaTabla(){
 		btnAdd:    '#btnTbAddUsuario',
 		btnEdit:   '#btnTbEditUsuario',
 		getDt:     function () { return $('#zero_config').DataTable(); },
-		onAdd:     function () { window.localStorage.setItem('pag_id1', ''); _recargarTab('fichausuario.php', 'Usuario', 'far fa-user'); },
+		onAdd:     function () {
+			window.localStorage.setItem('pag_id1', '');
+			if (window._gTabs && window._gTabs.find(function(t){ return t.pagina==='fichausuario.php'; })) { _recargarTab('fichausuario.php', 'Usuario', 'far fa-user'); }
+			else { CargarPagina('fichausuario.php', 'Usuario', 'far fa-user'); }
+		},
 		onEdit:    function (tr) {
 			var data = $('#zero_config').DataTable().row(tr).data();
-			if (data) { window.localStorage.setItem('pag_id1', data[0]); _recargarTab('fichausuario.php', 'Usuario', 'far fa-user'); }
+			if (data) {
+				window.localStorage.setItem('pag_id1', data[0]);
+				if (window._gTabs && window._gTabs.find(function(t){ return t.pagina==='fichausuario.php'; })) { _recargarTab('fichausuario.php', 'Usuario', 'far fa-user'); }
+				else { CargarPagina('fichausuario.php', 'Usuario', 'far fa-user', data[0]); }
+			}
 		}
 	});
 
