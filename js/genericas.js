@@ -1,4 +1,4 @@
-	const cdiNewLine="\n";
+	var cdiNewLine="\n";
 
 	// ============================================================
 	// FUNCIONES COMUNES REUTILIZABLES EN TODAS LAS PANTALLAS
