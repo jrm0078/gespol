@@ -117,7 +117,7 @@ INSERT INTO plantillas_maestro (cod_plantilla, nombre, descripcion, tipo_documen
  'Ficha detallada de una incidencia: agentes, turno, descripción',
  'PDF',
  '<div style="font-family:Arial,sans-serif;font-size:13px;padding:30px;max-width:800px;margin:0 auto;"><h2 style="text-align:center;font-size:18px;margin-bottom:20px;">Informe de determinado Registro</h2><p><strong>Oficial:</strong> [[Encargado]]</p><table width="100%" cellpadding="6" style="border-collapse:collapse;margin-bottom:16px;"><thead><tr style="background:#f0f0f0;"><th style="border:1px solid #ccc;text-align:left;padding:6px;">Fecha</th><th style="border:1px solid #ccc;text-align:left;padding:6px;">Turno</th><th style="border:1px solid #ccc;text-align:left;padding:6px;">Día Semana</th><th style="border:1px solid #ccc;text-align:left;padding:6px;">Agentes actuantes</th><th style="border:1px solid #ccc;text-align:left;padding:6px;">Registro</th></tr></thead><tbody><tr><td style="border:1px solid #ccc;padding:6px;">[[Fecha]]</td><td style="border:1px solid #ccc;padding:6px;">[[Turno]]</td><td style="border:1px solid #ccc;padding:6px;">[[Dia_semana]]</td><td style="border:1px solid #ccc;padding:6px;">[[NumAgente]]<br>[[NumAgente1]]<br>[[NumAgente2]]</td><td style="border:1px solid #ccc;padding:6px;">[[Id_incidencias]]</td></tr></tbody></table><p>[[Incidencias]]</p><p><br><strong>EN RELACIÓN CON LA NOTA DE INCIDENCIA ANTERIOR:</strong></p></div>',
- 'SELECT id_incidencias, DATE_FORMAT(fecha, ''%d/%m/%Y'') AS Fecha, turno AS Turno, dia_semana AS Dia_semana, IFNULL(num_agente,'''') AS NumAgente, IFNULL(num_agente1,'''') AS NumAgente1, IFNULL(num_agente2,'''') AS NumAgente2, incidencias AS Incidencias, IFNULL(encargado,'''') AS Encargado FROM incidencias WHERE id_incidencias = [[id_incidencia]]',
+ 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, s.turno AS Turno, s.diasemana AS Dia_semana, IFNULL(a.nombre,'''') AS NumAgente, IFNULL(a1.nombre,'''') AS NumAgente1, IFNULL(a2.nombre,'''') AS NumAgente2, i.incidencias AS Incidencias, IFNULL(e.encargado,'''') AS Encargado FROM incidencias_pol i LEFT JOIN servicios s ON i.numservicio = s.numservicio LEFT JOIN encargados e ON s.numagenteencargado = e.numencargado LEFT JOIN agentes a ON i.numagente = a.numagente LEFT JOIN agentes a1 ON i.numagente1 = a1.numagente LEFT JOIN agentes a2 ON i.numagente2 = a2.numagente WHERE i.numincidencia = [[id_incidencia]]',
  1);
 
 INSERT INTO plantillas_maestro (cod_plantilla, nombre, descripcion, tipo_documento, contenido, sql_consulta, estado) VALUES
@@ -126,7 +126,7 @@ INSERT INTO plantillas_maestro (cod_plantilla, nombre, descripcion, tipo_documen
  'Listado de incidencias remitidas al Negociado de Urbanismo',
  'PDF',
  '<div style="font-family:Arial,sans-serif;font-size:12px;padding:40px;max-width:750px;margin:0 auto;"><table width="100%" style="border:none;border-collapse:collapse;margin-bottom:20px;"><tr><td style="border:none;vertical-align:top;font-size:11px;"><strong>EXCMO. AYUNTAMIENTO<br>DE<br>MONTILLA<br>(CÓRDOBA)</strong><br>N.º E. L. 01140425</td><td style="border:none;text-align:right;font-weight:bold;font-size:14px;vertical-align:top;">POLICÍA LOCAL</td></tr></table><p style="margin-bottom:16px;font-size:11px;">N/Refª FJG/rh<br>Gex nº &nbsp;&nbsp;&nbsp;&nbsp;/</p><p style="margin-bottom:24px;"><strong>Negociado de Urbanismo</strong></p><br><p style="text-align:justify;padding-left:30px;margin-bottom:12px;">A continuación se transcriben notas de incidencias emitidas por distintos Oficiales dependientes de esta Jefatura, a los efectos que estime procedentes.</p><hr style="border:1px solid #000;margin:16px 40px;"><ul style="list-style-type:disc;padding-left:50px;margin:0;"><li style="font-style:italic;margin-bottom:4px;">(Refª [[id_incidencias]]).- [[Fecha]] &nbsp; [[Incidencias]]</li></ul><br><br><p style="text-align:center;"><strong>El Jefe de Policía</strong></p><br><br><br><hr style="border:0;border-top:1px solid #aaa;margin:0 10px;"><p style="font-size:9px;text-align:center;margin-top:3px;">C/. Conde de la Cortina, s/n - 14550 MONTILLA (Córdoba) – Tlfno.: 957 65 26 26, Fax 957 65 58 67 – e-mail: policia@montilla.es</p></div>',
- 'SELECT id_incidencias, DATE_FORMAT(fecha, ''%d/%m/%Y'') AS Fecha, incidencias AS Incidencias FROM incidencias WHERE tipo = ''URBANISMO'' AND fecha BETWEEN [[fecha_inicio]] AND [[fecha_fin]] AND estado = 1 ORDER BY fecha ASC',
+ 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, i.incidencias AS Incidencias FROM incidencias_pol i LEFT JOIN servicios s ON i.numservicio = s.numservicio WHERE i.etiquetas_filtro LIKE ''%URBANISMO%'' AND s.fecha BETWEEN [[fecha_inicio]] AND [[fecha_fin]] ORDER BY s.fecha ASC',
  1);
 
 INSERT INTO plantillas_maestro (cod_plantilla, nombre, descripcion, tipo_documento, contenido, sql_consulta, estado) VALUES
@@ -135,7 +135,7 @@ INSERT INTO plantillas_maestro (cod_plantilla, nombre, descripcion, tipo_documen
  'Listado de incidencias sobre señalización para reparación/colocación',
  'PDF',
  '<div style="font-family:Arial,sans-serif;font-size:12px;padding:40px;max-width:750px;margin:0 auto;"><table width="100%" style="border:none;border-collapse:collapse;margin-bottom:16px;"><tr><td style="border:none;vertical-align:top;font-size:11px;"><strong>EXCMO. AYUNTAMIENTO<br>DE<br>MONTILLA<br>(CÓRDOBA)</strong><br>N.º E. L. 01140425</td><td style="border:none;text-align:right;font-weight:bold;font-size:14px;vertical-align:top;">POLICÍA LOCAL</td></tr></table><p style="text-align:right;margin-bottom:16px;"><strong>Asunto</strong>: Incidencias señalización</p><p style="margin-bottom:24px;font-size:11px;">N/Refª FJG/rh<br>Gex nº &nbsp;&nbsp;&nbsp;&nbsp;/</p><br><p style="text-align:justify;padding-left:30px;margin-bottom:12px;">Con motivo de no disponer al día de la fecha por este negociado, de personal adscrito para realizar trabajos de señalización, a continuación le doy traslado de las INCIDENCIAS SOBRE SEÑALIZACIÓN surgidas, para que por personal de ese servicio se proceda a la mayor brevedad posible a su reparación/colocación, debiendo previamente, el personal que va a realizar los trabajos, ponerse en contacto con esta Jefatura para recibir instrucciones sobre los mismos.</p><hr style="border:1px solid #000;margin:16px 40px;"><ul style="list-style-type:disc;padding-left:50px;margin:0;"><li style="font-style:italic;margin-bottom:4px;">(Refª [[id_incidencias]]).- [[Fecha]] &nbsp; [[Incidencias]]</li></ul><br><br><p style="text-align:center;"><strong>El Jefe de Policía</strong></p><br><br><br><hr style="border:0;border-top:1px solid #aaa;margin:0 10px;"><p style="font-size:9px;text-align:center;margin-top:3px;">C/. Conde de la Cortina, s/n - 14550 MONTILLA (Córdoba) – Tlfno.: 957 65 26 26, Fax 957 65 58 67 – e-mail: policia@montilla.es</p></div>',
- 'SELECT id_incidencias, DATE_FORMAT(fecha, ''%d/%m/%Y'') AS Fecha, incidencias AS Incidencias FROM incidencias WHERE tipo = ''SEÑALIZACION'' AND fecha BETWEEN [[fecha_inicio]] AND [[fecha_fin]] AND estado = 1 ORDER BY fecha ASC',
+ 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, i.incidencias AS Incidencias FROM incidencias_pol i LEFT JOIN servicios s ON i.numservicio = s.numservicio WHERE i.etiquetas_filtro LIKE ''%SEÑALIZACION%'' AND s.fecha BETWEEN [[fecha_inicio]] AND [[fecha_fin]] ORDER BY s.fecha ASC',
  1);
 
 -- Filtros plantilla 1: número de registro
@@ -257,3 +257,20 @@ CREATE TABLE IF NOT EXISTS incidencias_pol (
   valor                INT          DEFAULT NULL,
   FOREIGN KEY (numservicio) REFERENCES servicios(numservicio) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================
+-- ACTUALIZACIÓN DE PLANTILLAS: usar tablas nuevas
+-- (ejecutar si la BD ya estaba creada con las queries antiguas)
+-- ============================================
+
+UPDATE plantillas_maestro SET
+  sql_consulta = 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, s.turno AS Turno, s.diasemana AS Dia_semana, IFNULL(a.nombre,'''') AS NumAgente, IFNULL(a1.nombre,'''') AS NumAgente1, IFNULL(a2.nombre,'''') AS NumAgente2, i.incidencias AS Incidencias, IFNULL(e.encargado,'''') AS Encargado FROM incidencias_pol i LEFT JOIN servicios s ON i.numservicio = s.numservicio LEFT JOIN encargados e ON s.numagenteencargado = e.numencargado LEFT JOIN agentes a ON i.numagente = a.numagente LEFT JOIN agentes a1 ON i.numagente1 = a1.numagente LEFT JOIN agentes a2 ON i.numagente2 = a2.numagente WHERE i.numincidencia = [[id_incidencia]]'
+WHERE cod_plantilla = 'informe_registro';
+
+UPDATE plantillas_maestro SET
+  sql_consulta = 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, i.incidencias AS Incidencias FROM incidencias_pol i LEFT JOIN servicios s ON i.numservicio = s.numservicio WHERE i.etiquetas_filtro LIKE ''%URBANISMO%'' AND s.fecha BETWEEN [[fecha_inicio]] AND [[fecha_fin]] ORDER BY s.fecha ASC'
+WHERE cod_plantilla = 'incidencias_urbanismo';
+
+UPDATE plantillas_maestro SET
+  sql_consulta = 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, i.incidencias AS Incidencias FROM incidencias_pol i LEFT JOIN servicios s ON i.numservicio = s.numservicio WHERE i.etiquetas_filtro LIKE ''%SEÑALIZACION%'' AND s.fecha BETWEEN [[fecha_inicio]] AND [[fecha_fin]] ORDER BY s.fecha ASC'
+WHERE cod_plantilla = 'incidencias_senalizacion';

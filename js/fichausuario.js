@@ -92,7 +92,7 @@ function CargaDatos(){
 				document.getElementById("txtcontrasenia").value = "";
 				CmbSeleccionaValor($("#cmbrol"),result.rol);
 
-				document.getElementById("tituloFichaUsuario").innerHTML = "<i class='fas fa-user-edit mr-2'></i>" + result.nombre;
+				document.getElementById("tituloFichaUsuario").innerHTML = "<i class='fas fa-user-edit mr-2'></i>Usuario";
 				document.getElementById("btnActualizar").innerHTML = "<i class='fa fa-check mr-1'></i> Actualizar";
 				document.getElementById("btnEliminar").style.display = "inline-block";
 				document.getElementById("txtcontrasenia").placeholder = "Dejar vacío para no cambiar";

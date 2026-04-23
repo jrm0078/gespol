@@ -33,7 +33,7 @@ function CargaDatos() {
                 document.getElementById("txtNombreAgente").value    = result.nombre;
                 document.getElementById("txtIndicativo").value      = result.indicativo || "";
                 document.getElementById("cmbActivoAgente").value    = result.activo;
-                document.getElementById("tituloFichaAgente").innerHTML = "<i class='fas fa-user-edit mr-2'></i>" + result.nombre;
+                document.getElementById("tituloFichaAgente").innerHTML = "<i class='fas fa-user-edit mr-2'></i>Agente";
                 document.getElementById("btnActualizarAgente").innerHTML = "<i class='fa fa-check mr-1'></i> Actualizar";
                 document.getElementById("btnEliminarAgente").style.display = "inline-block";
             } else {

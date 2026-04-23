@@ -1,4 +1,3 @@
-﻿
 <?php
 session_start();
 ?>
@@ -9,7 +8,7 @@ session_start();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
-    <title>Acceso â€” GesPol</title>
+    <title>Acceso &mdash; GesPol</title>
     <link href="libs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="libs/fontawesome-free-5.15.1-web/css/all.css" rel="stylesheet">
     <link href="libs/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
@@ -26,7 +25,6 @@ session_start();
             justify-content: center;
         }
 
-        /* â”€â”€ Tarjeta centrada â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
         .login-card {
             width: 100%;
             max-width: 400px;
@@ -42,7 +40,6 @@ session_start();
             to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* â”€â”€ Cabecera â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
         .login-header {
             text-align: center;
             margin-bottom: 32px;
@@ -67,7 +64,6 @@ session_start();
             color: #8a97aa;
         }
 
-        /* â”€â”€ Campos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
         .field { margin-bottom: 18px; }
         .field label {
             display: block;
@@ -116,7 +112,6 @@ session_start();
         }
         .toggle-pw:hover { color: #0079cc; }
 
-        /* â”€â”€ BotÃ³n â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
         .btn-login {
             width: 100%;
             margin-top: 8px;
@@ -134,7 +129,6 @@ session_start();
         .btn-login:hover  { background: #006ab5; box-shadow: 0 3px 12px rgba(0,102,179,0.25); }
         .btn-login:active { background: #005a9e; }
 
-        /* â”€â”€ Pie â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
         .login-footer {
             text-align: center;
             font-size: 0.71rem;
@@ -147,14 +141,12 @@ session_start();
 
     <div class="login-card">
 
-        <!-- CABECERA -->
         <div class="login-header">
             <div class="login-logo"><i class="fas fa-shield-alt"></i></div>
             <h1>GesPol</h1>
-            <p>Panel de administraciÃ³n</p>
+            <p>Panel de administraci&oacute;n</p>
         </div>
 
-        <!-- CAMPOS -->
         <div class="field">
             <label for="usuario">Usuario</label>
             <div class="field-inner">
@@ -165,12 +157,12 @@ session_start();
         </div>
 
         <div class="field">
-            <label for="password">ContraseÃ±a</label>
+            <label for="password">Contrase&ntilde;a</label>
             <div class="field-inner">
                 <i class="fas fa-lock f-icon"></i>
                 <input type="password" id="password" name="password"
-                       placeholder="Introduce tu contraseÃ±a" autocomplete="current-password">
-                <button class="toggle-pw" id="togglePw" type="button" title="Mostrar contraseÃ±a">
+                       placeholder="Introduce tu contrase&ntilde;a" autocomplete="current-password">
+                <button class="toggle-pw" id="togglePw" type="button" title="Mostrar contrase&ntilde;a">
                     <i class="fas fa-eye" id="eyeIcon"></i>
                 </button>
             </div>

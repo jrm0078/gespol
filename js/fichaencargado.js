@@ -44,7 +44,7 @@ function CargaDatos() {
                 document.getElementById("cmbCargoEncargado").value  = result.cargo;
                 document.getElementById("txtEstadoEncargado").value = result.estado;
                 CmbSeleccionaValor($('#cmbAgenteEncargado'), result.numagente);
-                document.getElementById("tituloFichaEncargado").innerHTML = "<i class='fas fa-user-edit mr-2'></i>" + result.encargado;
+                document.getElementById("tituloFichaEncargado").innerHTML = "<i class='fas fa-user-edit mr-2'></i>Encargado";
                 document.getElementById("btnActualizarEncargado").innerHTML = "<i class='fa fa-check mr-1'></i> Actualizar";
                 document.getElementById("btnEliminarEncargado").style.display = "inline-block";
             } else {

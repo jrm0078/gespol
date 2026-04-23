@@ -44,10 +44,10 @@ function CargaTabla() {
         btnAdd:    '#btnTbAddServicio',
         btnEdit:   '#btnTbEditServicio',
         getDt:     function() { return $('#tbl_servicios').DataTable(); },
-        onAdd:     function() { CargarPagina('fichaservicio.php', 'Servicio', 'fas fa-calendar-alt'); },
+        onAdd:     function() { window.localStorage.setItem('pag_id1', ''); _recargarTab('fichaservicio.php', 'Servicio', 'fas fa-calendar-alt'); },
         onEdit:    function(tr) {
             var data = $('#tbl_servicios').DataTable().row(tr).data();
-            if (data) CargarPagina('fichaservicio.php', 'Servicio', 'fas fa-calendar-alt', data[0]);
+            if (data) { window.localStorage.setItem('pag_id1', data[0]); _recargarTab('fichaservicio.php', 'Servicio', 'fas fa-calendar-alt'); }
         }
     });
 

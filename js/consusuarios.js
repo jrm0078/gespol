@@ -115,10 +115,10 @@ function CargaTabla(){
 		btnAdd:    '#btnTbAddUsuario',
 		btnEdit:   '#btnTbEditUsuario',
 		getDt:     function () { return $('#zero_config').DataTable(); },
-		onAdd:     function () { CargarPagina('fichausuario.php', 'Usuario', 'far fa-user'); },
+		onAdd:     function () { window.localStorage.setItem('pag_id1', ''); _recargarTab('fichausuario.php', 'Usuario', 'far fa-user'); },
 		onEdit:    function (tr) {
 			var data = $('#zero_config').DataTable().row(tr).data();
-			if (data) CargarPagina('fichausuario.php', 'Usuario', 'far fa-user', data[0], '', '', '', '');
+			if (data) { window.localStorage.setItem('pag_id1', data[0]); _recargarTab('fichausuario.php', 'Usuario', 'far fa-user'); }
 		}
 	});
 

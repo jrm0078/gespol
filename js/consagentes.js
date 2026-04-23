@@ -50,10 +50,10 @@ function CargaTabla() {
         btnAdd:    '#btnTbAddAgente',
         btnEdit:   '#btnTbEditAgente',
         getDt:     function() { return $('#tbl_agentes').DataTable(); },
-        onAdd:     function() { CargarPagina('fichaagente.php', 'Agente', 'fas fa-user-shield'); },
+        onAdd:     function() { window.localStorage.setItem('pag_id1', ''); _recargarTab('fichaagente.php', 'Agente', 'fas fa-user-shield'); },
         onEdit:    function(tr) {
             var data = $('#tbl_agentes').DataTable().row(tr).data();
-            if (data) CargarPagina('fichaagente.php', 'Agente', 'fas fa-user-shield', data[0]);
+            if (data) { window.localStorage.setItem('pag_id1', data[0]); _recargarTab('fichaagente.php', 'Agente', 'fas fa-user-shield'); }
         }
     });
 

@@ -44,10 +44,10 @@ function CargaTabla() {
         btnAdd:    '#btnTbAddIncidencia',
         btnEdit:   '#btnTbEditIncidencia',
         getDt:     function() { return $('#tbl_incidencias').DataTable(); },
-        onAdd:     function() { CargarPagina('fichaincidencia.php', 'Incidencia', 'fas fa-exclamation-triangle'); },
+        onAdd:     function() { window.localStorage.setItem('pag_id1', ''); _recargarTab('fichaincidencia.php', 'Incidencia', 'fas fa-exclamation-triangle'); },
         onEdit:    function(tr) {
             var data = $('#tbl_incidencias').DataTable().row(tr).data();
-            if (data) CargarPagina('fichaincidencia.php', 'Incidencia', 'fas fa-exclamation-triangle', data[0]);
+            if (data) { window.localStorage.setItem('pag_id1', data[0]); _recargarTab('fichaincidencia.php', 'Incidencia', 'fas fa-exclamation-triangle'); }
         }
     });
 
