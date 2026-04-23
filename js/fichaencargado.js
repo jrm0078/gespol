@@ -101,7 +101,7 @@ function Eliminar() {
             $.ajax({
                 type: "POST", url: "inc/func_ajax.php/EliminarEncargado",
                 data: { id: document.getElementById("txtNumEncargado").value },
-                dataType: "json", crossDomain: true, cache: false, async: false,
+                dataType: "json", crossDomain: true, cache: false,
                 success: function(result) {
                     if (result.validacion == "ok") {
                         mostrarToast('success', 'Encargado eliminado');

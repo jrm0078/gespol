@@ -79,7 +79,6 @@ function CargaDatos(){
 		url: "inc/func_ajax.php/CargaUsuario",				
 		crossDomain: true,
 		cache: false,
-		async: false,
 		dataType: "json",
 		success: function (resultado) {
 			//MODO EDICION
@@ -150,7 +149,6 @@ function Actualizar() {
 		dataType: "json",
 		crossDomain: true,
 		cache: false,			
-		async: false,		
 		success: function (result) {
 			if (result.validacion == "ok") {
 				var mensaje = lmodo == "alta" ? "Usuario creado correctamente" : "Usuario actualizado correctamente";
@@ -210,8 +208,6 @@ function Eliminar() {
 				},
 			dataType: "json",
 			crossDomain: true,
-			cache: false,
-			async: false,
 			cache: false,
 			success: function (result) {
 				if (result.validacion == "ok") {

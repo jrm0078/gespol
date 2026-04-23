@@ -23,7 +23,7 @@ function CargaDatos() {
         type: "POST",
         data: { id: pag_id1 || 0 },
         url: "inc/func_ajax.php/CargaAgente",
-        crossDomain: true, cache: false, async: false, dataType: "json",
+        crossDomain: true, cache: false, dataType: "json",
         success: function(resultado) {
             var result = resultado[0];
             if (result !== undefined) {
@@ -90,7 +90,7 @@ function Eliminar() {
             $.ajax({
                 type: "POST", url: "inc/func_ajax.php/EliminarAgente",
                 data: { id: document.getElementById("txtNumAgente").value },
-                dataType: "json", crossDomain: true, cache: false, async: false,
+                dataType: "json", crossDomain: true, cache: false,
                 success: function(result) {
                     if (result.validacion == "ok") {
                         mostrarToast('success', 'Agente eliminado');
