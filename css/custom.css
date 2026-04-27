@@ -26,7 +26,10 @@
     overflow-x: auto;
     min-height: 36px;
     gap: 2px;
-    scrollbar-width: none; /* ocultar scrollbar del tabbar — scroll funciona igual */
+    scrollbar-width: none;
+    position: sticky;
+    top: 50px;
+    z-index: 500;
 }
 #gespol-tabbar::-webkit-scrollbar { display: none; }
 
@@ -189,37 +192,14 @@
     padding-top: 0 !important;
 }
 
-/* ============> STICKY: barra pestañas + título página <============ */
-#gespol-tabbar {
-    position: fixed;
-    top: 50px;   /* debajo del topbar fijo */
-    left: 250px; /* sidebar full */
-    right: 0;
-    z-index: 500;
-}
-/* Mini-sidebar */
-#main-wrapper[data-sidebartype="mini-sidebar"] #gespol-tabbar {
-    left: 65px;
-}
-/* Móvil: sin sidebar */
-@media (max-width: 767px) {
-    #gespol-tabbar {
-        left: 0;
-    }
-}
-/* Compensar el espacio del tabbar fijo */
-#panelcentral {
-    padding-top: 40px;
-}
+/* ============> STICKY: barra pestañas <============ */
 /* Ocultar breadcrumb duplicado (#5) — titulopagina sigue en DOM para el JS */
 .page-breadcrumb {
     display: none !important;
 }
-/* Cabecera azul de cada card — sticky justo debajo del tabbar fijo (#6) */
+/* Cabecera azul: sin sticky (DataTables pagina, no hay scroll dentro de la card) */
 .card > .card-header-blue {
-    position: sticky;
-    top: 88px;   /* 50px topbar + 38px tabbar */
-    z-index: 497;
+    position: relative;
 }
 
 /* En móvil el sidebar debe aparecer por encima de los elementos sticky */
