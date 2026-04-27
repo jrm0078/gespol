@@ -66,7 +66,7 @@ var _detachedTabEl = null;
 if (window._gTabs && typeof _tabPanelId === 'function') {
     var _sameTab = window._gTabs.find(function(t) { return t.pagina === pagina; });
     if (_sameTab) {
-        _detachedTabEl = $('#' + _tabPanelId(pagina)).detach();
+        _detachedTabEl = $('#' + _tabPanelId(_sameTab.id)).detach();
     }
 }
 
@@ -158,14 +158,13 @@ window.localStorage.setItem('pag_pagina_prev',   pagina);
 window.localStorage.setItem('pag_titulo_prev',   titulo);
 window.localStorage.setItem('pag_icono_prev',    icono);
 
-// Punto #3: siempre abrir nueva pestaña (nunca reutilizar la existente)
-
-// Nueva pestania: registrar + crear panel
+// Nueva pestania: siempre nueva, aunque ya exista una con la misma pagina (punto #3)
 if (!window._gTabs) window._gTabs = [];
-window._gTabs.push({pagina: pagina, titulo: titulo, icono: icono});
-var $newPanel = $('<div class="gtab-panel" id="' + _tabPanelId(pagina) + '"></div>');
+var _newTabId = ++window._gTabIdSeq;
+window._gTabs.push({id: _newTabId, pagina: pagina, titulo: titulo, icono: icono});
+var $newPanel = $('<div class="gtab-panel" id="' + _tabPanelId(_newTabId) + '"></div>');
 $('#panelcentral').append($newPanel);
-_switchToTab(pagina);
+_switchToTab(_newTabId);
 
 // Cargar contenido en el panel de la pestania
 $newPanel.html('<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x text-primary"></i></div>');
@@ -221,7 +220,7 @@ function _recargarTab(pagina, titulo, icono) {
         if (existingTab) {
             existingTab.titulo = titulo;
             existingTab.icono  = icono;
-            var $panel = $('#' + _tabPanelId(pagina));
+            var $panel = $('#' + _tabPanelId(existingTab.id));
             $panel.find('table').each(function() {
                 if ($.fn.DataTable && $.fn.DataTable.isDataTable(this)) $(this).DataTable().destroy();
             });
@@ -231,7 +230,7 @@ function _recargarTab(pagina, titulo, icono) {
                 success: function(html) { $panel.html(html); },
                 error:   function()     { $panel.html('<div class="alert alert-danger m-3">Error al cargar la pagina</div>'); }
             });
-            _switchToTab(pagina);
+            _switchToTab(existingTab.id);
             return;
         }
     }
@@ -242,11 +241,12 @@ function _recargarTab(pagina, titulo, icono) {
 // SISTEMA DE PESTAÑAS
 ////////////////////////////
 
-window._gTabs      = [];   // [{pagina, titulo, icono}]
-window._gActiveTab = null;
+window._gTabs      = [];   // [{id, pagina, titulo, icono}]
+window._gTabIdSeq  = 0;    // contador de IDs unicos de pestana
+window._gActiveTab = null; // id numerico de la pestana activa
 
-function _tabPanelId(pagina) {
-    return 'gtabp-' + pagina.replace(/[^a-zA-Z0-9]/g, '_');
+function _tabPanelId(tabId) {
+    return 'gtabp-' + tabId;
 }
 
 function _renderTabBar() {
@@ -254,9 +254,9 @@ function _renderTabBar() {
     $bar.empty();
     window._gTabs.forEach(function(tab) {
         var isHome   = (tab.pagina === 'dashboard.php');
-        var isActive = (tab.pagina === window._gActiveTab);
-        var closeBtn = isHome ? '' : '<span class="gtab-close" data-pagina="' + tab.pagina + '" title="Cerrar">×</span>';
-        var $t = $('<div class="gtab' + (isActive ? ' active' : '') + '" data-pagina="' + tab.pagina + '">' +
+        var isActive = (tab.id === window._gActiveTab);
+        var closeBtn = isHome ? '' : '<span class="gtab-close" data-tabid="' + tab.id + '" title="Cerrar">×</span>';
+        var $t = $('<div class="gtab' + (isActive ? ' active' : '') + '" data-tabid="' + tab.id + '">' +
             '<i class="' + tab.icono + ' gtab-icon"></i>' +
             '<span class="gtab-title">' + $('<span>').text(tab.titulo).html() + '</span>' +
             closeBtn + '</div>');
@@ -276,31 +276,31 @@ function _sidebarMarkActive(pagina) {
     });
 }
 
-function _switchToTab(pagina) {
+function _switchToTab(tabId) {
     $('#panelcentral > .gtab-panel').hide();
-    $('#' + _tabPanelId(pagina)).show();
-    window._gActiveTab = pagina;
-    var tab = window._gTabs.find(function(t) { return t.pagina === pagina; });
+    $('#' + _tabPanelId(tabId)).show();
+    window._gActiveTab = tabId;
+    var tab = window._gTabs.find(function(t) { return t.id === tabId; });
     if (tab) {
         document.getElementById('titulopagina').innerHTML = "<i class='" + tab.icono + "'></i> " + tab.titulo;
+        _sidebarMarkActive(tab.pagina);
     }
-    _sidebarMarkActive(pagina);
     _renderTabBar();
 }
 
-function _closeTab(pagina) {
-    var idx = window._gTabs.findIndex(function(t) { return t.pagina === pagina; });
+function _closeTab(tabId) {
+    var idx = window._gTabs.findIndex(function(t) { return t.id === tabId; });
     if (idx === -1) return;
-    var $panel = $('#' + _tabPanelId(pagina));
+    var $panel = $('#' + _tabPanelId(tabId));
     $panel.find('table').each(function() {
         if ($.fn.DataTable && $.fn.DataTable.isDataTable(this)) $(this).DataTable().destroy();
     });
     $panel.remove();
     window._gTabs.splice(idx, 1);
-    if (window._gActiveTab === pagina) {
+    if (window._gActiveTab === tabId) {
         var newIdx = Math.max(0, Math.min(idx, window._gTabs.length - 1));
         if (window._gTabs[newIdx]) {
-            _switchToTab(window._gTabs[newIdx].pagina);
+            _switchToTab(window._gTabs[newIdx].id);
         }
     } else {
         _renderTabBar();
@@ -310,11 +310,11 @@ function _closeTab(pagina) {
 // Eventos de la barra de pestañas
 $(document).on('click', '.gtab', function(e) {
     if ($(e.target).hasClass('gtab-close') || $(e.target).closest('.gtab-close').length) return;
-    _switchToTab($(this).data('pagina'));
+    _switchToTab($(this).data('tabid'));
 });
 $(document).on('click', '.gtab-close', function(e) {
     e.stopPropagation();
-    _closeTab($(this).data('pagina'));
+    _closeTab($(this).data('tabid'));
 });
 
 

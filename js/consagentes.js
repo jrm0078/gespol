@@ -24,8 +24,7 @@ function CargaTabla() {
     });
 
     var table = $('#tbl_agentes').DataTable({
-        "sDom": '<"toolbar-dt"B>f<t><pl>',
-        "dom":  '<"toolbar-dt"B>f<t><pl>',
+        "sDom": '<f>t<pl>',
         "bPaginate": true, "bLengthChange": true, "bFilter": true, "bInfo": false, "bAutoWidth": false,
         "pageLength": 50, "orderCellsTop": true, "fixedHeader": true,
         "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
