@@ -27,11 +27,19 @@
     min-height: 36px;
     gap: 2px;
     scrollbar-width: none;
-    position: sticky;
+    /* Fijo bajo el topbar — 100% fiable sin depender del overflow de los padres */
+    position: fixed;
     top: 50px;
+    left: 0;
+    right: 0;
     z-index: 500;
 }
 #gespol-tabbar::-webkit-scrollbar { display: none; }
+/* Escritorio: desplazar para no solapar el sidebar */
+@media (min-width: 768px) {
+    #gespol-tabbar { left: 250px; }
+    #main-wrapper[data-sidebartype="mini-sidebar"] #gespol-tabbar { left: 65px; }
+}
 
 .gtab {
     display: flex;
@@ -299,7 +307,7 @@
 .page-wrapper {
     background: #f7f7f7;
     min-height: calc(100vh - 50px);
-    padding: 6px 4px 4px 4px !important;
+    padding: 42px 4px 4px 4px !important; /* 6px original + 36px altura tabbar fijo */
 }
 
 .page-breadcrumb {
