@@ -208,6 +208,13 @@
     z-index: 498;
 }
 
+/* En móvil el sidebar debe aparecer por encima de los elementos sticky */
+@media (max-width: 767px) {
+    .left-sidebar {
+        z-index: 600 !important;
+    }
+}
+
 /* ============> NAVBAR AZUL <============ */
 .topbar {
     background: linear-gradient(135deg, #0084D9 0%, #0066B3 100%);
