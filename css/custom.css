@@ -25,9 +25,6 @@
     flex-wrap: nowrap;
     overflow-x: auto;
     min-height: 36px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
     gap: 2px;
     scrollbar-width: thin;
     scrollbar-color: #cbd0d6 transparent;
@@ -197,17 +194,17 @@
 /* ============> STICKY: barra pestañas + título página <============ */
 #gespol-tabbar {
     position: sticky;
-    top: 0;
+    top: 50px;   /* altura del topbar fijo */
     z-index: 500;
 }
 /* Ocultar breadcrumb duplicado (#5) — titulopagina sigue en DOM para el JS */
 .page-breadcrumb {
     display: none !important;
 }
-/* Cabecera azul de cada card (título de pantalla) sticky bajo la barra de pestañas (#6) */
+/* Cabecera azul de cada card (título de pantalla) sticky bajo tabbar (#6) */
 .card > .card-header-blue {
     position: sticky;
-    top: 36px;   /* altura de la barra de pestañas */
+    top: 86px;   /* 50px topbar + ~36px tabbar */
     z-index: 498;
 }
 

@@ -400,10 +400,9 @@
 	});
 	// Cerrar menú móvil al seleccionar cualquier ítem del sidebar
 	$(document).ready(function() {
-		$('#sidebarnav').on('click', '.sidebar-link', function() {
-			if ($(window).width() < 768) {
-				$('#main-wrapper').removeClass('show-sidebar');
-				$('.nav-toggler i').removeClass('ti-close').addClass('ti-menu');
+		$('#sidebarnav').on('click', 'a.sidebar-link', function() {
+			if ($(window).width() < 768 && $('#main-wrapper').hasClass('show-sidebar')) {
+				$('.nav-toggler').trigger('click');
 			}
 		});
 	});
