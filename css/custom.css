@@ -191,18 +191,34 @@
 
 /* ============> STICKY: barra pestañas + título página <============ */
 #gespol-tabbar {
-    position: sticky;
-    top: 50px;   /* altura del topbar fijo */
+    position: fixed;
+    top: 50px;   /* debajo del topbar fijo */
+    left: 250px; /* sidebar full */
+    right: 0;
     z-index: 500;
+}
+/* Mini-sidebar */
+#main-wrapper[data-sidebartype="mini-sidebar"] #gespol-tabbar {
+    left: 65px;
+}
+/* Móvil: sin sidebar */
+@media (max-width: 767px) {
+    #gespol-tabbar {
+        left: 0;
+    }
+}
+/* Compensar el espacio del tabbar fijo */
+#panelcentral {
+    padding-top: 40px;
 }
 /* Ocultar breadcrumb duplicado (#5) — titulopagina sigue en DOM para el JS */
 .page-breadcrumb {
     display: none !important;
 }
-/* Cabecera azul de cada card — sticky justo debajo del tabbar (#6) */
+/* Cabecera azul de cada card — sticky justo debajo del tabbar fijo (#6) */
 .card > .card-header-blue {
     position: sticky;
-    top: 86px;   /* 50px topbar + 36px tabbar */
+    top: 88px;   /* 50px topbar + 38px tabbar */
     z-index: 497;
 }
 
