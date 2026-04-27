@@ -26,11 +26,9 @@
     overflow-x: auto;
     min-height: 36px;
     gap: 2px;
-    scrollbar-width: thin;
-    scrollbar-color: #cbd0d6 #fff;
+    scrollbar-width: none; /* ocultar scrollbar del tabbar — scroll funciona igual */
 }
-#gespol-tabbar::-webkit-scrollbar { height: 3px; background: #fff; }
-#gespol-tabbar::-webkit-scrollbar-thumb { background: #cbd0d6; border-radius: 3px; }
+#gespol-tabbar::-webkit-scrollbar { display: none; }
 
 .gtab {
     display: flex;
@@ -201,11 +199,9 @@
 .page-breadcrumb {
     display: none !important;
 }
-/* Cabecera azul de cada card (título de pantalla) sticky bajo tabbar (#6) */
+/* Cabecera azul de cada card — sin sticky (DataTables pagina el contenido, no hay scroll real en la card) */
 .card > .card-header-blue {
-    position: sticky;
-    top: 86px;   /* 50px topbar + ~36px tabbar */
-    z-index: 498;
+    position: relative;
 }
 
 /* En móvil el sidebar debe aparecer por encima de los elementos sticky */
