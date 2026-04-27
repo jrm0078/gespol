@@ -86,6 +86,8 @@
 	</audio>		
 	
     <div id="main-wrapper" data-layout="vertical" data-sidebar-position="fixed" data-sidebartype="full">
+        <!-- Overlay para cerrar sidebar en móvil al tocar fuera -->
+        <div id="sidebar-overlay"></div>
         <!-- ============================================================== -->
         <!-- Topbar header - style you can find in pages.scss -->
         <!-- ============================================================== -->
@@ -402,6 +404,13 @@
 	$(document).ready(function() {
 		$('#sidebarnav').on('click', 'a.sidebar-link', function() {
 			if ($(window).width() < 768 && $('#main-wrapper').hasClass('show-sidebar')) {
+				$('.nav-toggler').trigger('click');
+			}
+		});
+
+		// Cerrar menú móvil al tocar fuera del sidebar (overlay)
+		$('#sidebar-overlay').on('click', function() {
+			if ($('#main-wrapper').hasClass('show-sidebar')) {
 				$('.nav-toggler').trigger('click');
 			}
 		});

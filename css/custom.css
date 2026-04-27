@@ -27,9 +27,9 @@
     min-height: 36px;
     gap: 2px;
     scrollbar-width: thin;
-    scrollbar-color: #cbd0d6 transparent;
+    scrollbar-color: #cbd0d6 #fff;
 }
-#gespol-tabbar::-webkit-scrollbar { height: 3px; }
+#gespol-tabbar::-webkit-scrollbar { height: 3px; background: #fff; }
 #gespol-tabbar::-webkit-scrollbar-thumb { background: #cbd0d6; border-radius: 3px; }
 
 .gtab {
@@ -215,6 +215,19 @@
     }
 }
 
+/* Overlay para cerrar sidebar móvil al tocar fuera */
+#sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4);
+    z-index: 599;
+}
+#main-wrapper.show-sidebar #sidebar-overlay {
+    display: block;
+}
+
 /* ============> NAVBAR AZUL <============ */
 .topbar {
     background: linear-gradient(135deg, #0084D9 0%, #0066B3 100%);
@@ -320,7 +333,7 @@
 }
 
 #main-wrapper {
-    overflow-x: hidden;
+    overflow-x: clip; /* clip en vez de hidden: no rompe position:sticky en hijos */
 }
 
 .navbar {
