@@ -199,9 +199,11 @@
 .page-breadcrumb {
     display: none !important;
 }
-/* Cabecera azul de cada card — sin sticky (DataTables pagina el contenido, no hay scroll real en la card) */
+/* Cabecera azul de cada card — sticky justo debajo del tabbar (#6) */
 .card > .card-header-blue {
-    position: relative;
+    position: sticky;
+    top: 86px;   /* 50px topbar + 36px tabbar */
+    z-index: 497;
 }
 
 /* En móvil el sidebar debe aparecer por encima de los elementos sticky */
