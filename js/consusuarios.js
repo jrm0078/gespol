@@ -52,7 +52,8 @@ function CargaTabla(){
 	// tabla
 	var table = $('#zero_config').DataTable(
 	{
-		"sDom": '<f>t<pl>',
+		"sDom": '<"toolbar-dt"B>f<t><pl>',
+		"dom":  '<"toolbar-dt"B>f<t><pl>',
 		"bPaginate": true,
 		"bLengthChange": true,
 		"bFilter": true,

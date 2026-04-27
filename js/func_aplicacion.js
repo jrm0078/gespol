@@ -158,16 +158,7 @@ window.localStorage.setItem('pag_pagina_prev',   pagina);
 window.localStorage.setItem('pag_titulo_prev',   titulo);
 window.localStorage.setItem('pag_icono_prev',    icono);
 
-// Si la pestania ya esta abierta, solo activarla
-if (window._gTabs) {
-var existingTab = window._gTabs.find(function(t) { return t.pagina === pagina; });
-if (existingTab) {
-existingTab.titulo = titulo;
-existingTab.icono  = icono;
-_switchToTab(pagina);
-return;
-}
-}
+// Punto #3: siempre abrir nueva pestaña (nunca reutilizar la existente)
 
 // Nueva pestania: registrar + crear panel
 if (!window._gTabs) window._gTabs = [];

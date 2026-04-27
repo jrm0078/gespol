@@ -21,7 +21,7 @@ function Cargar() {
     });
     $.ajax({
         type:"POST", url:"inc/func_ajax.php/ComboAgentes",
-        crossDomain:true, cache:false, async:false, dataType:"json",
+        crossDomain:true, cache:false, dataType:"json",
         success:function(data) {
             ['cmbAgenteInc1','cmbAgenteInc2','cmbAgenteInc3','cmbAgenteInc4'].forEach(function(id) {
                 $.each(data, function(i,v) { CmbCargaValor($('#' + id), v.numagente, v.nombre); });
@@ -43,7 +43,7 @@ function CargaDatos() {
     $.ajax({
         type:"POST", data:{id: pag_id1},
         url:"inc/func_ajax.php/CargaIncidencia",
-        crossDomain:true, cache:false, async:false, dataType:"json",
+        crossDomain:true, cache:false, dataType:"json",
         success:function(resultado) {
             var r = resultado[0];
             if (r !== undefined) {
@@ -92,7 +92,7 @@ function Actualizar() {
             historialincidencias:document.getElementById("txtHistorial").value,
             valor:               ""
         },
-        dataType:"json", crossDomain:true, cache:false, async:false,
+        dataType:"json", crossDomain:true, cache:false,
         success:function(result) {
             if (result.validacion == "ok") {
                 mostrarToast('success', lmodo=="alta" ? "Incidencia creada" : "Incidencia actualizada");
