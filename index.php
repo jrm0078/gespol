@@ -100,11 +100,11 @@
                     <a class="navbar-brand d-flex align-items-center" href="javascript:void(0);" onclick="CargarPagina('dashboard.php','Inicio','mdi mdi-home')" style="padding: 10px 0; cursor: pointer; overflow: hidden; width: 100%;">
                         <!-- Logo icon - siempre visible -->
                         <b class="logo-icon" style="font-size: 1.5rem; display: flex; align-items: center; justify-content: center; min-width: 40px; flex-shrink: 0;">
-                            <i class="fas fa-cloud" style="color: white;"></i>
+                            <i class="fas fa-shield-alt" style="color: white;"></i>
                         </b>
                         <!-- Logo text - se oculta en mini-sidebar via style.css -->
                         <span class="logo-text" style="color: white; font-weight: bold; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; white-space: nowrap; margin-left: 10px;">
-                            GesPol
+                            GenPolMC
                         </span>
                     </a>
                     <!-- ============================================================== -->
@@ -264,7 +264,7 @@
             <!-- ══ Barra de pestañas ════════════════════════════════════ -->
             <div id="gespol-tabbar"></div>
             <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
+            <!-- Barra de título de página -->
             <!-- ============================================================== -->
             <div class="page-breadcrumb">
                 <div class="row">
@@ -307,7 +307,7 @@
     <!-- ============================================================== -->
     <!-- Modal Ventana Emergente (reutilizable) -->
     <!-- ============================================================== -->
-    <div class="modal fade" id="modalPagina" tabindex="-1" role="dialog" aria-labelledby="modalPaginaTitulo">
+    <div class="modal fade" id="modalPagina" tabindex="-1" role="dialog" aria-labelledby="modalPaginaTitulo" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document" style="max-width:95vw;">
             <div class="modal-content">
                 <div class="modal-header card-header-blue py-2">
@@ -398,9 +398,16 @@
 			});
 		}, 300);
 	});
+	// Cerrar menú móvil al seleccionar cualquier ítem del sidebar
+	$(document).ready(function() {
+		$('#sidebarnav').on('click', '.sidebar-link', function() {
+			if ($(window).width() < 768) {
+				$('#main-wrapper').removeClass('show-sidebar');
+				$('.nav-toggler i').removeClass('ti-close').addClass('ti-menu');
+			}
+		});
+	});
 	</script>
-
-</body>
 
 
 </html>

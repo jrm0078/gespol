@@ -8,7 +8,7 @@ session_start();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
-    <title>Acceso &mdash; GesPol</title>
+    <title>Acceso &mdash; GenPolMC</title>
     <link href="libs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="libs/fontawesome-free-5.15.1-web/css/all.css" rel="stylesheet">
     <link href="libs/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
@@ -143,7 +143,7 @@ session_start();
 
         <div class="login-header">
             <div class="login-logo"><i class="fas fa-shield-alt"></i></div>
-            <h1>GesPol</h1>
+            <h1>GenPolMC</h1>
             <p>Panel de administraci&oacute;n</p>
         </div>
 

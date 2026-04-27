@@ -190,7 +190,7 @@ $rol_usuario    = isset($_SESSION['user_rol'])          ? htmlspecialchars($_SES
             <div class="welcome-sub">
                 <i class="fas fa-shield-alt mr-1" style="opacity:.7;"></i>
                 <?= $rol_usuario ?>
-                &nbsp;·&nbsp; Panel de administración GesPol
+                &nbsp;&middot;&nbsp; Panel de administraci&oacute;n GenPolMC
             </div>
         </div>
         <div class="welcome-date mt-2 mt-sm-0">

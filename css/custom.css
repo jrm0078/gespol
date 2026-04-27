@@ -194,6 +194,23 @@
     padding-top: 0 !important;
 }
 
+/* ============> STICKY: barra pestañas + título página <============ */
+#gespol-tabbar {
+    position: sticky;
+    top: 0;
+    z-index: 500;
+}
+/* Ocultar breadcrumb duplicado (#5) — titulopagina sigue en DOM para el JS */
+.page-breadcrumb {
+    display: none !important;
+}
+/* Cabecera azul de cada card (título de pantalla) sticky bajo la barra de pestañas (#6) */
+.card > .card-header-blue {
+    position: sticky;
+    top: 36px;   /* altura de la barra de pestañas */
+    z-index: 498;
+}
+
 /* ============> NAVBAR AZUL <============ */
 .topbar {
     background: linear-gradient(135deg, #0084D9 0%, #0066B3 100%);
