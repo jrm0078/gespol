@@ -163,9 +163,7 @@ window.localStorage.setItem('pag_icono_prev',    icono);
 if (!window._gTabs) window._gTabs = [];
 var _existingTab = window._gTabs.find(function(t) { return t.pagina === pagina; });
 if (_existingTab) {
-    _existingTab.titulo = titulo;
-    _existingTab.icono  = icono;
-    _recargarTab(pagina, titulo, icono);
+    _switchToTab(_existingTab.id);
     return;
 }
 
