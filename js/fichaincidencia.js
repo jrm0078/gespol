@@ -122,7 +122,7 @@ function Eliminar() {
             $.ajax({
                 type:"POST", url:"inc/func_ajax.php/EliminarIncidencia",
                 data:{id: document.getElementById("txtNumIncidencia").value},
-                dataType:"json", crossDomain:true, cache:false, async:false,
+                dataType:"json", crossDomain:true, cache:false,
                 success:function(result) {
                     if (result.validacion == "ok") {
                         mostrarToast('success', 'Incidencia eliminada');
