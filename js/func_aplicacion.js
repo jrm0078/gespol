@@ -158,8 +158,18 @@ window.localStorage.setItem('pag_pagina_prev',   pagina);
 window.localStorage.setItem('pag_titulo_prev',   titulo);
 window.localStorage.setItem('pag_icono_prev',    icono);
 
-// Nueva pestania: siempre nueva, aunque ya exista una con la misma pagina (punto #3)
+// Si la pestania ya esta abierta, recargar su contenido (siempre fresco) y activarla
+// Esto evita IDs duplicados en el DOM que rompen DataTables y otros selectores
 if (!window._gTabs) window._gTabs = [];
+var _existingTab = window._gTabs.find(function(t) { return t.pagina === pagina; });
+if (_existingTab) {
+    _existingTab.titulo = titulo;
+    _existingTab.icono  = icono;
+    _recargarTab(pagina, titulo, icono);
+    return;
+}
+
+// Nueva pestania
 var _newTabId = ++window._gTabIdSeq;
 window._gTabs.push({id: _newTabId, pagina: pagina, titulo: titulo, icono: icono});
 var $newPanel = $('<div class="gtab-panel" id="' + _tabPanelId(_newTabId) + '"></div>');
