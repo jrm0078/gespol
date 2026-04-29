@@ -88,22 +88,29 @@ INSERT INTO plantillas_filtros (cod_plantilla, nombre_filtro, etiqueta, tipo_fil
 ('ficha_usuario', 'id_usuario', 'Usuario', 'select_table', 'usuario', 'id', 'nombre', NULL, 1, 1, 1);
 
 -- ============================================
--- TABLA INCIDENCIAS (módulo Gestión Policial)
--- ============================================
+-- TABLA INCIDENCIAS UNIFICADA (fusión de incidencias + incidencias_pol)
+-- ========================================================================
 
 CREATE TABLE IF NOT EXISTS incidencias (
-  id_incidencias  INT AUTO_INCREMENT PRIMARY KEY,
-  fecha           DATE         NOT NULL,
-  turno           VARCHAR(30)  DEFAULT NULL,
-  dia_semana      VARCHAR(20)  DEFAULT NULL,
-  num_agente      VARCHAR(150) DEFAULT NULL,
-  num_agente1     VARCHAR(150) DEFAULT NULL,
-  num_agente2     VARCHAR(150) DEFAULT NULL,
-  incidencias     TEXT         DEFAULT NULL,
-  encargado       VARCHAR(150) DEFAULT NULL,
-  tipo            VARCHAR(50)  DEFAULT 'GENERAL',
-  estado          TINYINT(1)   DEFAULT 1,
-  fecha_creacion  DATETIME     DEFAULT CURRENT_TIMESTAMP
+  numincidencia        INT AUTO_INCREMENT PRIMARY KEY,
+  numservicio          INT          DEFAULT NULL,
+  incidencias          TEXT         DEFAULT NULL,
+  destinatario         VARCHAR(255) DEFAULT NULL,
+  etiquetas_filtro     VARCHAR(255) DEFAULT NULL,
+  numagente            INT          DEFAULT NULL,
+  numagente1           INT          DEFAULT NULL,
+  numagente2           INT          DEFAULT NULL,
+  numagente3           INT          DEFAULT NULL,
+  historialincidencias TEXT         DEFAULT NULL,
+  valor                INT          DEFAULT NULL,
+  fecha                DATE         DEFAULT NULL,
+  turno                VARCHAR(30)  DEFAULT NULL,
+  dia_semana           VARCHAR(20)  DEFAULT NULL,
+  encargado            VARCHAR(150) DEFAULT NULL,
+  tipo                 VARCHAR(50)  DEFAULT 'GENERAL',
+  estado               TINYINT(1)   DEFAULT 1,
+  fecha_creacion       DATETIME     DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (numservicio) REFERENCES servicios(numservicio) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================
@@ -117,7 +124,7 @@ INSERT INTO plantillas_maestro (cod_plantilla, nombre, descripcion, tipo_documen
  'Ficha detallada de una incidencia: agentes, turno, descripción',
  'PDF',
  '<div style="font-family:Arial,sans-serif;font-size:13px;padding:30px;max-width:800px;margin:0 auto;"><h2 style="text-align:center;font-size:18px;margin-bottom:20px;">Informe de determinado Registro</h2><p><strong>Oficial:</strong> [[Encargado]]</p><table width="100%" cellpadding="6" style="border-collapse:collapse;margin-bottom:16px;"><thead><tr style="background:#f0f0f0;"><th style="border:1px solid #ccc;text-align:left;padding:6px;">Fecha</th><th style="border:1px solid #ccc;text-align:left;padding:6px;">Turno</th><th style="border:1px solid #ccc;text-align:left;padding:6px;">Día Semana</th><th style="border:1px solid #ccc;text-align:left;padding:6px;">Agentes actuantes</th><th style="border:1px solid #ccc;text-align:left;padding:6px;">Registro</th></tr></thead><tbody><tr><td style="border:1px solid #ccc;padding:6px;">[[Fecha]]</td><td style="border:1px solid #ccc;padding:6px;">[[Turno]]</td><td style="border:1px solid #ccc;padding:6px;">[[Dia_semana]]</td><td style="border:1px solid #ccc;padding:6px;">[[NumAgente]]<br>[[NumAgente1]]<br>[[NumAgente2]]</td><td style="border:1px solid #ccc;padding:6px;">[[Id_incidencias]]</td></tr></tbody></table><p>[[Incidencias]]</p><p><br><strong>EN RELACIÓN CON LA NOTA DE INCIDENCIA ANTERIOR:</strong></p></div>',
- 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, s.turno AS Turno, s.diasemana AS Dia_semana, IFNULL(a.nombre,'''') AS NumAgente, IFNULL(a1.nombre,'''') AS NumAgente1, IFNULL(a2.nombre,'''') AS NumAgente2, i.incidencias AS Incidencias, IFNULL(e.encargado,'''') AS Encargado FROM incidencias_pol i LEFT JOIN servicios s ON i.numservicio = s.numservicio LEFT JOIN encargados e ON s.numagenteencargado = e.numencargado LEFT JOIN agentes a ON i.numagente = a.numagente LEFT JOIN agentes a1 ON i.numagente1 = a1.numagente LEFT JOIN agentes a2 ON i.numagente2 = a2.numagente WHERE i.numincidencia = [[id_incidencia]]',
+ 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, s.turno AS Turno, s.diasemana AS Dia_semana, IFNULL(a.nombre,'''') AS NumAgente, IFNULL(a1.nombre,'''') AS NumAgente1, IFNULL(a2.nombre,'''') AS NumAgente2, i.incidencias AS Incidencias, IFNULL(e.encargado,'''') AS Encargado FROM incidencias i LEFT JOIN servicios s ON i.numservicio = s.numservicio LEFT JOIN encargados e ON s.numagenteencargado = e.numencargado LEFT JOIN agentes a ON i.numagente = a.numagente LEFT JOIN agentes a1 ON i.numagente1 = a1.numagente LEFT JOIN agentes a2 ON i.numagente2 = a2.numagente WHERE i.numincidencia = [[id_incidencia]]',
  1);
 
 INSERT INTO plantillas_maestro (cod_plantilla, nombre, descripcion, tipo_documento, contenido, sql_consulta, estado) VALUES
@@ -126,7 +133,7 @@ INSERT INTO plantillas_maestro (cod_plantilla, nombre, descripcion, tipo_documen
  'Listado de incidencias remitidas al Negociado de Urbanismo',
  'PDF',
  '<div style="font-family:Arial,sans-serif;font-size:12px;padding:40px;max-width:750px;margin:0 auto;"><table width="100%" style="border:none;border-collapse:collapse;margin-bottom:20px;"><tr><td style="border:none;vertical-align:top;font-size:11px;"><strong>EXCMO. AYUNTAMIENTO<br>DE<br>MONTILLA<br>(CÓRDOBA)</strong><br>N.º E. L. 01140425</td><td style="border:none;text-align:right;font-weight:bold;font-size:14px;vertical-align:top;">POLICÍA LOCAL</td></tr></table><p style="margin-bottom:16px;font-size:11px;">N/Refª FJG/rh<br>Gex nº &nbsp;&nbsp;&nbsp;&nbsp;/</p><p style="margin-bottom:24px;"><strong>Negociado de Urbanismo</strong></p><br><p style="text-align:justify;padding-left:30px;margin-bottom:12px;">A continuación se transcriben notas de incidencias emitidas por distintos Oficiales dependientes de esta Jefatura, a los efectos que estime procedentes.</p><hr style="border:1px solid #000;margin:16px 40px;"><ul style="list-style-type:disc;padding-left:50px;margin:0;"><li style="font-style:italic;margin-bottom:4px;">(Refª [[id_incidencias]]).- [[Fecha]] &nbsp; [[Incidencias]]</li></ul><br><br><p style="text-align:center;"><strong>El Jefe de Policía</strong></p><br><br><br><hr style="border:0;border-top:1px solid #aaa;margin:0 10px;"><p style="font-size:9px;text-align:center;margin-top:3px;">C/. Conde de la Cortina, s/n - 14550 MONTILLA (Córdoba) – Tlfno.: 957 65 26 26, Fax 957 65 58 67 – e-mail: policia@montilla.es</p></div>',
- 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, i.incidencias AS Incidencias FROM incidencias_pol i LEFT JOIN servicios s ON i.numservicio = s.numservicio WHERE i.etiquetas_filtro LIKE ''%URBANISMO%'' AND s.fecha BETWEEN [[fecha_inicio]] AND [[fecha_fin]] ORDER BY s.fecha ASC',
+ 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, i.incidencias AS Incidencias FROM incidencias i LEFT JOIN servicios s ON i.numservicio = s.numservicio WHERE i.etiquetas_filtro LIKE ''%URBANISMO%'' AND s.fecha BETWEEN [[fecha_inicio]] AND [[fecha_fin]] ORDER BY s.fecha ASC',
  1);
 
 INSERT INTO plantillas_maestro (cod_plantilla, nombre, descripcion, tipo_documento, contenido, sql_consulta, estado) VALUES
@@ -135,7 +142,7 @@ INSERT INTO plantillas_maestro (cod_plantilla, nombre, descripcion, tipo_documen
  'Listado de incidencias sobre señalización para reparación/colocación',
  'PDF',
  '<div style="font-family:Arial,sans-serif;font-size:12px;padding:40px;max-width:750px;margin:0 auto;"><table width="100%" style="border:none;border-collapse:collapse;margin-bottom:16px;"><tr><td style="border:none;vertical-align:top;font-size:11px;"><strong>EXCMO. AYUNTAMIENTO<br>DE<br>MONTILLA<br>(CÓRDOBA)</strong><br>N.º E. L. 01140425</td><td style="border:none;text-align:right;font-weight:bold;font-size:14px;vertical-align:top;">POLICÍA LOCAL</td></tr></table><p style="text-align:right;margin-bottom:16px;"><strong>Asunto</strong>: Incidencias señalización</p><p style="margin-bottom:24px;font-size:11px;">N/Refª FJG/rh<br>Gex nº &nbsp;&nbsp;&nbsp;&nbsp;/</p><br><p style="text-align:justify;padding-left:30px;margin-bottom:12px;">Con motivo de no disponer al día de la fecha por este negociado, de personal adscrito para realizar trabajos de señalización, a continuación le doy traslado de las INCIDENCIAS SOBRE SEÑALIZACIÓN surgidas, para que por personal de ese servicio se proceda a la mayor brevedad posible a su reparación/colocación, debiendo previamente, el personal que va a realizar los trabajos, ponerse en contacto con esta Jefatura para recibir instrucciones sobre los mismos.</p><hr style="border:1px solid #000;margin:16px 40px;"><ul style="list-style-type:disc;padding-left:50px;margin:0;"><li style="font-style:italic;margin-bottom:4px;">(Refª [[id_incidencias]]).- [[Fecha]] &nbsp; [[Incidencias]]</li></ul><br><br><p style="text-align:center;"><strong>El Jefe de Policía</strong></p><br><br><br><hr style="border:0;border-top:1px solid #aaa;margin:0 10px;"><p style="font-size:9px;text-align:center;margin-top:3px;">C/. Conde de la Cortina, s/n - 14550 MONTILLA (Córdoba) – Tlfno.: 957 65 26 26, Fax 957 65 58 67 – e-mail: policia@montilla.es</p></div>',
- 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, i.incidencias AS Incidencias FROM incidencias_pol i LEFT JOIN servicios s ON i.numservicio = s.numservicio WHERE i.etiquetas_filtro LIKE ''%SEÑALIZACION%'' AND s.fecha BETWEEN [[fecha_inicio]] AND [[fecha_fin]] ORDER BY s.fecha ASC',
+ 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, i.incidencias AS Incidencias FROM incidencias i LEFT JOIN servicios s ON i.numservicio = s.numservicio WHERE i.etiquetas_filtro LIKE ''%SEÑALIZACION%'' AND s.fecha BETWEEN [[fecha_inicio]] AND [[fecha_fin]] ORDER BY s.fecha ASC',
  1);
 
 -- Filtros plantilla 1: número de registro
@@ -243,34 +250,36 @@ CREATE TABLE IF NOT EXISTS servicios (
   valor                INT          DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS incidencias_pol (
-  numincidencia        INT AUTO_INCREMENT PRIMARY KEY,
-  numservicio          INT          DEFAULT NULL,
-  incidencias          TEXT         DEFAULT NULL,
-  destinatario         VARCHAR(255) DEFAULT NULL,
-  etiquetas_filtro     VARCHAR(255) DEFAULT NULL,
-  numagente            INT          DEFAULT NULL,
-  numagente1           INT          DEFAULT NULL,
-  numagente2           INT          DEFAULT NULL,
-  numagente3           INT          DEFAULT NULL,
-  historialincidencias TEXT         DEFAULT NULL,
-  valor                INT          DEFAULT NULL,
-  FOREIGN KEY (numservicio) REFERENCES servicios(numservicio) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- incidencias_pol fusionada en tabla 'incidencias' (ver arriba)
 
 -- ============================================
--- ACTUALIZACIÓN DE PLANTILLAS: usar tablas nuevas
--- (ejecutar si la BD ya estaba creada con las queries antiguas)
+-- MIGRACIÓN #9: unificar incidencias + incidencias_pol
+-- Ejecutar UNA VEZ sobre BD existente
 -- ============================================
 
+-- 1. Añadir columnas de incidencias_pol que faltan en incidencias (si existen ambas tablas)
+ALTER TABLE incidencias_pol
+  ADD COLUMN IF NOT EXISTS fecha                DATE         DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS turno                VARCHAR(30)  DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS dia_semana           VARCHAR(20)  DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS encargado            VARCHAR(150) DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS tipo                 VARCHAR(50)  DEFAULT 'GENERAL',
+  ADD COLUMN IF NOT EXISTS estado               TINYINT(1)   DEFAULT 1,
+  ADD COLUMN IF NOT EXISTS fecha_creacion       DATETIME     DEFAULT CURRENT_TIMESTAMP;
+
+-- 2. Renombrar: incidencias → incidencias_backup, incidencias_pol → incidencias
+RENAME TABLE incidencias TO incidencias_backup;
+RENAME TABLE incidencias_pol TO incidencias;
+
+-- 3. Actualizar queries de plantillas
 UPDATE plantillas_maestro SET
-  sql_consulta = 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, s.turno AS Turno, s.diasemana AS Dia_semana, IFNULL(a.nombre,'''') AS NumAgente, IFNULL(a1.nombre,'''') AS NumAgente1, IFNULL(a2.nombre,'''') AS NumAgente2, i.incidencias AS Incidencias, IFNULL(e.encargado,'''') AS Encargado FROM incidencias_pol i LEFT JOIN servicios s ON i.numservicio = s.numservicio LEFT JOIN encargados e ON s.numagenteencargado = e.numencargado LEFT JOIN agentes a ON i.numagente = a.numagente LEFT JOIN agentes a1 ON i.numagente1 = a1.numagente LEFT JOIN agentes a2 ON i.numagente2 = a2.numagente WHERE i.numincidencia = [[id_incidencia]]'
+  sql_consulta = 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, s.turno AS Turno, s.diasemana AS Dia_semana, IFNULL(a.nombre,'''') AS NumAgente, IFNULL(a1.nombre,'''') AS NumAgente1, IFNULL(a2.nombre,'''') AS NumAgente2, i.incidencias AS Incidencias, IFNULL(e.encargado,'''') AS Encargado FROM incidencias i LEFT JOIN servicios s ON i.numservicio = s.numservicio LEFT JOIN encargados e ON s.numagenteencargado = e.numencargado LEFT JOIN agentes a ON i.numagente = a.numagente LEFT JOIN agentes a1 ON i.numagente1 = a1.numagente LEFT JOIN agentes a2 ON i.numagente2 = a2.numagente WHERE i.numincidencia = [[id_incidencia]]'
 WHERE cod_plantilla = 'informe_registro';
 
 UPDATE plantillas_maestro SET
-  sql_consulta = 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, i.incidencias AS Incidencias FROM incidencias_pol i LEFT JOIN servicios s ON i.numservicio = s.numservicio WHERE i.etiquetas_filtro LIKE ''%URBANISMO%'' AND s.fecha BETWEEN [[fecha_inicio]] AND [[fecha_fin]] ORDER BY s.fecha ASC'
+  sql_consulta = 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, i.incidencias AS Incidencias FROM incidencias i LEFT JOIN servicios s ON i.numservicio = s.numservicio WHERE i.etiquetas_filtro LIKE ''%URBANISMO%'' AND s.fecha BETWEEN [[fecha_inicio]] AND [[fecha_fin]] ORDER BY s.fecha ASC'
 WHERE cod_plantilla = 'incidencias_urbanismo';
 
 UPDATE plantillas_maestro SET
-  sql_consulta = 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, i.incidencias AS Incidencias FROM incidencias_pol i LEFT JOIN servicios s ON i.numservicio = s.numservicio WHERE i.etiquetas_filtro LIKE ''%SEÑALIZACION%'' AND s.fecha BETWEEN [[fecha_inicio]] AND [[fecha_fin]] ORDER BY s.fecha ASC'
+  sql_consulta = 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, i.incidencias AS Incidencias FROM incidencias i LEFT JOIN servicios s ON i.numservicio = s.numservicio WHERE i.etiquetas_filtro LIKE ''%SEÑALIZACION%'' AND s.fecha BETWEEN [[fecha_inicio]] AND [[fecha_fin]] ORDER BY s.fecha ASC'
 WHERE cod_plantilla = 'incidencias_senalizacion';

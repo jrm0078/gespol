@@ -417,7 +417,7 @@ function EliminarServicio() {
 // INCIDENCIAS POL
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 function CargatablaIncidencias() {
-    $table      = "incidencias_pol";
+    $table      = "incidencias";
     $primaryKey = "numincidencia";
     $campos     = "numincidencia,numincidencia,numservicio,destinatario,etiquetas_filtro";
     $tiposcampo = "numero,numero,numero,texto,texto";
@@ -426,7 +426,7 @@ function CargatablaIncidencias() {
 
 function CargatablaIncidenciasXServicio() {
     $numservicio = intval($_POST["numservicio"]);
-    $table      = "incidencias_pol";
+    $table      = "incidencias";
     $primaryKey = "numincidencia";
     $campos     = "numincidencia,numincidencia,destinatario,etiquetas_filtro,numagente";
     $tiposcampo = "numero,numero,texto,texto,numero";
@@ -436,7 +436,7 @@ function CargatablaIncidenciasXServicio() {
 
 function CargaIncidencia() {
     $id = intval($_POST["id"]);
-    echo select("SELECT * FROM incidencias_pol WHERE numincidencia = $id");
+    echo select("SELECT * FROM incidencias WHERE numincidencia = $id");
 }
 
 function ActualizaIncidencia() {
@@ -457,7 +457,7 @@ function ActualizaIncidencia() {
     if (trim($_POST["incidencias"]) == "") $w2 .= "El texto de la incidencia es obligatorio.<br>";
     if ($w2 != "") { echo '{"validacion":"warning","mensaje":"' . $w2 . '"}'; exit(); }
 
-    $tabla  = "incidencias_pol";
+    $tabla  = "incidencias";
     $campos = "numservicio,incidencias,destinatario,etiquetas_filtro,numagente,numagente1,numagente2,numagente3,historialincidencias,valor";
     $vals   = "$numservicio#,#$incidencias#,#$destinatario#,#$etiquetas_filtro#,#$numagente#,#$numagente1#,#$numagente2#,#$numagente3#,#$historial#,#$valor";
     $where  = "numincidencia=$id";
@@ -468,7 +468,7 @@ function ActualizaIncidencia() {
         $camposArr = explode(",", $campos);
         $valsArr   = explode("#,#", $vals);
         $valsStr   = implode(",", $valsArr);
-        $sql = "INSERT INTO incidencias_pol ($campos) VALUES ($valsStr)";
+        $sql = "INSERT INTO incidencias ($campos) VALUES ($valsStr)";
         $sql = CadCompatible($sql);
         try {
             $db = getConnection();
@@ -485,7 +485,7 @@ function ActualizaIncidencia() {
 
 function EliminarIncidencia() {
     $id = intval($_POST["id"]);
-    echo delete("incidencias_pol", "numincidencia=$id");
+    echo delete("incidencias", "numincidencia=$id");
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
