@@ -27,7 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION["user_descripcion"] = $usuario->nombre;
             $_SESSION["user_email"] = $usuario->email;
             $_SESSION["user_rol"] = $usuario->rol;
-            
+
+            RegistrarLog($usuario->nombre, 'Login');
             echo json_encode(["validacion" => "ok"]);
         } else {
             echo json_encode(["validacion" => "error", "error" => "Credenciales inválidas"]);
