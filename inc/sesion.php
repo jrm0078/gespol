@@ -66,6 +66,7 @@ function login() {
 
 
 				echo '{"validacion":"ok"}';
+				RegistrarLog($resultado->nombre, 'Login');
 				
 			}
 		}else{

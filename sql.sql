@@ -340,3 +340,16 @@ WHERE cod_plantilla = 'incidencias_urbanismo';
 UPDATE plantillas_maestro SET
   sql_consulta = 'SELECT i.numincidencia AS id_incidencias, DATE_FORMAT(s.fecha, ''%d/%m/%Y'') AS Fecha, i.incidencias AS Incidencias FROM incidencias i LEFT JOIN servicios s ON i.numservicio = s.numservicio WHERE i.etiquetas_filtro LIKE ''%SEÑALIZACION%'' AND s.fecha BETWEEN [[fecha_inicio]] AND [[fecha_fin]] ORDER BY s.fecha ASC'
 WHERE cod_plantilla = 'incidencias_senalizacion';
+
+
+-- ============================================
+-- TABLA LOG_ACCESOS
+-- ============================================
+CREATE TABLE IF NOT EXISTS log_accesos (
+  id        INT AUTO_INCREMENT PRIMARY KEY,
+  fecha     DATE         DEFAULT NULL,
+  hora      TIME         DEFAULT NULL,
+  usuario   VARCHAR(150) DEFAULT NULL,
+  accion    TEXT         DEFAULT NULL,
+  FechaHora DATETIME     DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

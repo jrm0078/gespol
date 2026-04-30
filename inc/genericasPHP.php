@@ -373,6 +373,15 @@ function generacadenaaleatoria($num) {
     return $random_string;
 }
 
-
+function RegistrarLog($usuario, $accion) {
+    try {
+        $db = getConnection();
+        $stmt = $db->prepare(
+            "INSERT INTO log_accesos (fecha, hora, usuario, accion) VALUES (CURDATE(), CURTIME(), :usuario, :accion)"
+        );
+        $stmt->execute([':usuario' => (string)$usuario, ':accion' => (string)$accion]);
+        $db = null;
+    } catch(Exception $e) { /* silencioso */ }
+}
 
 ?>

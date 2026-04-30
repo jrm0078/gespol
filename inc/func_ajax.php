@@ -71,7 +71,16 @@ $app->post('/CargaVehiculo',       'CargaVehiculo');
 $app->post('/ActualizaVehiculo',   'ActualizaVehiculo');
 $app->post('/EliminarVehiculo',    'EliminarVehiculo');
 
+// LOG
+$app->post('/CargatablaLog', 'CargatablaLog');
+
 $app->run();
+
+function _logOk($r, $msg) {
+    if (strpos($r, '"validacion":"ok"') !== false) {
+        RegistrarLog(isset($_SESSION["user_descripcion"]) ? $_SESSION["user_descripcion"] : 'Sistema', $msg);
+    }
+}
 
 
 
@@ -124,7 +133,9 @@ function ActualizaVehiculo() {
     $where  = "idVehiculo=$idVehiculo";
 
     if ($lmodo == "edicion") {
-        echo update($tabla, $campos, $vals, $where);
+        $r = update($tabla, $campos, $vals, $where);
+        _logOk($r, 'Edición vehículo: ' . $_POST["Matricula"]);
+        echo $r;
     } else {
         // Alta: incluir idVehiculo en el INSERT
         $camposInsert = "idVehiculo,$campos";
@@ -138,6 +149,7 @@ function ActualizaVehiculo() {
             $stmt = $db->prepare($sql);
             $stmt->execute();
             $db = null;
+            RegistrarLog(isset($_SESSION["user_descripcion"]) ? $_SESSION["user_descripcion"] : 'Sistema', 'Alta vehículo: ' . $_POST["Matricula"]);
             echo '{"validacion":"ok","error":""}';
         } catch(PDOException $e) {
             echo '{"validacion":"error","error":"' . $e->getMessage() . '"}';
@@ -147,7 +159,9 @@ function ActualizaVehiculo() {
 
 function EliminarVehiculo() {
     $id = CadSql($_POST["id"]);
-    echo delete("vehiculos", "idVehiculo='$id'");
+    $r = delete("vehiculos", "idVehiculo='$id'");
+    _logOk($r, 'Eliminación vehículo: ' . $id);
+    echo $r;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -194,7 +208,9 @@ function ActualizaHabitante() {
     $where  = "idhabitante=$id";
 
     if ($lmodo == "edicion") {
-        echo update($tabla, $campos, $vals, $where);
+        $r = update($tabla, $campos, $vals, $where);
+        _logOk($r, 'Edición habitante: ' . $_POST["apel"] . ' ' . $_POST["nom"]);
+        echo $r;
     } else {
         $valsArr = explode("#,#", $vals);
         $valsStr = implode(",", $valsArr);
@@ -206,6 +222,7 @@ function ActualizaHabitante() {
             $stmt->execute();
             $newId = $db->lastInsertId();
             $db = null;
+            RegistrarLog(isset($_SESSION["user_descripcion"]) ? $_SESSION["user_descripcion"] : 'Sistema', 'Alta habitante: ' . $_POST["apel"] . ' ' . $_POST["nom"]);
             echo '{"validacion":"ok","error":"","id":' . $newId . '}';
         } catch(PDOException $e) {
             echo '{"validacion":"error","error":"' . $e->getMessage() . '"}';
@@ -215,7 +232,9 @@ function ActualizaHabitante() {
 
 function EliminarHabitante() {
     $id = intval($_POST["id"]);
-    echo delete("habitantes", "idhabitante=$id");
+    $r = delete("habitantes", "idhabitante=$id");
+    _logOk($r, 'Eliminación habitante ID: ' . $id);
+    echo $r;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -301,6 +320,7 @@ function ActualizaUsuario(){
 		$resultado = insert($tabla,$campos,$valores);
 	}
 
+	_logOk($resultado, ($_POST["lmodo"] === "edicion" ? 'Edición' : 'Alta') . ' usuario: ' . $_POST["nombre"]);
 	echo $resultado;
 	
 }
@@ -326,7 +346,9 @@ function EliminarUsuario(){
 	$tabla = "usuario";
 	$where = "id=" . $id;
 
-	echo delete($tabla,$where);
+	$r = delete($tabla, $where);
+	_logOk($r, 'Eliminación usuario ID: ' . $id);
+	echo $r;
 	
 }
 
@@ -409,7 +431,9 @@ function ActualizaAgente() {
     $where  = "numagente=$id";
 
     if ($lmodo == "edicion") {
-        echo update($tabla, "nombre,indicativo,activo", "$nombre#,#$indicativo#,#$activo", $where);
+        $r = update($tabla, "nombre,indicativo,activo", "$nombre#,#$indicativo#,#$activo", $where);
+        _logOk($r, 'Edición agente: ' . $_POST["nombre"]);
+        echo $r;
     } else {
         try {
             $db = getConnection();
@@ -417,13 +441,17 @@ function ActualizaAgente() {
             if ($exists > 0) { echo '{"validacion":"warning","mensaje":"Ya existe un agente con ese número."}'; $db = null; return; }
             $db = null;
         } catch(PDOException $e) {}
-        echo insert($tabla, $campos, $vals);
+        $r = insert($tabla, $campos, $vals);
+        _logOk($r, 'Alta agente: ' . $_POST["nombre"]);
+        echo $r;
     }
 }
 
 function EliminarAgente() {
     $id = intval($_POST["id"]);
-    echo delete("agentes", "numagente=$id");
+    $r = delete("agentes", "numagente=$id");
+    _logOk($r, 'Eliminación agente ID: ' . $id);
+    echo $r;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -461,7 +489,9 @@ function ActualizaEncargado() {
     $where  = "numencargado=$id";
 
     if ($lmodo == "edicion") {
-        echo update($tabla, "encargado,cargo,estado,numagente", "$encargado#,#$cargo#,#$estado#,#$numagente", $where);
+        $r = update($tabla, "encargado,cargo,estado,numagente", "$encargado#,#$cargo#,#$estado#,#$numagente", $where);
+        _logOk($r, 'Edición encargado: ' . $_POST["encargado"]);
+        echo $r;
     } else {
         try {
             $db = getConnection();
@@ -469,13 +499,17 @@ function ActualizaEncargado() {
             if ($exists > 0) { echo '{"validacion":"warning","mensaje":"Ya existe un encargado con ese número."}'; $db = null; return; }
             $db = null;
         } catch(PDOException $e) {}
-        echo insert($tabla, $campos, $vals);
+        $r = insert($tabla, $campos, $vals);
+        _logOk($r, 'Alta encargado: ' . $_POST["encargado"]);
+        echo $r;
     }
 }
 
 function EliminarEncargado() {
     $id = intval($_POST["id"]);
-    echo delete("encargados", "numencargado=$id");
+    $r = delete("encargados", "numencargado=$id");
+    _logOk($r, 'Eliminación encargado ID: ' . $id);
+    echo $r;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -540,6 +574,7 @@ function ActualizaServicio() {
             $stmt = $db->prepare($sql);
             $stmt->execute();
             $db = null;
+            RegistrarLog(isset($_SESSION["user_descripcion"]) ? $_SESSION["user_descripcion"] : 'Sistema', 'Edición servicio ID: ' . $id);
             echo '{"validacion":"ok","error":""}';
         } catch(PDOException $e) {
             echo '{"validacion":"error","error":"' . $e->getMessage() . '"}';
@@ -555,6 +590,7 @@ function ActualizaServicio() {
             $stmt->execute();
             $newId = $db->lastInsertId();
             $db = null;
+            RegistrarLog(isset($_SESSION["user_descripcion"]) ? $_SESSION["user_descripcion"] : 'Sistema', 'Alta servicio');
             echo '{"validacion":"ok","error":"","id":' . $newId . '}';
         } catch(PDOException $e) {
             echo '{"validacion":"error","error":"' . $e->getMessage() . '"}';
@@ -564,7 +600,9 @@ function ActualizaServicio() {
 
 function EliminarServicio() {
     $id = intval($_POST["id"]);
-    echo delete("servicios", "numservicio=$id");
+    $r = delete("servicios", "numservicio=$id");
+    _logOk($r, 'Eliminación servicio ID: ' . $id);
+    echo $r;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -617,7 +655,9 @@ function ActualizaIncidencia() {
     $where  = "numincidencia=$id";
 
     if ($lmodo == "edicion") {
-        echo update($tabla, $campos, $vals, $where);
+        $r = update($tabla, $campos, $vals, $where);
+        _logOk($r, 'Edición incidencia ID: ' . $id);
+        echo $r;
     } else {
         $camposArr = explode(",", $campos);
         $valsArr   = explode("#,#", $vals);
@@ -630,6 +670,7 @@ function ActualizaIncidencia() {
             $stmt->execute();
             $newId = $db->lastInsertId();
             $db = null;
+            RegistrarLog(isset($_SESSION["user_descripcion"]) ? $_SESSION["user_descripcion"] : 'Sistema', 'Alta incidencia');
             echo '{"validacion":"ok","error":"","id":' . $newId . '}';
         } catch(PDOException $e) {
             echo '{"validacion":"error","error":"' . $e->getMessage() . '"}';
@@ -639,7 +680,9 @@ function ActualizaIncidencia() {
 
 function EliminarIncidencia() {
     $id = intval($_POST["id"]);
-    echo delete("incidencias", "numincidencia=$id");
+    $r = delete("incidencias", "numincidencia=$id");
+    _logOk($r, 'Eliminación incidencia ID: ' . $id);
+    echo $r;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -655,4 +698,15 @@ function ComboEncargados() {
 
 function ComboHabitantes() {
     echo select("SELECT idhabitante, apel, nom, dni FROM habitantes ORDER BY apel ASC, nom ASC");
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// LOG
+////////////////////////////////////////////////////////////////////////////////////////////////////
+function CargatablaLog() {
+    $table      = "log_accesos";
+    $primaryKey = "id";
+    $campos     = "id,fecha,hora,usuario,accion";
+    $tiposcampo = "numero,texto,texto,texto,texto";
+    echo CargaTablaPHP($table, $campos, $tiposcampo, $primaryKey, "", "", "");
 }

@@ -247,6 +247,8 @@
 						$menu= $menu . '<script>document.getElementById("mnuservicios").addEventListener("click", function(e){if(e.target.closest(".sidebar-modal-icon"))return;CargarPagina("consservicios.php","Servicios","fas fa-calendar-alt");}, false);</script>';
 						$menu= $menu . '<li class="sidebar-item" id="mnuincidencias" data-pagina="consincidencias.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="fas fa-exclamation-triangle"></i><span class="hide-menu">Incidencias</span><i class="fas fa-external-link-alt sidebar-modal-icon" data-pagina="consincidencias.php" data-titulo="Incidencias" data-icono="fas fa-exclamation-triangle" title="Abrir en ventana emergente" style="margin-left:auto;font-size:0.7rem;opacity:0.6;"></i></a></li>';
 						$menu= $menu . '<script>document.getElementById("mnuincidencias").addEventListener("click", function(e){if(e.target.closest(".sidebar-modal-icon"))return;CargarPagina("consincidencias.php","Incidencias","fas fa-exclamation-triangle");}, false);</script>';
+						$menu= $menu . '<li class="sidebar-item" id="mnulog" data-pagina="conslog.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="fas fa-list-alt"></i><span class="hide-menu">Log</span><i class="fas fa-external-link-alt sidebar-modal-icon" data-pagina="conslog.php" data-titulo="Log" data-icono="fas fa-list-alt" title="Abrir en ventana emergente" style="margin-left:auto;font-size:0.7rem;opacity:0.6;"></i></a></li>';
+						$menu= $menu . '<script>document.getElementById("mnulog").addEventListener("click", function(e){if(e.target.closest(".sidebar-modal-icon"))return;CargarPagina("conslog.php","Log de Accesos","fas fa-list-alt");}, false);</script>';
 
 						echo $menu;										
 					?>
