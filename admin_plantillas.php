@@ -298,6 +298,11 @@ function inicializarTinyMCEForm() {
         extended_valid_elements: '*[*]',
         entity_encoding: 'raw',
         placeholder: 'Contenido HTML',
+        image_list: function(success) {
+            $.getJSON('inc/repositorio/ajax_repositorio.php?action=listar_imagenes', function(resp) {
+                success(resp.ok ? resp.data : []);
+            }).fail(function() { success([]); });
+        },
         setup: function(editor) {
             editor.on('init', function() {
                 // Adjuntamos el listener DESPUÉS del init para que los eventos

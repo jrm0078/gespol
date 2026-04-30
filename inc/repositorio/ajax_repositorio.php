@@ -19,6 +19,7 @@ $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
 switch ($action) {
     case 'listar_directorios': listarDirectoriosAction(); break;
+    case 'listar_imagenes':    listarImagenesAction();    break;
     case 'obtener':            obtenerAction();           break;
     case 'crear':              crearAction();             break;
     case 'editar':             editarAction();            break;
@@ -27,6 +28,32 @@ switch ($action) {
     default:
         http_response_code(400);
         echo json_encode(['ok' => false, 'error' => 'Acción no válida']);
+}
+
+// ─────────────────────────────────────────────
+// LISTAR IMÁGENES (para TinyMCE image_list)
+// ─────────────────────────────────────────────
+function listarImagenesAction() {
+    try {
+        $db = getConnection();
+        $mimeImg = "'image/jpeg','image/png','image/gif','image/webp','image/svg+xml','image/bmp'";
+        $rows = $db->query(
+            "SELECT descripcion, directorio, nombre_fichero, nombre_original
+             FROM repositorio
+             WHERE tipo IN ($mimeImg)
+             ORDER BY descripcion ASC, nombre_original ASC"
+        )->fetchAll(PDO::FETCH_ASSOC);
+        $list = [];
+        foreach ($rows as $r) {
+            $dir   = trim($r['directorio'], '/');
+            $url   = REPO_BASE_URL . ($dir !== '' ? $dir . '/' : '') . $r['nombre_fichero'];
+            $title = ($r['descripcion'] ?: $r['nombre_original']);
+            $list[] = ['title' => $title, 'value' => $url];
+        }
+        echo json_encode(['ok' => true, 'data' => $list]);
+    } catch (Exception $e) {
+        echo json_encode(['ok' => false, 'data' => [], 'error' => $e->getMessage()]);
+    }
 }
 
 // ─────────────────────────────────────────────
