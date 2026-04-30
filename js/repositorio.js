@@ -79,7 +79,7 @@ function CargaTabla() {
         }
     });
 
-    initTablaToolbar({
+    var _toolbar = initTablaToolbar({
         tableId:   '#tblRepositorio',
         ctxMenuId: '#ctxMenuRepositorio',
         btnAdd:    '#btnTbAddRepo',
@@ -87,21 +87,21 @@ function CargaTabla() {
         getDt:     function () { return _tablRepo; },
         onAdd:     function ()    { abrirFormNuevo(); },
         onEdit:    function (tr)  { abrirFormEditar(tr); },
+        onDelete:  function (tr)  { confirmarEliminar(tr); },
     });
 
     // Botones extra
     $('#btnTbDelRepo').on('click', function () {
-        var tr = _tablRepo.row({ selected: true }).node();
+        var tr = _toolbar.getSelectedTr();
         if (tr) confirmarEliminar(tr);
     });
     $('#btnTbCopyUrl').on('click', function () {
-        var tr = _tablRepo.row({ selected: true }).node();
+        var tr = _toolbar.getSelectedTr();
         if (tr) copiarUrlDeFila(tr);
     });
 
     // Selección → activar botones extra
     $('#tblRepositorio').on('click', 'tbody tr', function () {
-        var sel = _tablRepo.row(this).node() === _tablRepo.row({ selected: true }).node();
         $('#btnTbDelRepo, #btnTbCopyUrl').prop('disabled', false);
     });
     $('#tblRepositorio').on('deselect', function () {
@@ -110,12 +110,8 @@ function CargaTabla() {
 
     // Context menu extra
     $('#ctxMenuRepositorio').on('click', '[data-ctx-action="copyurl"]', function () {
-        var tr = _tablRepo.row({ selected: true }).node();
+        var tr = _toolbar.getSelectedTr();
         if (tr) copiarUrlDeFila(tr);
-    });
-    $('#ctxMenuRepositorio').on('click', '[data-ctx-action="delete"]', function () {
-        var tr = _tablRepo.row({ selected: true }).node();
-        if (tr) confirmarEliminar(tr);
     });
 }
 
