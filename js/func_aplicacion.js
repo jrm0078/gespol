@@ -204,16 +204,11 @@ var _SwalToast = Swal.mixin({
     toast: true,
     position: 'top-end',
     showConfirmButton: false,
-    timer: 2800,
-    timerProgressBar: true,
-    didOpen: function(toast) {
-        toast.addEventListener('mouseenter', Swal.stopTimer);
-        toast.addEventListener('mouseleave', Swal.resumeTimer);
-    }
+    timer: 2800
 });
 
 function mostrarToast(tipo, mensaje) {
-    _SwalToast.fire({ icon: tipo, title: mensaje });
+    _SwalToast.fire({ type: tipo, title: mensaje });
 }
 
 ////////////////////////////
