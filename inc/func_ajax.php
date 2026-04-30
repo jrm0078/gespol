@@ -58,11 +58,85 @@ $app->post('/EliminarIncidencia',       'EliminarIncidencia');
 $app->post('/ComboAgentes',    'ComboAgentes');
 $app->post('/ComboEncargados', 'ComboEncargados');
 
+// HABITANTES
+$app->post('/CargatablaHabitantes', 'CargatablaHabitantes');
+$app->post('/CargaHabitante',       'CargaHabitante');
+$app->post('/ActualizaHabitante',   'ActualizaHabitante');
+$app->post('/EliminarHabitante',    'EliminarHabitante');
+
 $app->run();
 
 
 
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// HABITANTES
+////////////////////////////////////////////////////////////////////////////////////////////////////
+function CargatablaHabitantes() {
+    $table      = "habitantes";
+    $primaryKey = "idhabitante";
+    $campos     = "idhabitante,idhabitante,dni,apel,nom,sexo,fecnac";
+    $tiposcampo = "numero,numero,texto,texto,texto,texto,texto";
+    echo CargaTablaPHP($table, $campos, $tiposcampo, $primaryKey, "", "", "");
+}
+
+function CargaHabitante() {
+    $id = intval($_POST["id"]);
+    echo select("SELECT * FROM habitantes WHERE idhabitante = $id");
+}
+
+function ActualizaHabitante() {
+    $lmodo  = $_POST["lmodo"];
+    $id     = intval($_POST["id"]);
+    $dni    = "'" . CadSql($_POST["dni"])           . "'";
+    $apel   = "'" . CadSql($_POST["apel"])          . "'";
+    $nom    = "'" . CadSql($_POST["nom"])           . "'";
+    $sexo   = "'" . CadSql($_POST["sexo"])          . "'";
+    $lugnac = "'" . CadSql($_POST["lugnac"])        . "'";
+    $provnac= "'" . CadSql($_POST["provnac"])       . "'";
+    $fecnac = $_POST["fecnac"] != "" ? "'" . CadSql($_POST["fecnac"]) . "'" : "NULL";
+    $padre  = "'" . CadSql($_POST["padre"])         . "'";
+    $madre  = "'" . CadSql($_POST["madre"])         . "'";
+    $calle  = "'" . CadSql($_POST["calle"])         . "'";
+    $pob    = "'" . CadSql($_POST["pob"])           . "'";
+    $prov   = "'" . CadSql($_POST["prov"])          . "'";
+    $cpostal= "'" . CadSql($_POST["CPostal"])       . "'";
+    $pais   = "'" . CadSql($_POST["Pais"])          . "'";
+    $tf     = "'" . CadSql($_POST["tf"])            . "'";
+    $tft    = "'" . CadSql($_POST["tft"])           . "'";
+    $email  = "'" . CadSql($_POST["email"])         . "'";
+    $obs    = "'" . CadSql($_POST["Observaciones"]) . "'";
+
+    $tabla  = "habitantes";
+    $campos = "dni,apel,nom,sexo,lugnac,provnac,fecnac,padre,madre,calle,pob,prov,CPostal,Pais,tf,tft,email,Observaciones";
+    $vals   = "$dni#,#$apel#,#$nom#,#$sexo#,#$lugnac#,#$provnac#,#$fecnac#,#$padre#,#$madre#,#$calle#,#$pob#,#$prov#,#$cpostal#,#$pais#,#$tf#,#$tft#,#$email#,#$obs";
+    $where  = "idhabitante=$id";
+
+    if ($lmodo == "edicion") {
+        echo update($tabla, $campos, $vals, $where);
+    } else {
+        $valsArr = explode("#,#", $vals);
+        $valsStr = implode(",", $valsArr);
+        $sql = "INSERT INTO habitantes ($campos) VALUES ($valsStr)";
+        $sql = CadCompatible($sql);
+        try {
+            $db = getConnection();
+            $stmt = $db->prepare($sql);
+            $stmt->execute();
+            $newId = $db->lastInsertId();
+            $db = null;
+            echo '{"validacion":"ok","error":"","id":' . $newId . '}';
+        } catch(PDOException $e) {
+            echo '{"validacion":"error","error":"' . $e->getMessage() . '"}';
+        }
+    }
+}
+
+function EliminarHabitante() {
+    $id = intval($_POST["id"]);
+    echo delete("habitantes", "idhabitante=$id");
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //CARGA TABLA (DATATABLES) DE USUARIOS

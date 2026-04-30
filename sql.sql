@@ -1,3 +1,29 @@
+-- ============================================
+-- TABLA HABITANTES
+-- ============================================
+CREATE TABLE IF NOT EXISTS habitantes (
+  idhabitante   INT AUTO_INCREMENT PRIMARY KEY,
+  dni           VARCHAR(15)  DEFAULT NULL,
+  apel          VARCHAR(100) DEFAULT NULL,
+  nom           VARCHAR(100) DEFAULT NULL,
+  lugnac        VARCHAR(100) DEFAULT NULL,
+  provnac       VARCHAR(100) DEFAULT NULL,
+  fecnac        DATE         DEFAULT NULL,
+  padre         VARCHAR(100) DEFAULT NULL,
+  madre         VARCHAR(100) DEFAULT NULL,
+  calle         VARCHAR(150) DEFAULT NULL,
+  pob           VARCHAR(100) DEFAULT NULL,
+  prov          VARCHAR(100) DEFAULT NULL,
+  tf            VARCHAR(20)  DEFAULT NULL,
+  tft           VARCHAR(20)  DEFAULT NULL,
+  email         VARCHAR(150) DEFAULT NULL,
+  sexo          VARCHAR(10)  DEFAULT NULL,
+  Pais          VARCHAR(100) DEFAULT NULL,
+  FechaAlta     DATETIME     DEFAULT CURRENT_TIMESTAMP,
+  CPostal       VARCHAR(10)  DEFAULT NULL,
+  Observaciones TEXT         DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE usuario (
 id INT AUTO_INCREMENT PRIMARY KEY,
 nombre VARCHAR(150),
