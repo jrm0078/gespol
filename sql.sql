@@ -353,3 +353,31 @@ CREATE TABLE IF NOT EXISTS log_accesos (
   accion    TEXT         DEFAULT NULL,
   FechaHora DATETIME     DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ============================================
+-- ACTUALIZAR PLANTILLAS: escudo desde Repositorio
+-- Ejecutar DESPUÉS de subir el escudo al Repositorio
+-- (directorio recomendado: images_plantillas)
+-- ============================================
+UPDATE plantillas_maestro
+SET contenido = REPLACE(
+    contenido,
+    'src="images/escudo.png"',
+    CONCAT('src="', (
+        SELECT CONCAT(
+            'repositorio/',
+            IF(TRIM(BOTH '/' FROM directorio) != '',
+               CONCAT(TRIM(BOTH '/' FROM directorio), '/'),
+               ''),
+            nombre_fichero)
+        FROM repositorio
+        WHERE tipo LIKE 'image/%'
+          AND (directorio LIKE '%images_plantillas%'
+               OR descripcion   LIKE '%escudo%'
+               OR nombre_original LIKE '%escudo%')
+        ORDER BY fecha_subida DESC
+        LIMIT 1
+    ), '"')
+)
+WHERE cod_plantilla IN ('incidencias_senalizacion', 'incidencias_urbanismo');

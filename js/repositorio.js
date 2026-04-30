@@ -278,22 +278,22 @@ function confirmarEliminar(tr) {
     Swal.fire({
         title: '¿Eliminar fichero?',
         html: 'Se eliminará <strong>' + escHtml(desc) + '</strong> del servidor.',
-        icon: 'warning',
+        type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
         cancelButtonText: 'Cancelar',
         confirmButtonText: 'Sí, eliminar'
     }).then(function (result) {
-        if (!result.isConfirmed) return;
+        if (!result.value) return;
         $.post(API_REPO + '?action=eliminar', { id: data[0] }, function (res) {
             if (res.ok) {
                 _tablRepo.ajax.reload(null, false);
-                Swal.fire({ toast: true, position: 'top-end', icon: 'success',
+                Swal.fire({ toast: true, position: 'top-end', type: 'success',
                     title: 'Fichero eliminado', showConfirmButton: false, timer: 2000 });
             } else {
                 Swal.fire('Error', res.error, 'error');
             }
-        });
+        }, 'json');
     });
 }
 

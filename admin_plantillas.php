@@ -300,7 +300,12 @@ function inicializarTinyMCEForm() {
         placeholder: 'Contenido HTML',
         image_list: function(success) {
             $.getJSON('inc/repositorio/ajax_repositorio.php?action=listar_imagenes', function(resp) {
-                success(resp.ok ? resp.data : []);
+                if (!resp.ok) { success([]); return; }
+                var base = window.location.href.replace(/\/[^\/]*(\?.*)?$/, '/');
+                var items = resp.data.map(function(item) {
+                    return { title: item.title, value: base + item.value };
+                });
+                success(items);
             }).fail(function() { success([]); });
         },
         setup: function(editor) {
