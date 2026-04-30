@@ -15,6 +15,11 @@
         letter-spacing: 0.05em; color: #0084D9; border-bottom: 1px solid #dee2e6;
         padding-bottom: 4px; margin-bottom: 12px; margin-top: 8px; }
     .titular-linked { background: #f8f9fa !important; }
+    .select2-container--default .select2-selection--single { height:38px; border:1px solid #ced4da; border-radius:4px; padding:5px 10px; }
+    .select2-container--default .select2-selection--single .select2-selection__rendered { line-height:26px; color:#495057; padding-left:0; }
+    .select2-container--default .select2-selection--single .select2-selection__arrow { height:36px; }
+    .select2-container--default.select2-container--focus .select2-selection--single { border-color:#0084D9; box-shadow:0 0 0 0.2rem rgba(0,132,217,0.25); }
+    .select2-container--default .select2-results__option--highlighted[aria-selected] { background-color:#0084D9; }
 </style>
 
 <div class="preloader2">

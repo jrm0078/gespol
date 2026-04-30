@@ -16,30 +16,29 @@ Cargar();
 $(".preloader2").fadeOut();
 
 function Cargar() {
+    CmbIniciar($('#cmbHabitante'));
+
     $.ajax({
         type: "POST", url: "inc/func_ajax.php/ComboHabitantes",
-        crossDomain: true, cache: false, dataType: "json",
+        crossDomain: true, cache: false, async: false, dataType: "json",
         success: function(data) {
             $.each(data, function(i, v) {
                 var texto = ((v.apel || '') + ' ' + (v.nom || '')).trim() + (v.dni ? ' (' + v.dni + ')' : '');
-                $('#cmbHabitante').append(new Option(texto, v.idhabitante, false, false));
+                CmbCargaValor($('#cmbHabitante'), v.idhabitante, texto);
             });
-            $('#cmbHabitante').select2({ placeholder: 'Busca por nombre o DNI...', allowClear: true, width: '100%' });
-            $('#cmbHabitante').on('change', function() {
-                var idHab = $(this).val();
-                if (idHab && parseInt(idHab) > 0) {
-                    BuscarHabitante(parseInt(idHab));
-                } else {
-                    DesvinculaTitular();
-                }
-            });
-            CargaDatos();
-        },
-        error: function() {
-            $('#cmbHabitante').select2({ placeholder: 'Busca por nombre o DNI...', allowClear: true, width: '100%' });
-            CargaDatos();
         }
     });
+
+    $('#cmbHabitante').on('change', function() {
+        var idHab = $(this).val();
+        if (idHab && parseInt(idHab) > 0) {
+            BuscarHabitante(parseInt(idHab));
+        } else {
+            DesvinculaTitular();
+        }
+    });
+
+    CargaDatos();
 }
 
 function BuscarHabitante(idHab) {
