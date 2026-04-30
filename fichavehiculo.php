@@ -117,17 +117,12 @@
                 </span>
             </div>
             <div class="row">
-                <div class="col-6 col-md-2">
+                <div class="col-12 col-md-5">
                     <div class="form-group">
-                        <label class="field-label">Nº Habitante <small class="text-muted">(opcional)</small></label>
-                        <div class="input-group input-group-sm">
-                            <input id="txtIdHabitanteFk" type="number" class="form-control" placeholder="Id" min="1">
-                            <div class="input-group-append">
-                                <button id="btnBuscarHabitante" class="btn btn-outline-primary" type="button" title="Buscar habitante">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
+                        <label class="field-label">Habitante titular <small class="text-muted">(opcional &mdash; busca por nombre o DNI)</small></label>
+                        <select id="cmbHabitante" class="form-control" style="width:100%">
+                            <option value="">-- Sin vincular --</option>
+                        </select>
                     </div>
                 </div>
                 <div class="col-6 col-md-1">

@@ -55,8 +55,9 @@ $app->post('/ActualizaIncidencia',      'ActualizaIncidencia');
 $app->post('/EliminarIncidencia',       'EliminarIncidencia');
 
 // COMBOS AUXILIARES
-$app->post('/ComboAgentes',    'ComboAgentes');
-$app->post('/ComboEncargados', 'ComboEncargados');
+$app->post('/ComboAgentes',     'ComboAgentes');
+$app->post('/ComboEncargados',  'ComboEncargados');
+$app->post('/ComboHabitantes',  'ComboHabitantes');
 
 // HABITANTES
 $app->post('/CargatablaHabitantes', 'CargatablaHabitantes');
@@ -650,4 +651,8 @@ function ComboAgentes() {
 
 function ComboEncargados() {
     echo select("SELECT numencargado, encargado FROM encargados ORDER BY encargado ASC");
+}
+
+function ComboHabitantes() {
+    echo select("SELECT idhabitante, apel, nom, dni FROM habitantes ORDER BY apel ASC, nom ASC");
 }
