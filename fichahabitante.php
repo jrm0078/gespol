@@ -69,7 +69,7 @@
                         <label class="field-label">Sexo</label>
                         <select id="cmbSexo" class="form-control custom-select">
                             <option value="">-</option>
-                            <option value="VARON">Varón</option>
+                            <option value="HOMBRE">Hombre</option>
                             <option value="MUJER">Mujer</option>
                         </select>
                     </div>

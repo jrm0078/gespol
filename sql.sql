@@ -1,4 +1,35 @@
 -- ============================================
+-- TABLA VEHICULOS
+-- ============================================
+CREATE TABLE IF NOT EXISTS vehiculos (
+  idVehiculo     VARCHAR(20)  NOT NULL PRIMARY KEY,
+  Matricula      VARCHAR(20)  DEFAULT NULL,
+  marca_modelo   VARCHAR(100) DEFAULT NULL,
+  clase          VARCHAR(50)  DEFAULT NULL,
+  color          VARCHAR(30)  DEFAULT NULL,
+  fecmat         DATE         DEFAULT NULL,
+  bast           VARCHAR(50)  DEFAULT NULL,
+  cia            VARCHAR(100) DEFAULT NULL,
+  poliza         VARCHAR(50)  DEFAULT NULL,
+  ValidezPoliza  VARCHAR(50)  DEFAULT NULL,
+  FechaExpPoliza DATE         DEFAULT NULL,
+  idhabitante    INT          DEFAULT NULL,
+  dnitit         VARCHAR(15)  DEFAULT NULL,
+  apetit         VARCHAR(100) DEFAULT NULL,
+  nomtit         VARCHAR(100) DEFAULT NULL,
+  domtit         VARCHAR(150) DEFAULT NULL,
+  pobtit         VARCHAR(100) DEFAULT NULL,
+  provtit        VARCHAR(100) DEFAULT NULL,
+  tft            VARCHAR(20)  DEFAULT NULL,
+  email          VARCHAR(150) DEFAULT NULL,
+  CPostalVeh     VARCHAR(10)  DEFAULT NULL,
+  FechaAlta      DATETIME     DEFAULT CURRENT_TIMESTAMP,
+  Observaciones  TEXT         DEFAULT NULL,
+  CONSTRAINT fk_vehiculo_habitante FOREIGN KEY (idhabitante)
+    REFERENCES habitantes(idhabitante) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================
 -- TABLA HABITANTES
 -- ============================================
 CREATE TABLE IF NOT EXISTS habitantes (

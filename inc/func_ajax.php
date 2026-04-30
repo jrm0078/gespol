@@ -64,11 +64,90 @@ $app->post('/CargaHabitante',       'CargaHabitante');
 $app->post('/ActualizaHabitante',   'ActualizaHabitante');
 $app->post('/EliminarHabitante',    'EliminarHabitante');
 
+// VEHICULOS
+$app->post('/CargatablaVehiculos', 'CargatablaVehiculos');
+$app->post('/CargaVehiculo',       'CargaVehiculo');
+$app->post('/ActualizaVehiculo',   'ActualizaVehiculo');
+$app->post('/EliminarVehiculo',    'EliminarVehiculo');
+
 $app->run();
 
 
 
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// VEHICULOS
+////////////////////////////////////////////////////////////////////////////////////////////////////
+function CargatablaVehiculos() {
+    $table      = "vehiculos";
+    $primaryKey = "idVehiculo";
+    $campos     = "idVehiculo,idVehiculo,Matricula,marca_modelo,clase,color,apetit";
+    $tiposcampo = "texto,texto,texto,texto,texto,texto,texto";
+    echo CargaTablaPHP($table, $campos, $tiposcampo, $primaryKey, "", "", "");
+}
+
+function CargaVehiculo() {
+    $id = CadSql($_POST["id"]);
+    echo select("SELECT * FROM vehiculos WHERE idVehiculo = '$id'");
+}
+
+function ActualizaVehiculo() {
+    $lmodo         = $_POST["lmodo"];
+    $idVehiculo    = "'" . CadSql($_POST["idVehiculo"])    . "'";
+    $Matricula     = "'" . CadSql($_POST["Matricula"])     . "'";
+    $marca_modelo  = "'" . CadSql($_POST["marca_modelo"])  . "'";
+    $clase         = "'" . CadSql($_POST["clase"])         . "'";
+    $color         = "'" . CadSql($_POST["color"])         . "'";
+    $fecmat        = $_POST["fecmat"] != "" ? "'" . CadSql($_POST["fecmat"]) . "'" : "NULL";
+    $bast          = "'" . CadSql($_POST["bast"])          . "'";
+    $cia           = "'" . CadSql($_POST["cia"])           . "'";
+    $poliza        = "'" . CadSql($_POST["poliza"])        . "'";
+    $ValidezPoliza = "'" . CadSql($_POST["ValidezPoliza"]) . "'";
+    $FechaExpPoliza= $_POST["FechaExpPoliza"] != "" ? "'" . CadSql($_POST["FechaExpPoliza"]) . "'" : "NULL";
+    $idhabitante   = (isset($_POST["idhabitante"]) && $_POST["idhabitante"] !== "") ? intval($_POST["idhabitante"]) : "NULL";
+    $dnitit        = "'" . CadSql($_POST["dnitit"])        . "'";
+    $apetit        = "'" . CadSql($_POST["apetit"])        . "'";
+    $nomtit        = "'" . CadSql($_POST["nomtit"])        . "'";
+    $domtit        = "'" . CadSql($_POST["domtit"])        . "'";
+    $pobtit        = "'" . CadSql($_POST["pobtit"])        . "'";
+    $provtit       = "'" . CadSql($_POST["provtit"])       . "'";
+    $tft           = "'" . CadSql($_POST["tft"])           . "'";
+    $email         = "'" . CadSql($_POST["email"])         . "'";
+    $CPostalVeh    = "'" . CadSql($_POST["CPostalVeh"])    . "'";
+    $obs           = "'" . CadSql($_POST["Observaciones"]) . "'";
+
+    $tabla  = "vehiculos";
+    $campos = "Matricula,marca_modelo,clase,color,fecmat,bast,cia,poliza,ValidezPoliza,FechaExpPoliza,idhabitante,dnitit,apetit,nomtit,domtit,pobtit,provtit,tft,email,CPostalVeh,Observaciones";
+    $vals   = "$Matricula#,#$marca_modelo#,#$clase#,#$color#,#$fecmat#,#$bast#,#$cia#,#$poliza#,#$ValidezPoliza#,#$FechaExpPoliza#,#$idhabitante#,#$dnitit#,#$apetit#,#$nomtit#,#$domtit#,#$pobtit#,#$provtit#,#$tft#,#$email#,#$CPostalVeh#,#$obs";
+    $where  = "idVehiculo=$idVehiculo";
+
+    if ($lmodo == "edicion") {
+        echo update($tabla, $campos, $vals, $where);
+    } else {
+        // Alta: incluir idVehiculo en el INSERT
+        $camposInsert = "idVehiculo,$campos";
+        $valsAll      = "$idVehiculo#,#$Matricula#,#$marca_modelo#,#$clase#,#$color#,#$fecmat#,#$bast#,#$cia#,#$poliza#,#$ValidezPoliza#,#$FechaExpPoliza#,#$idhabitante#,#$dnitit#,#$apetit#,#$nomtit#,#$domtit#,#$pobtit#,#$provtit#,#$tft#,#$email#,#$CPostalVeh#,#$obs";
+        $valsArr = explode("#,#", $valsAll);
+        $valsStr = implode(",", $valsArr);
+        $sql = "INSERT INTO vehiculos ($camposInsert) VALUES ($valsStr)";
+        $sql = CadCompatible($sql);
+        try {
+            $db = getConnection();
+            $stmt = $db->prepare($sql);
+            $stmt->execute();
+            $db = null;
+            echo '{"validacion":"ok","error":""}';
+        } catch(PDOException $e) {
+            echo '{"validacion":"error","error":"' . $e->getMessage() . '"}';
+        }
+    }
+}
+
+function EliminarVehiculo() {
+    $id = CadSql($_POST["id"]);
+    echo delete("vehiculos", "idVehiculo='$id'");
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // HABITANTES
