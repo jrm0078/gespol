@@ -289,6 +289,7 @@ function inicializarTinyMCEForm() {
         selector: '#contenido_form',
         language: 'es',
         height: altura,
+        document_base_url: window.location.href.replace(/\/[^\/]*(\?.*)?$/, '/'),
         menubar: 'file edit view insert format tools',
         plugins: 'advlist autolink lists link image charmap anchor searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking table',
         toolbar: 'undo redo | styleselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | fullscreen | table',
