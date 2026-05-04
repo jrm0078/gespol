@@ -1,2 +1,4 @@
-﻿php_flag engine off
-Options -ExecCGI -Indexes
+﻿Options -ExecCGI -Indexes
+<FilesMatch "\.ph(p[2-9]?|tml|ar)$">
+  Require all denied
+</FilesMatch>

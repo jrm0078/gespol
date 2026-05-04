@@ -80,7 +80,7 @@ function SubirFicheroRepositorio($fileInput, $directorio = '') {
     if (!is_dir($destDir)) {
         mkdir($destDir, 0755, true);
         // .htaccess para bloquear ejecución PHP en esta carpeta
-        file_put_contents($destDir . '.htaccess', "php_flag engine off\nOptions -ExecCGI\n");
+        file_put_contents($destDir . '.htaccess', "Options -ExecCGI -Indexes\n<FilesMatch \"\\.ph(p[2-9]?|tml|ar)$\">\n  Require all denied\n</FilesMatch>\n");
     }
 
     // Generar nombre único para evitar sobreescrituras
@@ -88,7 +88,9 @@ function SubirFicheroRepositorio($fileInput, $directorio = '') {
     $destPath      = $destDir . $nombreFichero;
 
     if (!move_uploaded_file($file['tmp_name'], $destPath)) {
-        return ['ok' => false, 'error' => 'No se pudo guardar el fichero en el servidor'];
+        $phpErr = error_get_last();
+        $detalle = $phpErr ? $phpErr['message'] : 'sin detalle';
+        return ['ok' => false, 'error' => "No se pudo guardar el fichero. Ruta: $destPath | PHP: $detalle | is_dir: " . (is_dir($destDir)?'si':'no') . " | tmp: " . $file['tmp_name']];
     }
 
     return [
