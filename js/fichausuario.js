@@ -135,6 +135,18 @@ function txtid_changue(){
 
 
 function Actualizar() {
+	var nombre = document.getElementById("txtnombre").value.trim();
+	var email  = document.getElementById("txtemail").value.trim();
+	var pass   = document.getElementById("txtcontrasenia").value;
+	var w = "";
+	if (nombre === "") w += "El nombre es obligatorio.<br>";
+	if (email  === "") w += "El email es obligatorio.<br>";
+	if (lmodo === "alta" && pass === "") w += "La contraseña es obligatoria para nuevos usuarios.<br>";
+	if (w !== "") {
+		Swal.fire({ icon: 'warning', title: 'Datos incompletos', html: w });
+		return;
+	}
+
 	//agregando evento Ajax INSERT O UPDATE
 	$.ajax({
 		type: "POST",                 

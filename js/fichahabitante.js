@@ -90,6 +90,10 @@ function Actualizar() {
     var dniNum   = document.getElementById("txtDniNum").value.trim();
     var dniLetra = document.getElementById("txtDniLetra").value.trim();
     var dni      = dniNum + dniLetra;
+    var apel     = document.getElementById("txtApel").value.trim();
+    var w = "";
+    if (apel === "") w += "Los apellidos son obligatorios.<br>";
+    if (w !== "") { mostrarToast('warning', w.replace(/<br>/g, '\n')); return; }
 
     $.ajax({
         type: "POST", url: "inc/func_ajax.php/ActualizaHabitante",

@@ -104,6 +104,11 @@ function CargaVehiculo() {
 
 function ActualizaVehiculo() {
     $lmodo         = $_POST["lmodo"];
+
+    $w = "";
+    if (trim($_POST["idVehiculo"]) === "") $w .= "El Id Vehículo es obligatorio.<br>";
+    if ($w !== "") { echo '{"validacion":"warning","mensaje":"' . $w . '"}'; exit(); }
+
     $idVehiculo    = "'" . CadSql($_POST["idVehiculo"])    . "'";
     $Matricula     = "'" . CadSql($_POST["Matricula"])     . "'";
     $marca_modelo  = "'" . CadSql($_POST["marca_modelo"])  . "'";
@@ -183,6 +188,11 @@ function CargaHabitante() {
 function ActualizaHabitante() {
     $lmodo  = $_POST["lmodo"];
     $id     = intval($_POST["id"]);
+
+    $w = "";
+    if (trim($_POST["apel"]) === "") $w .= "Los apellidos son obligatorios.<br>";
+    if ($w !== "") { echo '{"validacion":"warning","mensaje":"' . $w . '"}'; exit(); }
+
     $dni    = "'" . CadSql($_POST["dni"])           . "'";
     $apel   = "'" . CadSql($_POST["apel"])          . "'";
     $nom    = "'" . CadSql($_POST["nom"])           . "'";
@@ -291,6 +301,10 @@ function ActualizaUsuario(){
 		$mensajewarning = $mensajewarning . "Indicar email<br>";
 	}
 	
+
+	if ($_POST["lmodo"]==="alta" && trim($_POST["contrasenia"])==="") {
+		$mensajewarning = $mensajewarning . "La contraseña es obligatoria para nuevos usuarios<br>";
+	}
 
 	if ($mensajewarning!=""){
 		echo '{"validacion":"warning","mensaje":"'. $mensajewarning . '"}';
