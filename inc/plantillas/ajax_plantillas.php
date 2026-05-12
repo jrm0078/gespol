@@ -124,20 +124,24 @@ function obtenerCompleta() {
     }
 
     // Obtener parámetros
-    $vars_json = ObtenerVariables($cod);
-    $vars = json_decode($vars_json, true) ?? [];
     $parametros = [];
-    if (is_array($vars)) {
-        foreach ($vars as $v) {
-            $parametros[] = [
-                'id'              => $v['id']              ?? '',
-                'nombre_variable' => $v['nombre_variable'] ?? '',
-                'etiqueta'        => $v['etiqueta']        ?? '',
-                'tipo'            => $v['tipo']            ?? 'text',
-                'requerido'       => $v['requerido']       ?? 0,
-                'orden'           => $v['orden']           ?? 999
-            ];
+    try {
+        $vars_json = ObtenerVariables($cod);
+        $vars = json_decode($vars_json, true) ?? [];
+        if (is_array($vars)) {
+            foreach ($vars as $v) {
+                $parametros[] = [
+                    'id'              => $v['id']              ?? '',
+                    'nombre_variable' => $v['nombre_variable'] ?? '',
+                    'etiqueta'        => $v['etiqueta']        ?? '',
+                    'tipo'            => $v['tipo']            ?? 'text',
+                    'requerido'       => $v['requerido']       ?? 0,
+                    'orden'           => $v['orden']           ?? 999
+                ];
+            }
         }
+    } catch (Exception $e) {
+        $parametros = []; // tabla no existe aún, ignorar
     }
     
     echo json_encode([
@@ -581,17 +585,23 @@ function obtenerParametrosAction() {
     $vars_json = ObtenerVariables($cod);
     $vars = json_decode($vars_json, true) ?? [];
     $parametros = [];
-    if (is_array($vars)) {
-        foreach ($vars as $v) {
-            $parametros[] = [
-                'id'              => $v['id']              ?? '',
-                'nombre_variable' => $v['nombre_variable'] ?? '',
-                'etiqueta'        => $v['etiqueta']        ?? '',
-                'tipo'            => $v['tipo']            ?? 'text',
-                'requerido'       => $v['requerido']       ?? 0,
-                'orden'           => $v['orden']           ?? 999
-            ];
+    try {
+        $vars_json = ObtenerVariables($cod);
+        $vars = json_decode($vars_json, true) ?? [];
+        if (is_array($vars)) {
+            foreach ($vars as $v) {
+                $parametros[] = [
+                    'id'              => $v['id']              ?? '',
+                    'nombre_variable' => $v['nombre_variable'] ?? '',
+                    'etiqueta'        => $v['etiqueta']        ?? '',
+                    'tipo'            => $v['tipo']            ?? 'text',
+                    'requerido'       => $v['requerido']       ?? 0,
+                    'orden'           => $v['orden']           ?? 999
+                ];
+            }
         }
+    } catch (Exception $e) {
+        $parametros = [];
     }
     echo json_encode(['success' => true, 'data' => $parametros]);
 }
