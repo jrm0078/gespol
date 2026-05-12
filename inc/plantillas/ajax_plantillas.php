@@ -50,6 +50,9 @@ switch($action) {
     case 'guardar_documento':
         guardarDocumentoAction();
         break;
+    case 'obtener_parametros':
+        obtenerParametrosAction();
+        break;
     default:
         echo json_encode(['success' => false, 'error' => 'Acción no reconocida']);
 }
@@ -119,6 +122,23 @@ function obtenerCompleta() {
             ];
         }
     }
+
+    // Obtener parámetros
+    $vars_json = ObtenerVariables($cod);
+    $vars = json_decode($vars_json, true) ?? [];
+    $parametros = [];
+    if (is_array($vars)) {
+        foreach ($vars as $v) {
+            $parametros[] = [
+                'id'              => $v['id']              ?? '',
+                'nombre_variable' => $v['nombre_variable'] ?? '',
+                'etiqueta'        => $v['etiqueta']        ?? '',
+                'tipo'            => $v['tipo']            ?? 'text',
+                'requerido'       => $v['requerido']       ?? 0,
+                'orden'           => $v['orden']           ?? 999
+            ];
+        }
+    }
     
     echo json_encode([
         'success' => true,
@@ -131,7 +151,8 @@ function obtenerCompleta() {
             'sql_consulta' => $plantilla['sql_consulta'] ?? '',
             'ayuda' => $plantilla['ayuda'] ?? '',
             'estado' => $plantilla['estado'] ?? 1,
-            'filtros' => $filtered
+            'filtros' => $filtered,
+            'parametros' => $parametros
         ]
     ]);
 }
@@ -357,6 +378,7 @@ function actionCrear() {
     $ayuda       = $data['ayuda']          ?? '';
     $estado      = isset($data['estado'])  ? (int)$data['estado'] : 1;
     $filtros     = $data['filtros']        ?? [];
+    $parametros  = $data['parametros']     ?? [];
 
     $result = json_decode(CrearPlantilla($cod, $nombre, $descripcion, $tipo, $contenido, $sql, $estado, $ayuda), true);
 
@@ -377,6 +399,17 @@ function actionCrear() {
             $f['sql_query']     ?? '',
             $f['orden']         ?? 1,
             isset($f['requerido']) ? (int)$f['requerido'] : 0
+        );
+    }
+
+    foreach ($parametros as $p) {
+        AgregarVariable(
+            $cod,
+            $p['nombre_variable'] ?? '',
+            $p['etiqueta']        ?? '',
+            $p['tipo']            ?? 'text',
+            $p['orden']           ?? 1,
+            isset($p['requerido']) ? (int)$p['requerido'] : 0
         );
     }
 
@@ -408,6 +441,7 @@ function actionEditar() {
     $ayuda       = $data['ayuda']          ?? '';
     $estado      = isset($data['estado'])  ? (int)$data['estado'] : 1;
     $filtros     = $data['filtros']        ?? [];
+    $parametros  = $data['parametros']     ?? [];
 
     $result = json_decode(ActualizarPlantilla($cod, $nombre, $descripcion, $tipo, $contenido, $sql, $estado, $ayuda), true);
 
@@ -430,6 +464,19 @@ function actionEditar() {
             $f['sql_query']     ?? '',
             $f['orden']         ?? 1,
             isset($f['requerido']) ? (int)$f['requerido'] : 0
+        );
+    }
+
+    // Reemplazar parámetros
+    EliminarVariablesPorPlantilla($cod);
+    foreach ($parametros as $p) {
+        AgregarVariable(
+            $cod,
+            $p['nombre_variable'] ?? '',
+            $p['etiqueta']        ?? '',
+            $p['tipo']            ?? 'text',
+            $p['orden']           ?? 1,
+            isset($p['requerido']) ? (int)$p['requerido'] : 0
         );
     }
 
@@ -520,6 +567,33 @@ function guardarDocumentoAction() {
     } else {
         echo json_encode(['success' => false, 'error' => 'Error al guardar el documento']);
     }
+}
+
+/**
+ * Obtener parámetros de una plantilla
+ */
+function obtenerParametrosAction() {
+    $cod = isset($_GET['cod']) ? $_GET['cod'] : '';
+    if (empty($cod)) {
+        echo json_encode(['success' => false, 'error' => 'Código requerido']);
+        return;
+    }
+    $vars_json = ObtenerVariables($cod);
+    $vars = json_decode($vars_json, true) ?? [];
+    $parametros = [];
+    if (is_array($vars)) {
+        foreach ($vars as $v) {
+            $parametros[] = [
+                'id'              => $v['id']              ?? '',
+                'nombre_variable' => $v['nombre_variable'] ?? '',
+                'etiqueta'        => $v['etiqueta']        ?? '',
+                'tipo'            => $v['tipo']            ?? 'text',
+                'requerido'       => $v['requerido']       ?? 0,
+                'orden'           => $v['orden']           ?? 999
+            ];
+        }
+    }
+    echo json_encode(['success' => true, 'data' => $parametros]);
 }
 
 ?>

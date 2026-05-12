@@ -237,6 +237,32 @@
                 <i class="fas fa-plus"></i> Agregar Filtro
             </button>
 
+            <!-- SECCIÓN: PARÁMETROS -->
+            <hr>
+            <h5 class="mb-1">Parámetros de Documento</h5>
+            <p class="text-muted small mb-3">Los parámetros son campos que el usuario rellena al generar un informe. Su valor reemplaza <code>[[nombre_param]]</code> directamente en el documento.</p>
+
+            <div class="table-responsive mb-3">
+                <table class="table table-sm table-bordered" id="tablaParametrosPlantillas">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Nombre Parámetro</th>
+                            <th>Etiqueta</th>
+                            <th>Tipo</th>
+                            <th>Orden</th>
+                            <th class="text-center">Requerido</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyParametrosPlantillas">
+                    </tbody>
+                </table>
+            </div>
+
+            <button type="button" class="btn btn-sm btn-success mb-4" onclick="agregarFilaParametroPlantillas()">
+                <i class="fas fa-plus"></i> Agregar Parámetro
+            </button>
+
             <!-- BOTONES -->
             <div class="card-footer bg-white d-flex align-items-center" style="gap:8px;">
                 <button type="button" class="btn btn-success" onclick="guardarPlantillaForm()">
@@ -409,6 +435,7 @@ function abrirFormularioPlantillasEditar(cod) {
             }, 100);
             
             cargarFiltrosPlantillas(data.data.filtros || []);
+            cargarParametrosPlantillas(data.data.parametros || []);
             
             ocultarTablaPlantillas();
         }
@@ -520,6 +547,92 @@ function obtenerFiltrosPlantillas() {
     return _filtrosMemoria.filter(f => f.nombre_filtro.trim() && f.etiqueta.trim());
 }
 
+// ============================================================
+// GESTIÓN DE PARÁMETROS EN MEMORIA
+// ============================================================
+var _parametrosMemoria = [];
+
+function _renderParametrosTabla() {
+    const tbody = $('#bodyParametrosPlantillas');
+    tbody.html('');
+
+    if (_parametrosMemoria.length === 0) {
+        tbody.html('<tr><td colspan="6" class="text-center text-muted py-2"><small>Sin parámetros. Pulsa "Agregar Parámetro" para añadir uno.</small></td></tr>');
+        return;
+    }
+
+    _parametrosMemoria.forEach((param, idx) => {
+        const nombre   = (param.nombre_variable || '').replace(/"/g,'&quot;');
+        const etiqueta = (param.etiqueta || '').replace(/"/g,'&quot;');
+
+        const fila = `<tr>
+            <td class="align-middle">
+                <input type="text" class="form-control form-control-sm" value="${nombre}"
+                    onchange="_parametrosMemoria[${idx}].nombre_variable = this.value" placeholder="ej: nombre_agente">
+            </td>
+            <td class="align-middle">
+                <input type="text" class="form-control form-control-sm" value="${etiqueta}"
+                    onchange="_parametrosMemoria[${idx}].etiqueta = this.value" placeholder="Etiqueta visible">
+            </td>
+            <td class="align-middle" style="width:120px;">
+                <select class="form-control form-control-sm" onchange="_parametrosMemoria[${idx}].tipo = this.value">
+                    <option value="text" ${param.tipo === 'text' ? 'selected' : ''}>Texto</option>
+                    <option value="number" ${param.tipo === 'number' ? 'selected' : ''}>Número</option>
+                    <option value="date" ${param.tipo === 'date' ? 'selected' : ''}>Fecha</option>
+                    <option value="textarea" ${param.tipo === 'textarea' ? 'selected' : ''}>Área de texto</option>
+                </select>
+            </td>
+            <td class="align-middle" style="width:80px;">
+                <input type="number" class="form-control form-control-sm" value="${param.orden || 1}" min="1"
+                    onchange="_parametrosMemoria[${idx}].orden = parseInt(this.value) || 1">
+            </td>
+            <td class="text-center align-middle" style="width:80px;">
+                <input type="checkbox" style="width:18px;height:18px;cursor:pointer;"
+                    ${param.requerido ? 'checked' : ''}
+                    onchange="_parametrosMemoria[${idx}].requerido = this.checked ? 1 : 0">
+            </td>
+            <td class="text-center align-middle" style="width:60px;">
+                <button type="button" class="btn btn-sm btn-danger" onclick="_eliminarParametroMemoria(${idx})" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>`;
+
+        tbody.append(fila);
+    });
+}
+
+function _eliminarParametroMemoria(idx) {
+    _parametrosMemoria.splice(idx, 1);
+    _renderParametrosTabla();
+}
+
+function cargarParametrosPlantillas(parametros) {
+    _parametrosMemoria = (parametros || []).map(p => ({
+        nombre_variable: p.nombre_variable || '',
+        etiqueta: p.etiqueta || '',
+        tipo: p.tipo || 'text',
+        orden: p.orden || 1,
+        requerido: p.requerido || 0
+    }));
+    _renderParametrosTabla();
+}
+
+function agregarFilaParametroPlantillas() {
+    _parametrosMemoria.push({
+        nombre_variable: '',
+        etiqueta: '',
+        tipo: 'text',
+        orden: _parametrosMemoria.length + 1,
+        requerido: 0
+    });
+    _renderParametrosTabla();
+}
+
+function obtenerParametrosPlantillas() {
+    return _parametrosMemoria.filter(p => p.nombre_variable.trim() && p.etiqueta.trim());
+}
+
 
 
 // Guardar plantilla
@@ -568,7 +681,8 @@ function guardarPlantillaForm() {
         ayuda: ayuda,
         contenido: contenido,
         estado: $('#estado_form').is(':checked') ? 1 : 0,
-        filtros: obtenerFiltrosPlantillas()
+        filtros: obtenerFiltrosPlantillas(),
+        parametros: obtenerParametrosPlantillas()
     };
     
     const action = plantillaEnEdicionForm ? 'editar&cod=' + plantillaEnEdicionForm : 'crear';
@@ -646,6 +760,9 @@ function limpiarFormularioPlantillas() {
     $('#bodyFiltrosPlantillas').html('');
     _filtrosMemoria = [];
     _renderFiltrosTabla();
+    $('#bodyParametrosPlantillas').html('');
+    _parametrosMemoria = [];
+    _renderParametrosTabla();
     plantillaEnEdicionForm = null;
 }
 
@@ -690,6 +807,7 @@ function cancelarFormularioPlantillas() {
             $('#estado_form').prop('checked', true);
             $('#bodyFiltrosPlantillas').html('');
             plantillaEnEdicionForm = null;
+            $('#bodyParametrosPlantillas').html('');
             mostrarTablaPlantillas();
         } else {
             // Reinicializar el editor con el contenido que tenía

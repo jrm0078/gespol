@@ -24,7 +24,7 @@ function Cargar() {
         crossDomain:true, cache:false, dataType:"json",
         success:function(data) {
             ['cmbAgenteInc1','cmbAgenteInc2','cmbAgenteInc3','cmbAgenteInc4'].forEach(function(id) {
-                $.each(data, function(i,v) { CmbCargaValor($('#' + id), v.numagente, v.nombre); });
+                $.each(data, function(i,v) { CmbCargaValor($('#' + id), v.numagente, v.numagente + ' \u2013 ' + (v.indicativo || '') + ' \u2013 ' + v.nombre); });
             });
         }
     });

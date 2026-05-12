@@ -234,9 +234,9 @@ CREATE TABLE IF NOT EXISTS repositorio (
 -- ============================================
 
 CREATE TABLE IF NOT EXISTS agentes (
-  numagente   INT PRIMARY KEY,
+  numagente   INT AUTO_INCREMENT PRIMARY KEY,
   nombre      VARCHAR(150) NOT NULL,
-  indicativo  INT DEFAULT NULL,
+  indicativo  VARCHAR(20) DEFAULT NULL,
   activo      TINYINT(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

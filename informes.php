@@ -161,6 +161,21 @@
         </div>
     </div>
 
+    <!-- SECCIÓN 2B: PARÁMETROS DE DOCUMENTO -->
+    <div id="parametroSection" style="display:none;" class="card shadow-sm mb-3">
+        <div class="card-header py-2" style="background: linear-gradient(to right, rgba(0,132,217,0.08), transparent); border-left: 4px solid #0066B3;">
+            <h6 class="m-0 font-weight-bold" style="color:#0066B3;"><i class="fas fa-pencil-alt mr-1"></i> Parámetros del Documento</h6>
+        </div>
+        <div class="card-body py-3">
+            <div class="row" id="parametrosContainer"></div>
+            <div class="mt-3">
+                <button class="btn btn-secondary px-4" onclick="aplicarParametros()">
+                    <i class="fas fa-check mr-1"></i> Aplicar Parámetros
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- SECCIÓN 3: EDITOR + ACCIONES -->
     <div id="editorSection" style="display:none;" class="card shadow-sm mb-3">
         <div class="card-header d-flex justify-content-between align-items-center py-2" style="background: linear-gradient(to right, rgba(0,132,217,0.08), transparent); border-left: 4px solid #0084D9;">
@@ -178,6 +193,9 @@
                 </button>
                 <button class="btn btn-sm btn-danger" onclick="descargarPDF()" title="Descargar PDF">
                     <i class="fas fa-file-pdf"></i> <span class="d-none d-md-inline">PDF</span>
+                </button>
+                <button class="btn btn-sm" onclick="descargarWord()" title="Exportar a Word/ODT" style="background:#2B579A;color:#fff;border:none;">
+                    <i class="fas fa-file-word"></i> <span class="d-none d-md-inline">Word</span>
                 </button>
             </div>
         </div>
@@ -312,6 +330,9 @@ function cargarPlantilla() {
                     }, 150);
                 }, 100);
 
+                // Cargar parámetros dinámicos
+                cargarParametrosDinamicos(plantillaActual.parametros || []);
+
             } else {
                 mostrarAlerta('Error al cargar plantilla: ' + response.error, 'danger');
             }
@@ -440,6 +461,72 @@ function cargarOpcionesConParametros(nombreFiltro, container) {
             });
         }
     });
+}
+
+// ============================================================
+// PARÁMETROS DINÁMICOS (reemplazo client-side en TinyMCE)
+// ============================================================
+function cargarParametrosDinamicos(parametros) {
+    var container = document.getElementById('parametrosContainer');
+    container.innerHTML = '';
+
+    if (!parametros || parametros.length === 0) {
+        document.getElementById('parametroSection').style.display = 'none';
+        return;
+    }
+
+    parametros.forEach(function(param) {
+        var col = document.createElement('div');
+        col.className = 'col-12 col-md-6 mb-3';
+
+        var tipo = param.tipo || 'text';
+        var html = '<div class="form-group">';
+        html += '<label class="font-weight-bold">' + escHtml(param.etiqueta) + (param.requerido ? ' <span class="text-danger">*</span>' : '') + '</label>';
+
+        if (tipo === 'textarea') {
+            html += '<textarea id="param_' + escHtml(param.nombre_variable) + '" '
+                  + 'class="form-control param-doc-input" rows="3" '
+                  + 'data-param="' + escHtml(param.nombre_variable) + '" '
+                  + 'placeholder="' + escHtml(param.etiqueta) + '"></textarea>';
+        } else if (tipo === 'number') {
+            html += '<input type="number" id="param_' + escHtml(param.nombre_variable) + '" '
+                  + 'class="form-control param-doc-input" '
+                  + 'data-param="' + escHtml(param.nombre_variable) + '" '
+                  + 'placeholder="' + escHtml(param.etiqueta) + '">';
+        } else if (tipo === 'date') {
+            html += '<input type="date" id="param_' + escHtml(param.nombre_variable) + '" '
+                  + 'class="form-control param-doc-input" '
+                  + 'data-param="' + escHtml(param.nombre_variable) + '">';
+        } else {
+            html += '<input type="text" id="param_' + escHtml(param.nombre_variable) + '" '
+                  + 'class="form-control param-doc-input" '
+                  + 'data-param="' + escHtml(param.nombre_variable) + '" '
+                  + 'placeholder="' + escHtml(param.etiqueta) + '">';
+        }
+
+        html += '</div>';
+        col.innerHTML = html;
+        container.appendChild(col);
+    });
+
+    document.getElementById('parametroSection').style.display = 'block';
+}
+
+function aplicarParametros() {
+    var ed = tinymce.get('documento-editor');
+    if (!ed) { mostrarAlerta('El editor no está listo', 'warning'); return; }
+
+    var contenido = ed.getContent();
+    var params = {};
+
+    document.querySelectorAll('.param-doc-input').forEach(function(el) {
+        var nombre = el.getAttribute('data-param');
+        params[nombre] = el.value;
+    });
+
+    contenido = reemplazarVariables(contenido, params);
+    ed.setContent(contenido);
+    mostrarAlerta('Parámetros aplicados al documento', 'success');
 }
 
 // ============================================================
@@ -587,6 +674,43 @@ function imprimirDocumento() {
 }
 
 // ============================================================
+// EXPORTAR A WORD (formato HTML-en-DOC, compatible Word/LibreOffice)
+// ============================================================
+function descargarWord() {
+    if (!plantillaActual) {
+        mostrarAlerta('Selecciona una plantilla primero', 'warning');
+        return;
+    }
+    var ed = tinymce.get('documento-editor');
+    var contenido = ed ? ed.getContent() : '';
+    if (!contenido || contenido === '<p></p>') {
+        mostrarAlerta('Genera el documento primero', 'warning');
+        return;
+    }
+    var nombre = (plantillaActual ? plantillaActual.nombre : 'documento').replace(/\s+/g, '_');
+    var html = '<!DOCTYPE html><html xmlns:o="urn:schemas-microsoft-com:office:office"'
+        + ' xmlns:w="urn:schemas-microsoft-com:office:word"'
+        + ' xmlns="http://www.w3.org/TR/REC-html40">'
+        + '<head><meta charset="utf-8">'
+        + '<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View>'
+        + '<w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->'
+        + '<style>@page { margin: 15mm; } body { font-family: Arial, sans-serif; font-size: 12pt; }'
+        + ' table { border-collapse: collapse; width: 100%; }'
+        + ' td, th { border: 1px solid #ccc; padding: 4px 8px; }</style>'
+        + '</head><body>' + contenido + '</body></html>';
+
+    var blob = new Blob([html], { type: 'application/msword' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href   = url;
+    a.download = nombre + '.doc';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// ============================================================
 // GUARDAR DOCUMENTO EN BD
 // ============================================================
 function guardarDocumento() {
@@ -632,6 +756,8 @@ function limpiar() {
     }
     document.getElementById('filtrosContainer').innerHTML = '';
     document.getElementById('filtroSection').style.display  = 'none';
+    document.getElementById('parametrosContainer').innerHTML = '';
+    document.getElementById('parametroSection').style.display = 'none';
     document.getElementById('editorSection').style.display  = 'none';
     document.getElementById('ayudaSection').style.display   = 'none';
     $('#ayudaPlantilla').val('');

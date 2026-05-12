@@ -18,9 +18,9 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-12 col-md-6">
-                    <div class="form-group">
-                        <label class="field-label" for="txtNumAgente">Nº Agente (indicativo local) *</label>
-                        <input type="number" class="form-control" id="txtNumAgente" placeholder="Número indicativo local">
+                    <div class="form-group" id="rowNumAgente">
+                        <label class="field-label" for="txtNumAgente">Nº Agente</label>
+                        <input type="number" class="form-control" id="txtNumAgente" placeholder="(Automático)" disabled>
                     </div>
                     <div class="form-group">
                         <label class="field-label" for="txtNombreAgente">Nombre y apellidos *</label>
@@ -29,8 +29,8 @@
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label class="field-label" for="txtIndicativo">Indicativo (nº andaluz)</label>
-                        <input type="number" class="form-control" id="txtIndicativo" placeholder="Número indicativo andaluz">
+                        <label class="field-label" for="txtIndicativo">Indicativo</label>
+                        <input type="text" class="form-control" id="txtIndicativo" placeholder="Ej: AB112" maxlength="20">
                     </div>
                     <div class="form-group">
                         <label class="field-label" for="cmbActivoAgente">Estado</label>

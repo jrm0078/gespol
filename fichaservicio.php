@@ -66,6 +66,7 @@
                             <option value="">-- Seleccionar --</option>
                             <option value="normal">Normal</option>
                             <option value="festivo">Festivo</option>
+                            <option value="fin de semana">Fin de semana</option>
                         </select>
                     </div>
                 </div>

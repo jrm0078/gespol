@@ -207,6 +207,26 @@ function ObtenerVariables($cod_plantilla) {
     return select($query);
 }
 
+function AgregarVariable($cod_plantilla, $nombre_variable, $etiqueta, $tipo, $orden, $requerido) {
+    $cod_sql  = CadSql($cod_plantilla);
+    $nom_sql  = CadSql($nombre_variable);
+    $eti_sql  = CadSql($etiqueta);
+    $tipo_sql = CadSql($tipo);
+
+    $query = "INSERT INTO plantillas_variables
+              (cod_plantilla, nombre_variable, etiqueta, tipo, orden, requerido, activo)
+              VALUES ('$cod_sql', '$nom_sql', '$eti_sql', '$tipo_sql', $orden, $requerido, 1)";
+    $result = ejecutaqueryPHP($query);
+    return $result === 'OK';
+}
+
+function EliminarVariablesPorPlantilla($cod_plantilla) {
+    $cod_sql = CadSql($cod_plantilla);
+    $query   = "DELETE FROM plantillas_variables WHERE cod_plantilla = '$cod_sql'";
+    $result  = ejecutaqueryPHP($query);
+    return $result === 'OK';
+}
+
 // ============================================
 // FUNCIONES GENERACIÓN DE DOCUMENTOS
 // ============================================

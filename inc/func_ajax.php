@@ -429,35 +429,31 @@ function CargaAgente() {
 
 function ActualizaAgente() {
     $lmodo     = $_POST["lmodo"];
-    $id        = intval($_POST["id"]);
     $nombre    = "'" . CadSql($_POST["nombre"])    . "'";
-    $indicativo= intval($_POST["indicativo"]);
+    $indicativo= "'" . CadSql($_POST["indicativo"]) . "'";
     $activo    = intval($_POST["activo"]);
 
     $w = "";
     if (trim($_POST["nombre"]) == "") $w .= "Indicar nombre del agente<br>";
-    if ($_POST["id"] == "")           $w .= "Indicar número de agente<br>";
     if ($w != "") { echo '{"validacion":"warning","mensaje":"' . $w . '"}'; exit(); }
 
-    $tabla  = "agentes";
-    $campos = "numagente,nombre,indicativo,activo";
-    $vals   = "$id#,#$nombre#,#$indicativo#,#$activo";
-    $where  = "numagente=$id";
-
     if ($lmodo == "edicion") {
-        $r = update($tabla, "nombre,indicativo,activo", "$nombre#,#$indicativo#,#$activo", $where);
+        $id    = intval($_POST["id"]);
+        $r = update("agentes", "nombre,indicativo,activo", "$nombre#,#$indicativo#,#$activo", "numagente=$id");
         _logOk($r, 'Edición agente: ' . $_POST["nombre"]);
         echo $r;
     } else {
         try {
-            $db = getConnection();
-            $exists = $db->query("SELECT COUNT(*) FROM agentes WHERE numagente=$id")->fetchColumn();
-            if ($exists > 0) { echo '{"validacion":"warning","mensaje":"Ya existe un agente con ese número."}'; $db = null; return; }
-            $db = null;
-        } catch(PDOException $e) {}
-        $r = insert($tabla, $campos, $vals);
-        _logOk($r, 'Alta agente: ' . $_POST["nombre"]);
-        echo $r;
+            $db   = getConnection();
+            $stmt = $db->prepare("INSERT INTO agentes (nombre, indicativo, activo) VALUES (?, ?, ?)");
+            $stmt->execute([$_POST["nombre"], $_POST["indicativo"], $activo]);
+            $newId = $db->lastInsertId();
+            $db   = null;
+            _logOk('OK', 'Alta agente: ' . $_POST["nombre"]);
+            echo json_encode(["validacion" => "ok", "id" => $newId, "mensaje" => "Agente creado correctamente"]);
+        } catch(PDOException $e) {
+            echo json_encode(["validacion" => "error", "error" => $e->getMessage()]);
+        }
     }
 }
 
@@ -703,7 +699,7 @@ function EliminarIncidencia() {
 // COMBOS AUXILIARES
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 function ComboAgentes() {
-    echo select("SELECT numagente, nombre FROM agentes WHERE activo=1 ORDER BY nombre ASC");
+    echo select("SELECT numagente, indicativo, nombre FROM agentes WHERE activo=1 ORDER BY numagente ASC");
 }
 
 function ComboEncargados() {

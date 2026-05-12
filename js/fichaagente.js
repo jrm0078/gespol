@@ -29,7 +29,7 @@ function CargaDatos() {
             if (result !== undefined) {
                 lmodo = "edicion";
                 document.getElementById("txtNumAgente").value       = result.numagente;
-                document.getElementById("txtNumAgente").disabled    = true;
+                document.getElementById("rowNumAgente").style.display = "block";
                 document.getElementById("txtNombreAgente").value    = result.nombre;
                 document.getElementById("txtIndicativo").value      = result.indicativo || "";
                 document.getElementById("cmbActivoAgente").value    = result.activo;
@@ -38,6 +38,7 @@ function CargaDatos() {
                 document.getElementById("btnEliminarAgente").style.display = "inline-block";
             } else {
                 lmodo = "alta";
+                document.getElementById("rowNumAgente").style.display = "none";
                 document.getElementById("tituloFichaAgente").innerHTML = "<i class='fas fa-user-plus mr-2'></i>Nuevo Agente";
                 document.getElementById("btnActualizarAgente").innerHTML = "<i class='fa fa-check mr-1'></i> Crear";
                 document.getElementById("btnEliminarAgente").style.display = "none";
@@ -48,23 +49,25 @@ function CargaDatos() {
 }
 
 function Actualizar() {
-    var id     = document.getElementById("txtNumAgente").value.trim();
     var nombre = document.getElementById("txtNombreAgente").value.trim();
     var w = "";
-    if (id === "" || isNaN(parseInt(id, 10)) || parseInt(id, 10) <= 0) w += "Indica un número de agente válido.<br>";
     if (nombre === "") w += "El nombre es obligatorio.<br>";
     if (w !== "") { mostrarToast('warning', w.replace(/<br>/g, '\n')); return; }
+
+    var postData = {
+        lmodo:      lmodo,
+        nombre:     document.getElementById("txtNombreAgente").value,
+        indicativo: document.getElementById("txtIndicativo").value,
+        activo:     document.getElementById("cmbActivoAgente").value
+    };
+    if (lmodo === "edicion") {
+        postData.id = document.getElementById("txtNumAgente").value;
+    }
 
     $.ajax({
         type: "POST",
         url: "inc/func_ajax.php/ActualizaAgente",
-        data: {
-            lmodo:      lmodo,
-            id:         document.getElementById("txtNumAgente").value,
-            nombre:     document.getElementById("txtNombreAgente").value,
-            indicativo: document.getElementById("txtIndicativo").value,
-            activo:     document.getElementById("cmbActivoAgente").value
-        },
+        data: postData,
         dataType: "json", crossDomain: true, cache: false, async: false,
         success: function(result) {
             if (result.validacion == "ok") {

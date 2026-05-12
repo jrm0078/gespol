@@ -64,20 +64,20 @@ function Cargar() {
             AGENTES_SRV.forEach(function(ag) {
                 var $s = $('#cmb_' + ag);
                 $s.select2();
-                $.each(data, function(i,v) { CmbCargaValor($s, v.numagente, v.nombre); });
+                $.each(data, function(i,v) { CmbCargaValor($s, v.numagente, v.numagente + ' \u2013 ' + (v.indicativo || '') + ' \u2013 ' + v.nombre); });
             });
             // Extras
             EXTRAS.forEach(function(i) {
                 var suf = i === 0 ? '' : i;
                 var $s = $('#cmb_agenteextra' + suf);
                 $s.select2({ width: '100%' });
-                $.each(data, function(j,v) { CmbCargaValor($s, v.numagente, v.nombre); });
+                $.each(data, function(j,v) { CmbCargaValor($s, v.numagente, v.numagente + ' \u2013 ' + (v.indicativo || '') + ' \u2013 ' + v.nombre); });
             });
             // Modal incidencias
             ['cmbAgenteInc1','cmbAgenteInc2','cmbAgenteInc3','cmbAgenteInc4'].forEach(function(id) {
                 var $s = $('#' + id);
                 $s.select2({ dropdownParent: $('#modalIncidencia') });
-                $.each(data, function(j,v) { CmbCargaValor($s, v.numagente, v.nombre); });
+                $.each(data, function(j,v) { CmbCargaValor($s, v.numagente, v.numagente + ' \u2013 ' + (v.indicativo || '') + ' \u2013 ' + v.nombre); });
             });
         }
     });

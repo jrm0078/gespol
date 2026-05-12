@@ -22,7 +22,7 @@ function Cargar() {
         crossDomain: true, cache: false, async: false, dataType: "json",
         success: function(data) {
             $.each(data, function(i, v) {
-                CmbCargaValor($('#cmbAgenteEncargado'), v.numagente, v.nombre);
+                CmbCargaValor($('#cmbAgenteEncargado'), v.numagente, v.numagente + ' \u2013 ' + (v.indicativo || '') + ' \u2013 ' + v.nombre);
             });
         }
     });
