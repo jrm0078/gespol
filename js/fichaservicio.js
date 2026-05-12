@@ -179,24 +179,13 @@ function Actualizar() {
         dataType:"json", crossDomain:true, cache:false, async:false,
         success:function(result) {
             if (result.validacion == "ok") {
-                // En alta, recargar con el nuevo ID para mostrar incidencias
-                if (lmodo === "alta" && result.id) {
-                    window.localStorage.setItem('pag_id1', result.id);
-                    pag_id1 = result.id;
+                // En alta, volver a la lista
+                if (lmodo === "alta") {
                     mostrarToast('success', 'Servicio creado');
-                    lmodo = "edicion";
-                    CargaDatos();
+                    _recargarTab('consservicios.php', 'Servicios', 'fas fa-calendar-alt');
                 } else {
                     mostrarToast('success', 'Servicio actualizado');
-                }
-                // Refrescar la lista en segundo plano si está abierta
-                if (window._gTabs) {
-                    var _consTab = window._gTabs.find(function(t) { return t.pagina === 'consservicios.php'; });
-                    if (_consTab) {
-                        var $p = $('#' + _tabPanelId('consservicios.php'));
-                        $p.find('table').each(function() { if ($.fn.DataTable.isDataTable(this)) $(this).DataTable().destroy(); });
-                        $p.load('consservicios.php');
-                    }
+                    _recargarTab('consservicios.php', 'Servicios', 'fas fa-calendar-alt');
                 }
             } else if (result.validacion == "warning") {
                 mostrarToast('warning', result.mensaje);
