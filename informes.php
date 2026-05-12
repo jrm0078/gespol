@@ -687,6 +687,13 @@ function descargarWord() {
         mostrarAlerta('Genera el documento primero', 'warning');
         return;
     }
+
+    // Convertir rutas relativas de imágenes a absolutas
+    var base = window.location.href.replace(/\/[^\/]*(\?.*)?$/, '/');
+    contenido = contenido.replace(/(<img[^>]+src=["'])(?!http|data:)([^"']+)(["'])/gi, function(match, p1, p2, p3) {
+        return p1 + base + p2 + p3;
+    });
+
     var nombre = (plantillaActual ? plantillaActual.nombre : 'documento').replace(/\s+/g, '_');
     var html = '<!DOCTYPE html><html xmlns:o="urn:schemas-microsoft-com:office:office"'
         + ' xmlns:w="urn:schemas-microsoft-com:office:word"'
@@ -696,7 +703,8 @@ function descargarWord() {
         + '<w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->'
         + '<style>@page { margin: 15mm; } body { font-family: Arial, sans-serif; font-size: 12pt; }'
         + ' table { border-collapse: collapse; width: 100%; }'
-        + ' td, th { border: 1px solid #ccc; padding: 4px 8px; }</style>'
+        + ' td, th { border: 1px solid #ccc; padding: 4px 8px; }'
+        + ' img { max-width: 100%; }</style>'
         + '</head><body>' + contenido + '</body></html>';
 
     var blob = new Blob([html], { type: 'application/msword' });
