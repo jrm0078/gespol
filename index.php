@@ -250,6 +250,21 @@
 						$menu= $menu . '<li class="sidebar-item" id="mnulog" data-pagina="conslog.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="fas fa-list-alt"></i><span class="hide-menu">Log</span><i class="fas fa-external-link-alt sidebar-modal-icon" data-pagina="conslog.php" data-titulo="Log" data-icono="fas fa-list-alt" title="Abrir en ventana emergente" style="margin-left:auto;font-size:0.7rem;opacity:0.6;"></i></a></li>';
 						$menu= $menu . '<script>document.getElementById("mnulog").addEventListener("click", function(e){if(e.target.closest(".sidebar-modal-icon"))return;CargarPagina("conslog.php","Log de Accesos","fas fa-list-alt");}, false);</script>';
 
+						// ── GESTIÓN DE TURNOS ──────────────────────────────────
+						$menu= $menu . '<li class="nav-small-cap"><i class="mdi mdi-dots-horizontal"></i><span class="hide-menu">Gestión de Turnos</span></li>';
+
+						$menu= $menu . '<li class="sidebar-item" id="mnuCuadrante" data-pagina="cons_cuadrante.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="fas fa-table"></i><span class="hide-menu">Cuadrante</span></a></li>';
+						$menu= $menu . '<script>document.getElementById("mnuCuadrante").addEventListener("click", function(e){CargarPagina("cons_cuadrante.php","Cuadrante mensual","fas fa-table");}, false);</script>';
+
+						$menu= $menu . '<li class="sidebar-item" id="mnuEquipos" data-pagina="cons_turnos_equipos.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="fas fa-users-cog"></i><span class="hide-menu">Equipos</span></a></li>';
+						$menu= $menu . '<script>document.getElementById("mnuEquipos").addEventListener("click", function(e){CargarPagina("cons_turnos_equipos.php","Equipos","fas fa-users-cog");}, false);</script>';
+
+						$menu= $menu . '<li class="sidebar-item" id="mnuCodigos" data-pagina="cons_turnos_codigos.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="fas fa-tags"></i><span class="hide-menu">Códigos</span></a></li>';
+						$menu= $menu . '<script>document.getElementById("mnuCodigos").addEventListener("click", function(e){CargarPagina("cons_turnos_codigos.php","Códigos de turno","fas fa-tags");}, false);</script>';
+
+						$menu= $menu . '<li class="sidebar-item" id="mnuCalendario" data-pagina="cons_turnos_calendario.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="fas fa-calendar-alt"></i><span class="hide-menu">Calendario Laboral</span></a></li>';
+						$menu= $menu . '<script>document.getElementById("mnuCalendario").addEventListener("click", function(e){CargarPagina("cons_turnos_calendario.php","Calendario Laboral","fas fa-calendar-alt");}, false);</script>';
+
 						echo $menu;										
 					?>
 

@@ -381,3 +381,290 @@ SET contenido = REPLACE(
     ), '"')
 )
 WHERE cod_plantilla IN ('incidencias_senalizacion', 'incidencias_urbanismo');
+
+
+-- ============================================================
+-- MÓDULO GESTIÓN DE TURNOS Y CUADRANTES
+-- Fase 1 – Tablas base
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS turnos_ejercicio (
+  id              INT AUTO_INCREMENT PRIMARY KEY,
+  ejercicio       INT NOT NULL UNIQUE,
+  descripcion     VARCHAR(200) DEFAULT NULL,
+  total_horas     DECIMAL(8,2) DEFAULT 1498.00,
+  estado          ENUM('abierto','cerrado') DEFAULT 'abierto',
+  fecha_creacion  DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS turnos_equipo (
+  id      INT AUTO_INCREMENT PRIMARY KEY,
+  codigo  VARCHAR(20)  NOT NULL UNIQUE,
+  nombre  VARCHAR(100) NOT NULL,
+  orden   INT DEFAULT 0,
+  activo  TINYINT(1) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS turnos_equipo_agente (
+  id           INT AUTO_INCREMENT PRIMARY KEY,
+  id_equipo    INT NOT NULL,
+  numagente    INT NOT NULL,
+  orden        INT DEFAULT 0,
+  fecha_desde  DATE DEFAULT NULL,
+  fecha_hasta  DATE DEFAULT NULL,
+  activo       TINYINT(1) DEFAULT 1,
+  UNIQUE KEY uq_teqa (id_equipo, numagente, fecha_desde),
+  CONSTRAINT fk_teqa_equipo FOREIGN KEY (id_equipo) REFERENCES turnos_equipo(id)  ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_teqa_agente FOREIGN KEY (numagente)  REFERENCES agentes(numagente) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Nomenclaturas / códigos de turno
+CREATE TABLE IF NOT EXISTS turnos_codigo (
+  id                   INT AUTO_INCREMENT PRIMARY KEY,
+  codigo               VARCHAR(10)  NOT NULL UNIQUE,
+  descripcion          VARCHAR(150) NOT NULL,
+  color                VARCHAR(20)  DEFAULT '#cccccc',
+  computa              TINYINT(1)   DEFAULT 1  COMMENT '1=Cuenta como jornada laboral',
+  tipo_computo         ENUM('normal','extra','reducida','ninguno') DEFAULT 'normal',
+  afecta_jornada       TINYINT(1)   DEFAULT 1,
+  afecta_extra         TINYINT(1)   DEFAULT 0,
+  requiere_observacion TINYINT(1)   DEFAULT 0,
+  activo               TINYINT(1)   DEFAULT 1,
+  orden                INT DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Días especiales del calendario laboral (festivos, convenio)
+CREATE TABLE IF NOT EXISTS turnos_calendario_dia (
+  id                INT AUTO_INCREMENT PRIMARY KEY,
+  ejercicio         INT NOT NULL,
+  fecha             DATE NOT NULL,
+  festivo_tipo      ENUM('nacional','local','convenio') NOT NULL,
+  festivo_desc      VARCHAR(200) DEFAULT NULL,
+  reduccion_minutos INT DEFAULT 0,
+  observaciones     VARCHAR(500) DEFAULT NULL,
+  UNIQUE KEY uq_cal_fecha (ejercicio, fecha),
+  CONSTRAINT fk_cal_ejercicio FOREIGN KEY (ejercicio) REFERENCES turnos_ejercicio(ejercicio) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Periodos de reducción de jornada
+CREATE TABLE IF NOT EXISTS turnos_reduccion (
+  id                INT AUTO_INCREMENT PRIMARY KEY,
+  ejercicio         INT NOT NULL,
+  descripcion       VARCHAR(200) NOT NULL,
+  fecha_desde       DATE NOT NULL,
+  fecha_hasta       DATE NOT NULL,
+  reduccion_minutos INT NOT NULL,
+  aplica_sabado     TINYINT(1) DEFAULT 0,
+  aplica_domingo    TINYINT(1) DEFAULT 0,
+  observaciones     VARCHAR(500) DEFAULT NULL,
+  CONSTRAINT fk_red_ejercicio FOREIGN KEY (ejercicio) REFERENCES turnos_ejercicio(ejercicio) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Cuadrante mensual (cabecera)
+CREATE TABLE IF NOT EXISTS turnos_cuadrante (
+  id             INT AUTO_INCREMENT PRIMARY KEY,
+  ejercicio      INT NOT NULL,
+  mes            TINYINT NOT NULL COMMENT '1-12',
+  estado         ENUM('borrador','cerrado','contabilizado') DEFAULT 'borrador',
+  fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+  fecha_cierre   DATETIME DEFAULT NULL,
+  usuario_cierre VARCHAR(150) DEFAULT NULL,
+  observaciones  TEXT DEFAULT NULL,
+  UNIQUE KEY uq_cuadrante (ejercicio, mes),
+  CONSTRAINT fk_cuad_ejercicio FOREIGN KEY (ejercicio) REFERENCES turnos_ejercicio(ejercicio) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Cuadrante mensual (detalle por agente/día)
+CREATE TABLE IF NOT EXISTS turnos_cuadrante_dia (
+  id           INT AUTO_INCREMENT PRIMARY KEY,
+  id_cuadrante INT  NOT NULL,
+  numagente    INT  NOT NULL,
+  id_equipo    INT  NOT NULL,
+  fecha        DATE NOT NULL,
+  codigo       VARCHAR(10) DEFAULT NULL,
+  horas        DECIMAL(4,2) DEFAULT NULL,
+  es_excepcion TINYINT(1)  DEFAULT 0  COMMENT '1=Difiere del patrón del equipo',
+  observaciones VARCHAR(500) DEFAULT NULL,
+  UNIQUE KEY uq_cdia (id_cuadrante, numagente, fecha),
+  CONSTRAINT fk_cdia_cuadrante FOREIGN KEY (id_cuadrante) REFERENCES turnos_cuadrante(id)  ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_cdia_agente    FOREIGN KEY (numagente)    REFERENCES agentes(numagente)      ON UPDATE CASCADE,
+  CONSTRAINT fk_cdia_equipo    FOREIGN KEY (id_equipo)    REFERENCES turnos_equipo(id)       ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Contabilización mensual por agente (campos calculados + manuales)
+CREATE TABLE IF NOT EXISTS turnos_contabilidad_mes (
+  id                      INT AUTO_INCREMENT PRIMARY KEY,
+  id_cuadrante            INT NOT NULL,
+  numagente               INT NOT NULL,
+  -- Calculados automáticamente del cuadrante
+  jornadas_mes            DECIMAL(6,2) DEFAULT 0,
+  festivos_trabajados     INT          DEFAULT 0,
+  fines_semana_trabajados INT          DEFAULT 0,
+  vacaciones_dias         INT          DEFAULT 0,
+  bajas_dias              INT          DEFAULT 0,
+  permisos_dias           INT          DEFAULT 0,
+  formacion_dias          INT          DEFAULT 0,
+  horas_reduccion         DECIMAL(5,2) DEFAULT 0,
+  p01_jornadas            DECIMAL(6,2) DEFAULT 0,
+  p040_jornadas           DECIMAL(6,2) DEFAULT 0,
+  -- Campos manuales (sin fórmula en el Excel)
+  extras_horas            DECIMAL(5,2) DEFAULT 0,
+  descuentos              DECIMAL(5,2) DEFAULT 0,
+  ajuste_manual           DECIMAL(5,2) DEFAULT 0,
+  observaciones           TEXT DEFAULT NULL,
+  -- Trazabilidad
+  calculado_en            DATETIME DEFAULT NULL,
+  editado_en              DATETIME DEFAULT NULL,
+  editado_por             VARCHAR(150) DEFAULT NULL,
+  UNIQUE KEY uq_contab (id_cuadrante, numagente),
+  CONSTRAINT fk_contab_cuadrante FOREIGN KEY (id_cuadrante) REFERENCES turnos_cuadrante(id) ON UPDATE CASCADE,
+  CONSTRAINT fk_contab_agente    FOREIGN KEY (numagente)    REFERENCES agentes(numagente)    ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Servicios extraordinarios vinculados al cuadrante
+CREATE TABLE IF NOT EXISTS turnos_extraordinarios (
+  id             INT AUTO_INCREMENT PRIMARY KEY,
+  numagente      INT NOT NULL,
+  fecha          DATE NOT NULL,
+  horas          DECIMAL(4,2) DEFAULT NULL,
+  origen         ENUM('cuadrante','tablon','horas_sueltas') DEFAULT 'cuadrante',
+  descripcion    VARCHAR(500) DEFAULT NULL,
+  estado         ENUM('pendiente','revisado','consolidado') DEFAULT 'pendiente',
+  id_cuadrante   INT DEFAULT NULL,
+  observaciones  TEXT DEFAULT NULL,
+  fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_ext_agente    FOREIGN KEY (numagente)    REFERENCES agentes(numagente)     ON UPDATE CASCADE,
+  CONSTRAINT fk_ext_cuadrante FOREIGN KEY (id_cuadrante) REFERENCES turnos_cuadrante(id)  ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Auditoría de cambios en el cuadrante
+CREATE TABLE IF NOT EXISTS turnos_auditoria (
+  id             INT AUTO_INCREMENT PRIMARY KEY,
+  fecha_hora     DATETIME DEFAULT CURRENT_TIMESTAMP,
+  usuario        VARCHAR(150) DEFAULT NULL,
+  entidad        VARCHAR(50)  DEFAULT NULL,
+  id_entidad     INT          DEFAULT NULL,
+  campo          VARCHAR(100) DEFAULT NULL,
+  valor_anterior TEXT DEFAULT NULL,
+  valor_nuevo    TEXT DEFAULT NULL,
+  observaciones  VARCHAR(500) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ============================================================
+-- DATOS INICIALES: EJERCICIO 2026
+-- ============================================================
+INSERT IGNORE INTO turnos_ejercicio (ejercicio, descripcion, total_horas, estado)
+VALUES (2026, 'Ejercicio 2026', 1498.00, 'abierto');
+
+-- ============================================================
+-- DATOS INICIALES: EQUIPOS (del Excel Cuadrantes 2026)
+-- ============================================================
+INSERT IGNORE INTO turnos_equipo (codigo, nombre, orden, activo) VALUES
+('EQ1', 'Equipo 1', 1, 1),
+('EQ2', 'Equipo 2', 2, 1),
+('EQ3', 'Equipo 3', 3, 1),
+('EQ4', 'Equipo 4', 4, 1);
+
+-- ============================================================
+-- DATOS INICIALES: ASIGNACIÓN AGENTES → EQUIPOS (2026)
+-- Solo se insertan agentes que existan en la tabla agentes
+-- ============================================================
+INSERT IGNORE INTO turnos_equipo_agente (id_equipo, numagente, orden, fecha_desde, activo)
+SELECT eq.id, a.numagente,
+  CASE a.numagente WHEN 34 THEN 1 WHEN 9 THEN 2 WHEN 24 THEN 3 WHEN 50 THEN 4 WHEN 42 THEN 5 ELSE 99 END,
+  '2026-01-01', 1
+FROM turnos_equipo eq CROSS JOIN agentes a
+WHERE eq.codigo = 'EQ1' AND a.numagente IN (34, 9, 24, 50, 42);
+
+INSERT IGNORE INTO turnos_equipo_agente (id_equipo, numagente, orden, fecha_desde, activo)
+SELECT eq.id, a.numagente,
+  CASE a.numagente WHEN 57 THEN 1 WHEN 65 THEN 2 WHEN 67 THEN 3 WHEN 68 THEN 4 WHEN 27 THEN 5 ELSE 99 END,
+  '2026-01-01', 1
+FROM turnos_equipo eq CROSS JOIN agentes a
+WHERE eq.codigo = 'EQ2' AND a.numagente IN (57, 65, 67, 68, 27);
+
+INSERT IGNORE INTO turnos_equipo_agente (id_equipo, numagente, orden, fecha_desde, activo)
+SELECT eq.id, a.numagente,
+  CASE a.numagente WHEN 48 THEN 1 WHEN 44 THEN 2 WHEN 70 THEN 3 WHEN 72 THEN 4 WHEN 54 THEN 5 ELSE 99 END,
+  '2026-01-01', 1
+FROM turnos_equipo eq CROSS JOIN agentes a
+WHERE eq.codigo = 'EQ3' AND a.numagente IN (48, 44, 70, 72, 54);
+
+INSERT IGNORE INTO turnos_equipo_agente (id_equipo, numagente, orden, fecha_desde, activo)
+SELECT eq.id, a.numagente,
+  CASE a.numagente WHEN 26 THEN 1 WHEN 43 THEN 2 ELSE 99 END,
+  '2026-01-01', 1
+FROM turnos_equipo eq CROSS JOIN agentes a
+WHERE eq.codigo = 'EQ4' AND a.numagente IN (26, 43);
+
+-- ============================================================
+-- DATOS INICIALES: CÓDIGOS / NOMENCLATURAS
+-- (del Excel NOTAS y documento Notas sobre nomenclaturas)
+-- ============================================================
+INSERT IGNORE INTO turnos_codigo (codigo, descripcion, color, computa, tipo_computo, afecta_jornada, afecta_extra, requiere_observacion, activo, orden) VALUES
+-- Turnos de servicio normales
+('M',   'Mañana',                      '#28a745', 1, 'normal',   1, 0, 0, 1,  1),
+('T',   'Tarde',                       '#fd7e14', 1, 'normal',   1, 0, 0, 1,  2),
+('N',   'Noche',                       '#004085', 1, 'normal',   1, 0, 0, 1,  3),
+-- Turnos con reducción de jornada
+('m',   'Mañana (reducida)',           '#82c91e', 1, 'reducida', 1, 0, 0, 1,  4),
+('t',   'Tarde (reducida)',            '#ffa94d', 1, 'reducida', 1, 0, 0, 1,  5),
+('n',   'Noche (reducida)',            '#74c0fc', 1, 'reducida', 1, 0, 0, 1,  6),
+-- Jornadas extraordinarias (cómputo aparte)
+('(M)', 'Mañana extraordinaria',       '#155724', 0, 'extra',    0, 1, 1, 1,  7),
+('(T)', 'Tarde extraordinaria',        '#7d3200', 0, 'extra',    0, 1, 1, 1,  8),
+('(N)', 'Noche extraordinaria',        '#1a237e', 0, 'extra',    0, 1, 1, 1,  9),
+-- Vacaciones y bajas
+('V',   'Vacaciones',                  '#ffc107', 0, 'ninguno',  0, 0, 0, 1, 10),
+('B',   'Baja',                        '#dc3545', 0, 'ninguno',  0, 0, 0, 1, 11),
+-- Permisos (según nomenclatura Excel)
+('P',   'Permiso',                     '#6c757d', 0, 'ninguno',  0, 0, 0, 1, 12),
+('Pa',  'Permiso Particular (no suma)','#adb5bd', 0, 'ninguno',  0, 0, 0, 1, 13),
+('Pas', 'Permiso Particular (saldo)',  '#868e96', 0, 'ninguno',  0, 0, 0, 1, 14),
+('Pc',  'Permiso Compensación',        '#6f42c1', 0, 'ninguno',  0, 0, 0, 1, 15),
+('Ps',  'Permiso Sindical',            '#20c997', 0, 'ninguno',  0, 0, 0, 1, 16),
+('Pf',  'Permiso Form.-Comp.',         '#6610f2', 0, 'ninguno',  0, 0, 0, 1, 17),
+-- Formación
+('F',   'Formación (agente)',          '#17a2b8', 1, 'normal',   1, 0, 0, 1, 18),
+('Fj',  'Formación (jefatura)',        '#0c7287', 1, 'normal',   1, 0, 0, 1, 19),
+-- Otros
+('E',   'Escuela / Otro organismo',    '#94d82d', 0, 'ninguno',  0, 0, 0, 1, 20),
+('Jf',  'Jefatura',                    '#795548', 1, 'normal',   1, 0, 0, 1, 21),
+('Sto', 'Santo / Onomástica',          '#e83e8c', 0, 'ninguno',  0, 0, 1, 1, 22);
+
+-- ============================================================
+-- DATOS INICIALES: CALENDARIO LABORAL 2026
+-- Fuente: Calendario_Laboral_2026.pdf + doc Cuadrante contabilidad
+-- ============================================================
+INSERT IGNORE INTO turnos_calendario_dia (ejercicio, fecha, festivo_tipo, festivo_desc, reduccion_minutos) VALUES
+-- Festivos nacionales
+(2026, '2026-01-01', 'nacional', 'Año Nuevo',                         0),
+(2026, '2026-01-06', 'nacional', 'Reyes Magos',                       0),
+(2026, '2026-02-28', 'nacional', 'Día de Andalucía',                  0),
+(2026, '2026-04-02', 'nacional', 'Jueves Santo',                      0),
+(2026, '2026-04-03', 'nacional', 'Viernes Santo',                     0),
+(2026, '2026-05-01', 'nacional', 'Día del Trabajo',                   0),
+(2026, '2026-08-15', 'nacional', 'Asunción de la Virgen',             0),
+(2026, '2026-10-12', 'nacional', 'Fiesta Nacional de España',         0),
+(2026, '2026-11-02', 'nacional', 'Todos los Santos (traslado lunes)', 0),
+(2026, '2026-12-07', 'nacional', 'Puente Inmaculada',                 0),
+(2026, '2026-12-08', 'nacional', 'Inmaculada Concepción',             0),
+(2026, '2026-12-24', 'nacional', 'Nochebuena',                        0),
+(2026, '2026-12-25', 'nacional', 'Navidad',                           0),
+(2026, '2026-12-31', 'nacional', 'Nochevieja',                        0),
+-- Festivos locales (Montilla, Córdoba)
+(2026, '2026-07-14', 'local',    'San Francisco Solano',              0),
+(2026, '2026-09-07', 'local',    'Vendimia',                          0),
+-- Días de convenio empresa
+(2026, '2026-04-01', 'convenio', 'Convenio – Semana Santa',           0),
+(2026, '2026-07-13', 'convenio', 'Convenio – Feria El Santo',         0);
+
+-- ============================================================
+-- DATOS INICIALES: REDUCCIONES DE JORNADA 2026
+-- Fuente: Cuadrante contabilidad jornadas y descuentos 2026.doc
+-- ============================================================
+INSERT IGNORE INTO turnos_reduccion (ejercicio, descripcion, fecha_desde, fecha_hasta, reduccion_minutos, aplica_sabado, aplica_domingo) VALUES
+(2026, 'Semana Santa 2026',      '2026-03-30', '2026-03-31', 60, 0, 0),
+(2026, 'Feria El Santo 2026',    '2026-07-09', '2026-07-10', 60, 0, 0),
+(2026, 'Horario de Verano 2026', '2026-06-16', '2026-09-15', 30, 0, 0);
