@@ -256,6 +256,12 @@
 						$menu= $menu . '<li class="sidebar-item" id="mnuCuadrante" data-pagina="cons_cuadrante.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="fas fa-table"></i><span class="hide-menu">Cuadrante</span></a></li>';
 						$menu= $menu . '<script>document.getElementById("mnuCuadrante").addEventListener("click", function(e){CargarPagina("cons_cuadrante.php","Cuadrante mensual","fas fa-table");}, false);</script>';
 
+						$menu= $menu . '<li class="sidebar-item" id="mnuContabilidad" data-pagina="cons_turnos_contabilidad.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="fas fa-calculator"></i><span class="hide-menu">Contabilidad</span></a></li>';
+						$menu= $menu . '<script>document.getElementById("mnuContabilidad").addEventListener("click", function(e){CargarPagina("cons_turnos_contabilidad.php","Contabilidad mensual","fas fa-calculator");}, false);</script>';
+
+						$menu= $menu . '<li class="sidebar-item" id="mnuAuditoria" data-pagina="cons_turnos_auditoria.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="fas fa-history"></i><span class="hide-menu">Auditoría</span></a></li>';
+						$menu= $menu . '<script>document.getElementById("mnuAuditoria").addEventListener("click", function(e){CargarPagina("cons_turnos_auditoria.php","Auditoría de cambios","fas fa-history");}, false);</script>';
+
 						$menu= $menu . '<li class="sidebar-item" id="mnuEquipos" data-pagina="cons_turnos_equipos.php"> <a href="javascript:void(0)" class="sidebar-link"><i class="fas fa-users-cog"></i><span class="hide-menu">Equipos</span></a></li>';
 						$menu= $menu . '<script>document.getElementById("mnuEquipos").addEventListener("click", function(e){CargarPagina("cons_turnos_equipos.php","Equipos","fas fa-users-cog");}, false);</script>';
 

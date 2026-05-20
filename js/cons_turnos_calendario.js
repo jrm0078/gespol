@@ -149,10 +149,10 @@ $(function () {
 
     $('#tblFestivos tbody').on('click', '.btn-del-fes', function () {
         var id = $(this).data('id');
-        Swal.fire({ title:'¿Eliminar festivo?', icon:'warning', showCancelButton:true,
+        Swal.fire({ title:'¿Eliminar festivo?', type:'warning', showCancelButton:true,
                     confirmButtonText:'Sí', cancelButtonText:'No', confirmButtonColor:'#dc3545' })
             .then(function (res) {
-                if (!res.isConfirmed) return;
+                if (!res.value) return;
                 $.post(AJAX + '?action=eliminar_festivo', { id: id }, function (r) {
                     mostrarRespuesta(r);
                     if (r.validacion === 'ok') cargarTodo();
@@ -196,10 +196,10 @@ $(function () {
 
     $('#tblReducciones tbody').on('click', '.btn-del-red', function () {
         var id = $(this).data('id');
-        Swal.fire({ title:'¿Eliminar reducción?', icon:'warning', showCancelButton:true,
+        Swal.fire({ title:'¿Eliminar reducción?', type:'warning', showCancelButton:true,
                     confirmButtonText:'Sí', cancelButtonText:'No', confirmButtonColor:'#dc3545' })
             .then(function (res) {
-                if (!res.isConfirmed) return;
+                if (!res.value) return;
                 $.post(AJAX + '?action=eliminar_reduccion', { id: id }, function (r) {
                     mostrarRespuesta(r);
                     if (r.validacion === 'ok') cargarTodo();
@@ -246,6 +246,6 @@ $(function () {
     function mostrarRespuesta(r) {
         var icon = r.validacion === 'ok' ? 'success' : (r.validacion === 'warning' ? 'warning' : 'error');
         var msg  = r.mensaje || r.error || '';
-        if (msg) Swal.fire({ icon: icon, title: msg, timer: 2000, showConfirmButton: false });
+        if (msg) Swal.fire({ type: icon, title: msg, timer: 2000, showConfirmButton: false });
     }
 });

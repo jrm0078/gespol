@@ -72,13 +72,13 @@ $(function () {
         var id = $(this).data('id');
         Swal.fire({
             title: '¿Eliminar código?',
-            icon: 'warning',
+            type: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Sí',
             cancelButtonText: 'No',
             confirmButtonColor: '#dc3545'
         }).then(function (res) {
-            if (!res.isConfirmed) return;
+            if (!res.value) return;
             $.post(AJAX + '?action=eliminar_codigo', { id: id }, function (r) {
                 mostrarRespuesta(r);
                 if (r.validacion === 'ok') initTabla();
@@ -142,6 +142,6 @@ $(function () {
     function mostrarRespuesta(r) {
         var icon = r.validacion === 'ok' ? 'success' : (r.validacion === 'warning' ? 'warning' : 'error');
         var msg = r.mensaje || r.error || '';
-        if (msg) Swal.fire({ icon: icon, title: msg, timer: 2000, showConfirmButton: false });
+        if (msg) Swal.fire({ type: icon, title: msg, timer: 2000, showConfirmButton: false });
     }
 });

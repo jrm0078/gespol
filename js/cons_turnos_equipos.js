@@ -69,13 +69,13 @@ $(function () {
         Swal.fire({
             title: '¿Eliminar equipo?',
             text: 'Se eliminarán también las asignaciones de agentes.',
-            icon: 'warning',
+            type: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar',
             confirmButtonColor: '#dc3545'
         }).then(function (res) {
-            if (!res.isConfirmed) return;
+            if (!res.value) return;
             $.post(AJAX + '?action=eliminar_equipo', { id: id }, function (r) {
                 mostrarRespuesta(r);
                 if (r.validacion === 'ok') initTabla();
@@ -204,10 +204,10 @@ $(function () {
     function mostrarRespuesta(r) {
         var icon = r.validacion === 'ok' ? 'success' : (r.validacion === 'warning' ? 'warning' : 'error');
         var msg  = r.mensaje || r.error || '';
-        if (msg) Swal.fire({ icon: icon, title: msg, timer: 2000, showConfirmButton: false });
+        if (msg) Swal.fire({ type: icon, title: msg, timer: 2000, showConfirmButton: false });
     }
 
     function mostrarAviso(msg) {
-        Swal.fire({ icon: 'warning', title: msg, timer: 2000, showConfirmButton: false });
+        Swal.fire({ type: 'warning', title: msg, timer: 2000, showConfirmButton: false });
     }
 });
