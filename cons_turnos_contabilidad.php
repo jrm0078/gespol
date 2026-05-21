@@ -129,7 +129,7 @@ tr.fila-totales td.col-agente { background: #e8f5e9 !important; }
           <option value="11">Noviembre</option>
           <option value="12">Diciembre</option>
         </select>
-        <button id="btnCargar" class="btn btn-sm btn-light">
+        <button id="btnCargar" class="btn btn-sm" style="background:#0084D9;color:#fff;border-color:#0066B3;">
           <i class="fas fa-sync-alt mr-1"></i>Cargar
         </button>
         <span id="estadoBadge" class="badge badge-secondary d-none" style="font-size:.8rem"></span>
