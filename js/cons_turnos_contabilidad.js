@@ -16,11 +16,15 @@ $(function () {
     // ─────────────────────────────────────────────────────────────
     // ARRANQUE: cargar Enero del año actual automáticamente
     // ─────────────────────────────────────────────────────────────
-    $('#btnCargar').on('click', cargarContabilidad);
+
+    // Helper para escopar selectores a esta página (evita conflicto con otras páginas abiertas como tabs)
+    function $p(sel) { return $('.pag-contabilidad').find(sel); }
+
+    $(document).on('click', '.pag-contabilidad #btnCargar', cargarContabilidad);
 
     (function () {
         var hoy = new Date();
-        $('#selEjercicio').val(hoy.getFullYear());
+        $p('#selEjercicio').val(hoy.getFullYear());
         cargarContabilidad();
     })();
 
@@ -28,14 +32,14 @@ $(function () {
     // CARGA DE DATOS
     // ─────────────────────────────────────────────────────────────
     function cargarContabilidad() {
-        var ej  = parseInt($('#selEjercicio').val(), 10);
-        var mes = parseInt($('#selMes').val(), 10);
+        var ej  = parseInt($p('#selEjercicio').val(), 10);
+        var mes = parseInt($p('#selMes').val(), 10);
 
-        $('#areaContabilidad').addClass('d-none');
-        $('#divCargando').removeClass('d-none');
+        $p('#areaContabilidad').addClass('d-none');
+        $p('#divCargando').removeClass('d-none');
 
         $.post(AJAX + '?action=cargar_contabilidad', { ejercicio: ej, mes: mes }, function (r) {
-            $('#divCargando').addClass('d-none');
+            $p('#divCargando').addClass('d-none');
 
             if (r.validacion === 'warning') {
                 // No hay cuadrante aún para ese mes
@@ -64,9 +68,9 @@ $(function () {
             }
             $('#lblDiasTeoricos').text(_diasTeoricos || '–');
 
-            $('#areaContabilidad').removeClass('d-none');
+            $p('#areaContabilidad').removeClass('d-none');
         }, 'json').fail(function () {
-            $('#divCargando').addClass('d-none');
+            $p('#divCargando').addClass('d-none');
             mostrarToast('error', 'Error de conexión');
         });
     }
@@ -447,7 +451,7 @@ $(function () {
             'contabilizado': 'Contabilizado'
         };
         var est = _cuadrante.estado || 'borrador';
-        $('#estadoBadge')
+        $p('#estadoBadge')
             .removeClass('d-none badge-secondary badge-warning badge-success')
             .addClass(cls[est] || 'badge-secondary')
             .text(lbl[est] || est);

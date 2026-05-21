@@ -101,7 +101,7 @@ tr.fila-totales td.col-agente { background: #e8f5e9 !important; }
 }
 </style>
 
-<div class="container-fluid px-1">
+<div class="container-fluid px-1 pag-contabilidad">
 
   <!-- ── SELECTOR EJERCICIO / MES ─────────────────────────────── -->
   <div class="card shadow-sm mb-2">

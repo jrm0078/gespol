@@ -94,7 +94,7 @@ td.dia-fes-convenio  { background-color: rgba(111,66,193,.12); }
 #barraTotal .total-val  { font-weight:bold; }
 </style>
 
-<div class="container-fluid px-1">
+<div class="container-fluid px-1 pag-cuadrante">
 
   <!-- ── SELECTOR EJERCICIO / MES ─────────────────────────── -->
   <div class="card shadow-sm mb-2">

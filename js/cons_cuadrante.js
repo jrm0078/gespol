@@ -25,26 +25,29 @@ $(function () {
     // CARGA DEL CUADRANTE
     // ─────────────────────────────────────────────────────────────
 
-    $('#btnCargar').on('click', cargarCuadrante);
+    // Helper para escopar selectores a esta página (evita conflicto con otras páginas abiertas como tabs)
+    function $p(sel) { return $('.pag-cuadrante').find(sel); }
+
+    $(document).on('click', '.pag-cuadrante #btnCargar', cargarCuadrante);
 
     // Cargar mes seleccionado al arrancar (por defecto: Enero del año actual)
     (function () {
         var hoy = new Date();
-        $('#selEjercicio').val(hoy.getFullYear());
+        $p('#selEjercicio').val(hoy.getFullYear());
         cargarCuadrante();
     })();
 
     function cargarCuadrante() {
-        var ej  = parseInt($('#selEjercicio').val(), 10);
-        var mes = parseInt($('#selMes').val(), 10);
+        var ej  = parseInt($p('#selEjercicio').val(), 10);
+        var mes = parseInt($p('#selMes').val(), 10);
 
-        $('#areaEditor').addClass('d-none');
-        $('#divCargando').removeClass('d-none');
+        $p('#areaEditor').addClass('d-none');
+        $p('#divCargando').removeClass('d-none');
         _pendientes = {};
         _selCeldas  = {};
 
         $.post(AJAX + '?action=cargar_cuadrante_mes', { ejercicio: ej, mes: mes }, function (r) {
-            $('#divCargando').addClass('d-none');
+            $p('#divCargando').addClass('d-none');
             if (r.validacion !== 'ok') { mostrarToast('error', r.error || 'Error cargando cuadrante'); return; }
 
             _cuadrante = r.cuadrante;
@@ -56,9 +59,9 @@ $(function () {
             renderPanelCodigos();
             renderCuadrante(ej, mes);
             actualizarEstadoBadge();
-            $('#areaEditor').removeClass('d-none');
+            $p('#areaEditor').removeClass('d-none');
         }, 'json').fail(function () {
-            $('#divCargando').addClass('d-none');
+            $p('#divCargando').addClass('d-none');
             mostrarToast('error', 'Error de conexión');
         });
     }
@@ -482,9 +485,9 @@ $(function () {
         if (!_cuadrante) return;
         var cls = { 'borrador': 'badge-secondary', 'cerrado': 'badge-warning', 'contabilizado': 'badge-success' };
         var lbl = { 'borrador': 'Borrador', 'cerrado': 'Cerrado', 'contabilizado': 'Contabilizado' };
-        $('#estadoBadge').removeClass('d-none badge-secondary badge-warning badge-success')
-                         .addClass(cls[_cuadrante.estado] || 'badge-secondary')
-                         .text(lbl[_cuadrante.estado] || _cuadrante.estado);
+        $p('#estadoBadge').removeClass('d-none badge-secondary badge-warning badge-success')
+                          .addClass(cls[_cuadrante.estado] || 'badge-secondary')
+                          .text(lbl[_cuadrante.estado] || _cuadrante.estado);
     }
 
     function actualizarContadorPendientes() {
