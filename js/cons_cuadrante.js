@@ -27,11 +27,10 @@ $(function () {
 
     $('#btnCargar').on('click', cargarCuadrante);
 
-    // Cargar mes actual al arrancar
+    // Cargar mes seleccionado al arrancar (por defecto: Enero del año actual)
     (function () {
         var hoy = new Date();
         $('#selEjercicio').val(hoy.getFullYear());
-        $('#selMes').val(hoy.getMonth() + 1);
         cargarCuadrante();
     })();
 
