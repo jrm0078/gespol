@@ -312,10 +312,16 @@
     margin-bottom: 0 !important;
 }
 
-/* Sidebar: solo ajustar top para que quede debajo del navbar fijo */
-/* style.css ya maneja el resto (full, mini-sidebar, hover, márgenes) */
+/* Sidebar: ajustar top y height para que quede debajo del navbar fijo y no se corte por abajo */
+/* Con position:fixed, height:100% = 100vh, pero top:50px lo desplaza → se cortan los últimos ítems */
 .left-sidebar {
     top: 50px !important;
+    height: calc(100vh - 50px) !important;
+}
+/* Permitir scroll interno cuando hay muchos ítems */
+.scroll-sidebar {
+    height: 100% !important;
+    overflow-y: auto;
 }
 
 /* Cuando sidebar hover expande el logo (expand-logo 250px), también desplazar el navbar-collapse

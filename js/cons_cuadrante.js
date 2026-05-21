@@ -198,6 +198,7 @@ $(function () {
         $('#tblCuadrante thead').html(thead);
         $('#tblCuadrante tbody').html(tbody);
         actualizarContadorPendientes();
+        actualizarBarraTotales();
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -285,6 +286,46 @@ $(function () {
             }
         });
         $tr.find('.col-total').text(jornadas);
+        actualizarBarraTotales();
+    }
+
+    function actualizarBarraTotales() {
+        var totJornadas = 0, totFestivos = 0, totFS = 0;
+        var semanasFS = {};
+
+        Object.keys(_celdas).forEach(function (key) {
+            var cel = _celdas[key];
+            if (!cel || !cel.codigo) return;
+            var cdef = buscarCodigo(cel.codigo);
+            if (!cdef || !cdef.computa || cdef.tipo_computo !== 'normal') return;
+
+            totJornadas++;
+
+            var fes = _festivos[cel.fecha];
+            if (fes) totFestivos++;
+
+            var dt  = new Date(cel.fecha);
+            var dow = (dt.getDay() + 6) % 7; // 0=lun
+            if (dow === 5 || dow === 6) {
+                // Clave semana única por agente+semana
+                var semKey = cel.numagente + '_' + pad4(dt.getFullYear()) + pad2(getWeek(dt));
+                semanasFS[semKey] = true;
+            }
+        });
+        totFS = Object.keys(semanasFS).length;
+
+        $('#totJornadas').text(totJornadas);
+        $('#totFestivos').text(totFestivos);
+        $('#totFS').text(totFS);
+        $('#barraTotal').toggleClass('d-none', totJornadas === 0);
+    }
+
+    function getWeek(d) {
+        var date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+        var dayNum = date.getUTCDay() || 7;
+        date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+        var yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+        return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
     }
 
     // ─────────────────────────────────────────────────────────────

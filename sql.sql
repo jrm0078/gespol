@@ -572,31 +572,31 @@ INSERT IGNORE INTO turnos_equipo (codigo, nombre, orden, activo) VALUES
 -- ============================================================
 INSERT IGNORE INTO turnos_equipo_agente (id_equipo, numagente, orden, fecha_desde, activo)
 SELECT eq.id, a.numagente,
-  CASE a.numagente WHEN 34 THEN 1 WHEN 9 THEN 2 WHEN 24 THEN 3 WHEN 50 THEN 4 WHEN 42 THEN 5 ELSE 99 END,
+  CASE a.numagente WHEN 1 THEN 1 WHEN 2 THEN 2 ELSE 99 END,
   '2026-01-01', 1
 FROM turnos_equipo eq CROSS JOIN agentes a
-WHERE eq.codigo = 'EQ1' AND a.numagente IN (34, 9, 24, 50, 42);
+WHERE eq.codigo = 'EQ1' AND a.numagente IN (1, 2);
 
 INSERT IGNORE INTO turnos_equipo_agente (id_equipo, numagente, orden, fecha_desde, activo)
 SELECT eq.id, a.numagente,
-  CASE a.numagente WHEN 57 THEN 1 WHEN 65 THEN 2 WHEN 67 THEN 3 WHEN 68 THEN 4 WHEN 27 THEN 5 ELSE 99 END,
+  CASE a.numagente WHEN 3 THEN 1 WHEN 5 THEN 2 ELSE 99 END,
   '2026-01-01', 1
 FROM turnos_equipo eq CROSS JOIN agentes a
-WHERE eq.codigo = 'EQ2' AND a.numagente IN (57, 65, 67, 68, 27);
+WHERE eq.codigo = 'EQ2' AND a.numagente IN (3, 5);
 
 INSERT IGNORE INTO turnos_equipo_agente (id_equipo, numagente, orden, fecha_desde, activo)
 SELECT eq.id, a.numagente,
-  CASE a.numagente WHEN 48 THEN 1 WHEN 44 THEN 2 WHEN 70 THEN 3 WHEN 72 THEN 4 WHEN 54 THEN 5 ELSE 99 END,
+  CASE a.numagente WHEN 12 THEN 1 WHEN 21 THEN 2 ELSE 99 END,
   '2026-01-01', 1
 FROM turnos_equipo eq CROSS JOIN agentes a
-WHERE eq.codigo = 'EQ3' AND a.numagente IN (48, 44, 70, 72, 54);
+WHERE eq.codigo = 'EQ3' AND a.numagente IN (12, 21);
 
 INSERT IGNORE INTO turnos_equipo_agente (id_equipo, numagente, orden, fecha_desde, activo)
 SELECT eq.id, a.numagente,
-  CASE a.numagente WHEN 26 THEN 1 WHEN 43 THEN 2 ELSE 99 END,
+  CASE a.numagente WHEN 22 THEN 1 WHEN 23 THEN 2 ELSE 99 END,
   '2026-01-01', 1
 FROM turnos_equipo eq CROSS JOIN agentes a
-WHERE eq.codigo = 'EQ4' AND a.numagente IN (26, 43);
+WHERE eq.codigo = 'EQ4' AND a.numagente IN (22, 23);
 
 -- ============================================================
 -- DATOS INICIALES: CÓDIGOS / NOMENCLATURAS
