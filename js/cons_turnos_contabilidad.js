@@ -14,12 +14,11 @@ $(function () {
                  'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
     // ─────────────────────────────────────────────────────────────
-    // ARRANQUE: cargar el mes actual automáticamente
+    // ARRANQUE: cargar Enero del año actual automáticamente
     // ─────────────────────────────────────────────────────────────
     (function () {
         var hoy = new Date();
         $('#selEjercicio').val(hoy.getFullYear());
-        $('#selMes').val(hoy.getMonth() + 1);
         cargarContabilidad();
     })();
 
