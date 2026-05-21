@@ -16,13 +16,13 @@ $(function () {
     // ─────────────────────────────────────────────────────────────
     // ARRANQUE: cargar Enero del año actual automáticamente
     // ─────────────────────────────────────────────────────────────
+    $('#btnCargar').on('click', cargarContabilidad);
+
     (function () {
         var hoy = new Date();
         $('#selEjercicio').val(hoy.getFullYear());
         cargarContabilidad();
     })();
-
-    $('#btnCargar').on('click', cargarContabilidad);
 
     // ─────────────────────────────────────────────────────────────
     // CARGA DE DATOS
