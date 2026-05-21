@@ -34,14 +34,12 @@ $app->run();
 
 function login() {
 	
-	$sql = "SELECT id,nombre,email,contrasenia,rol" .
-			" FROM usuario " .
-			"WHERE email='" . $_POST['usuario'] . "'";
-	
+	$sql = "SELECT id,nombre,email,contrasenia,rol FROM usuario WHERE email = ?";
+
 	try {
 		$db = getConnection();
 		$stmt = $db->prepare($sql);
-		$stmt->execute();
+		$stmt->execute([$_POST['usuario'] ?? '']);
 		$resultado = $stmt->fetch(PDO::FETCH_OBJ);
 		$db = null;
 		

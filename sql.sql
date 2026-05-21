@@ -631,7 +631,10 @@ INSERT IGNORE INTO turnos_codigo (codigo, descripcion, color, computa, tipo_comp
 -- Otros
 ('E',   'Escuela / Otro organismo',    '#94d82d', 0, 'ninguno',  0, 0, 0, 1, 20),
 ('Jf',  'Jefatura',                    '#795548', 1, 'normal',   1, 0, 0, 1, 21),
-('Sto', 'Santo / Onomástica',          '#e83e8c', 0, 'ninguno',  0, 0, 1, 1, 22);
+('Sto', 'Santo / Onomástica',          '#e83e8c', 0, 'ninguno',  0, 0, 1, 1, 22),
+-- Permisos especiales con regla decimal (Fase 7)
+('P01',  'Permiso art.01 (jornada especial)',  '#e67e22', 0, 'ninguno', 0, 0, 0, 1, 23),
+('P040', 'Permiso art.040 (jornada especial)', '#d35400', 0, 'ninguno', 0, 0, 0, 1, 24);
 
 -- ============================================================
 -- DATOS INICIALES: CALENDARIO LABORAL 2026

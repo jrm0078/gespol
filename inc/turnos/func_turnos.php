@@ -442,17 +442,17 @@ function turnos_guardarCelda($d) {
     $id_cuadrante = intval($d['id_cuadrante'] ?? 0);
     $numagente    = intval($d['numagente']    ?? 0);
     $id_equipo    = intval($d['id_equipo']    ?? 0);
-    $fecha        = CadSql($d['fecha']        ?? '');
-    $codigo       = isset($d['codigo']) ? CadSql($d['codigo']) : null;
+    $fecha        = $d['fecha'] ?? '';
+    $codigo       = isset($d['codigo']) && $d['codigo'] !== '' ? $d['codigo'] : null;
     $horas        = isset($d['horas']) && $d['horas'] !== '' ? floatval($d['horas']) : null;
     $es_exc       = intval($d['es_excepcion'] ?? 0);
-    $obs          = CadSql($d['observaciones'] ?? '');
+    $obs          = $d['observaciones'] ?? '';
 
     if (!$id_cuadrante || !$numagente || !$id_equipo || !$fecha)
         return '{"validacion":"warning","mensaje":"Datos incompletos"}';
 
-    $codigo_val   = $codigo !== null && $codigo !== '' ? "'$codigo'" : 'NULL';
-    $horas_val    = $horas  !== null ? $horas : 'NULL';
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha))
+        return '{"validacion":"warning","mensaje":"Formato de fecha no válido"}';
 
     try {
         $db = getConnection();
@@ -462,25 +462,31 @@ function turnos_guardarCelda($d) {
             return '{"validacion":"warning","mensaje":"El cuadrante está cerrado y no puede modificarse"}';
 
         // Leer el código anterior para el log de auditoría
-        $cod_anterior = $db->query(
+        $ant = $db->prepare(
             "SELECT IFNULL(codigo,'') FROM turnos_cuadrante_dia
-             WHERE id_cuadrante=$id_cuadrante AND numagente=$numagente AND fecha='$fecha' LIMIT 1"
-        )->fetchColumn();
-
-        $db->exec(
-            "INSERT INTO turnos_cuadrante_dia (id_cuadrante,numagente,id_equipo,fecha,codigo,horas,es_excepcion,observaciones)
-             VALUES ($id_cuadrante,$numagente,$id_equipo,'$fecha',$codigo_val,$horas_val,$es_exc,'$obs')
-             ON DUPLICATE KEY UPDATE
-               codigo=$codigo_val, horas=$horas_val, es_excepcion=$es_exc, observaciones='$obs'"
+             WHERE id_cuadrante=? AND numagente=? AND fecha=? LIMIT 1"
         );
+        $ant->execute([$id_cuadrante, $numagente, $fecha]);
+        $cod_anterior = $ant->fetchColumn();
+
+        $s = $db->prepare(
+            "INSERT INTO turnos_cuadrante_dia (id_cuadrante,numagente,id_equipo,fecha,codigo,horas,es_excepcion,observaciones)
+             VALUES (?,?,?,?,?,?,?,?)
+             ON DUPLICATE KEY UPDATE
+               codigo=VALUES(codigo),horas=VALUES(horas),
+               es_excepcion=VALUES(es_excepcion),observaciones=VALUES(observaciones)"
+        );
+        $s->execute([$id_cuadrante, $numagente, $id_equipo, $fecha, $codigo, $horas, $es_exc, $obs]);
 
         // Auditoría: solo si cambió el código
         $cod_nuevo = $codigo ?? '';
         if ((string)$cod_anterior !== $cod_nuevo) {
-            $id_dia = $db->query(
+            $idDia = $db->prepare(
                 "SELECT id FROM turnos_cuadrante_dia
-                 WHERE id_cuadrante=$id_cuadrante AND numagente=$numagente AND fecha='$fecha' LIMIT 1"
-            )->fetchColumn();
+                 WHERE id_cuadrante=? AND numagente=? AND fecha=? LIMIT 1"
+            );
+            $idDia->execute([$id_cuadrante, $numagente, $fecha]);
+            $id_dia = $idDia->fetchColumn();
             turnos_registrarAuditoria($db, 'cuadrante_dia', $id_dia, 'codigo',
                 $cod_anterior, $cod_nuevo,
                 "Agente:$numagente Fecha:$fecha Cuadrante:$id_cuadrante");
