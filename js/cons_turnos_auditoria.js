@@ -1,4 +1,4 @@
-/* jshint esversion:6 */
+﻿/* jshint esversion:6 */
 $(function () {
     'use strict';
 
@@ -13,25 +13,29 @@ $(function () {
         'contabilidad_mes': 'badge-info',
     };
 
+    // Helper para escopar selectores a esta página
+    function $p(sel) { return $('.pag-auditoria').find(sel); }
+
     // ── Fechas por defecto: último mes ───────────────────────
     (function () {
         var hoy    = new Date();
         var inicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-        $('#filtDesde').val(fmtDate(inicio));
-        $('#filtHasta').val(fmtDate(hoy));
+        $p('#filtDesde').val(fmtDate(inicio));
+        $p('#filtHasta').val(fmtDate(hoy));
+        cargarAuditoria();
     })();
 
     // ── Botón filtrar ────────────────────────────────────────
-    $('#btnFiltrar').on('click', function () {
+    $(document).on('click', '.pag-auditoria #btnFiltrar', function () {
         _pagina = 1;
         cargarAuditoria();
     });
 
     // ── Paginación ───────────────────────────────────────────
-    $('#btnPagAnterior').on('click', function () {
+    $(document).on('click', '.pag-auditoria #btnPagAnterior', function () {
         if (_pagina > 1) { _pagina--; cargarAuditoria(); }
     });
-    $('#btnPagSiguiente').on('click', function () {
+    $(document).on('click', '.pag-auditoria #btnPagSiguiente', function () {
         if (_pagina < _total_paginas) { _pagina++; cargarAuditoria(); }
     });
 
@@ -39,20 +43,20 @@ $(function () {
     // CARGA DE DATOS
     // ─────────────────────────────────────────────────────────
     function cargarAuditoria() {
-        $('#divCargando').removeClass('d-none');
-        $('#wrapTabla').addClass('d-none');
-        $('#divPaginacion').addClass('d-none');
+        $p('#divCargando').removeClass('d-none');
+        $p('#wrapTabla').addClass('d-none');
+        $p('#divPaginacion').addClass('d-none');
 
         $.post(AJAX + '?action=cargar_auditoria', {
             pagina:   _pagina,
-            entidad:  $('#filtEntidad').val(),
-            usuario:  $('#filtUsuario').val().trim(),
-            desde:    $('#filtDesde').val(),
-            hasta:    $('#filtHasta').val(),
-            busqueda: $('#filtBusqueda').val().trim()
+            entidad:  $p('#filtEntidad').val(),
+            usuario:  $p('#filtUsuario').val().trim(),
+            desde:    $p('#filtDesde').val(),
+            hasta:    $p('#filtHasta').val(),
+            busqueda: $p('#filtBusqueda').val().trim()
         }, function (r) {
-            $('#divCargando').addClass('d-none');
-            $('#wrapTabla').removeClass('d-none');
+            $p('#divCargando').addClass('d-none');
+            $p('#wrapTabla').removeClass('d-none');
 
             if (r.validacion !== 'ok') {
                 mostrarToast('error', r.error || 'Error al cargar auditoría');
@@ -63,7 +67,7 @@ $(function () {
 
             // Actualizar entidades en el selector (dinámico)
             if (r.entidades && r.entidades.length) {
-                var $sel = $('#filtEntidad');
+                var $sel = $p('#filtEntidad');
                 var selVal = $sel.val();
                 $sel.find('option:not(:first)').remove();
                 r.entidades.forEach(function (e) {
@@ -76,23 +80,23 @@ $(function () {
             var desde = ((_pagina - 1) * r.por_pagina) + 1;
             var hasta = Math.min(_pagina * r.por_pagina, r.total);
             if (r.total === 0) {
-                $('#lblTotal').text('No hay registros con esos filtros');
+                $p('#lblTotal').text('No hay registros con esos filtros');
             } else {
-                $('#lblTotal').text('Mostrando ' + desde + '–' + hasta + ' de ' + r.total + ' registros');
+                $p('#lblTotal').text('Mostrando ' + desde + '–' + hasta + ' de ' + r.total + ' registros');
             }
 
             if (_total_paginas > 1) {
-                $('#divPaginacion').removeClass('d-none');
-                $('#lblPagina').text('Página ' + _pagina + ' de ' + _total_paginas);
-                $('#btnPagAnterior').prop('disabled', _pagina <= 1);
-                $('#btnPagSiguiente').prop('disabled', _pagina >= _total_paginas);
+                $p('#divPaginacion').removeClass('d-none');
+                $p('#lblPagina').text('Página ' + _pagina + ' de ' + _total_paginas);
+                $p('#btnPagAnterior').prop('disabled', _pagina <= 1);
+                $p('#btnPagSiguiente').prop('disabled', _pagina >= _total_paginas);
             }
 
             renderTabla(r.filas);
 
         }, 'json').fail(function () {
-            $('#divCargando').addClass('d-none');
-            $('#wrapTabla').removeClass('d-none');
+            $p('#divCargando').addClass('d-none');
+            $p('#wrapTabla').removeClass('d-none');
             mostrarToast('error', 'Error de conexión');
         });
     }
@@ -102,7 +106,7 @@ $(function () {
     // ─────────────────────────────────────────────────────────
     function renderTabla(filas) {
         if (!filas || filas.length === 0) {
-            $('#tbodyAuditoria').html(
+            $p('#tbodyAuditoria').html(
                 '<tr><td colspan="8" class="text-center text-muted py-4">' +
                 '<i class="fas fa-search mr-1"></i>Sin registros con esos filtros.</td></tr>'
             );
@@ -126,7 +130,7 @@ $(function () {
                 '</tr>';
         });
 
-        $('#tbodyAuditoria').html(html);
+        $p('#tbodyAuditoria').html(html);
     }
 
     /** Renderiza un valor: truncado con tooltip si es largo */

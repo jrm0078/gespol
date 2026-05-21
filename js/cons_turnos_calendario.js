@@ -9,9 +9,9 @@ $(function () {
         'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'
     ];
 
-    function getEjercicio() { return $('#selEjercicio').val(); }
+    function getEjercicio() { return $('.pag-calendario').find('#selEjercicio').val(); }
 
-    // ── CARGA COMPLETA ───────────────────────────────────────
+    // ── CARGA COMPLETA ──────────────────────────────────
     function cargarTodo() {
         var ej = getEjercicio();
         $.post(AJAX + '?action=listar_festivos',   { ejercicio: ej }, function (r) {
@@ -24,7 +24,7 @@ $(function () {
     }
 
     cargarTodo();
-    $('#selEjercicio').on('change', cargarTodo);
+    $(document).on('change', '.pag-calendario #selEjercicio', cargarTodo);
 
     // ── CALENDARIO VISUAL ────────────────────────────────────
     function renderCalendario(ejercicio, festivos) {

@@ -12,7 +12,7 @@
 }
 </style>
 
-<div class="container-fluid px-1">
+<div class="container-fluid px-1 pag-auditoria">
 
   <!-- ── CABECERA ─────────────────────────────────────────────── -->
   <div class="card shadow-sm mb-2">

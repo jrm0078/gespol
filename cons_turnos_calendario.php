@@ -14,7 +14,7 @@
 .legend-box  { width:16px; height:16px; border-radius:3px; flex-shrink:0; }
 </style>
 
-<div class="container-fluid px-1">
+<div class="container-fluid px-1 pag-calendario">
 
   <!-- Selector ejercicio + leyenda -->
   <div class="card shadow-sm mb-3">
